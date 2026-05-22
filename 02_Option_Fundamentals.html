@@ -1,0 +1,1894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Option Fundamentals — S&T Interview Guide</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+/* ── TOKENS ─────────────────────────────────────────────────────────── */
+:root{
+  --bg:       #0b0e17;
+  --surface:  #111420;
+  --card:     #171c2c;
+  --border:   #222840;
+  --accent:   #c084fc;   /* violet */
+  --accent2:  #fb923c;   /* orange */
+  --accent3:  #34d399;   /* emerald */
+  --red:      #f87171;
+  --green:    #34d399;
+  --blue:     #60a5fa;
+  --yellow:   #fbbf24;
+  --text:     #e2e8f0;
+  --muted:    #7c8db0;
+  --mono:     'Fira Code','JetBrains Mono',monospace;
+  --sans:     'IBM Plex Sans','Segoe UI',sans-serif;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.72;
+  min-height:100vh;
+}
+
+/* ── NOISE OVERLAY ───────────────────────────────────────────────────── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:9998;opacity:.5;
+}
+
+/* ── TOP BAR ──────────────────────────────────────────────────────────── */
+.topbar{
+  background:var(--surface);
+  border-bottom:2px solid var(--accent);
+  padding:.6rem 2rem;
+  display:flex;align-items:center;gap:1rem;
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(10px);
+}
+.topbar .tag{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;
+  background:var(--accent);color:#000;
+  padding:.2rem .55rem;border-radius:3px;font-weight:700;
+}
+.topbar .crumb{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.topbar .crumb a{color:inherit;text-decoration:none;transition:color .2s}
+.topbar .crumb a:hover{color:var(--accent)}
+.topbar .crumb span{color:var(--accent)}
+.topbar .mod{
+  margin-left:auto;font-family:var(--mono);font-size:.7rem;
+  color:var(--muted);border:1px solid var(--border);
+  padding:.2rem .6rem;border-radius:4px;
+}
+
+/* ── LAYOUT ───────────────────────────────────────────────────────────── */
+.wrapper{max-width:1120px;margin:0 auto;padding:2.5rem 1.5rem 6rem}
+
+/* ── HERO ─────────────────────────────────────────────────────────────── */
+.hero{padding:2.5rem 0 2rem;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+.hero h1{
+  font-size:2.8rem;font-weight:800;letter-spacing:-.04em;
+  background:linear-gradient(125deg,var(--accent) 0%,#e9b4ff 40%,var(--accent2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:.4rem;line-height:1.1;
+}
+.hero p{color:var(--muted);font-size:.95rem;max-width:660px;margin-top:.6rem}
+.hero .meta{display:flex;gap:.7rem;margin-top:1.2rem;flex-wrap:wrap}
+.pill{
+  font-family:var(--mono);font-size:.68rem;font-weight:600;
+  border:1px solid var(--border);padding:.22rem .7rem;border-radius:99px;
+  color:var(--muted);letter-spacing:.07em;
+}
+.pill.v{border-color:var(--accent);color:var(--accent)}
+.pill.o{border-color:var(--accent2);color:var(--accent2)}
+.pill.g{border-color:var(--green);color:var(--green)}
+
+/* ── TABS ─────────────────────────────────────────────────────────────── */
+.nav-tabs{
+  display:flex;gap:.35rem;flex-wrap:wrap;
+  border-bottom:1px solid var(--border);
+  margin-bottom:2.5rem;
+}
+.nav-tab{
+  font-family:var(--mono);font-size:.7rem;font-weight:600;letter-spacing:.08em;
+  padding:.5rem .95rem;border-radius:6px 6px 0 0;cursor:pointer;
+  border:1px solid transparent;border-bottom:none;
+  color:var(--muted);background:transparent;
+  transition:all .2s;position:relative;top:1px;text-transform:uppercase;
+}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{
+  background:var(--card);border-color:var(--border);
+  color:var(--accent);border-bottom:2px solid var(--card);
+}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ── HEADINGS ─────────────────────────────────────────────────────────── */
+.sh{
+  font-size:1.2rem;font-weight:700;color:var(--accent);
+  margin:2.5rem 0 1rem;display:flex;align-items:center;gap:.7rem;
+}
+.sh::before{content:'◆';font-size:.6rem}
+.sh2{
+  font-size:.95rem;font-weight:700;color:var(--accent2);
+  margin:1.8rem 0 .8rem;padding-left:1rem;
+  border-left:3px solid var(--accent2);
+}
+
+/* ── CARDS ────────────────────────────────────────────────────────────── */
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:1.4rem 1.6rem;margin-bottom:1.2rem;position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),transparent);
+}
+.card.o::before{background:linear-gradient(90deg,var(--accent2),transparent)}
+.card.g::before{background:linear-gradient(90deg,var(--green),transparent)}
+.card.r::before{background:linear-gradient(90deg,var(--red),transparent)}
+.card.b::before{background:linear-gradient(90deg,var(--blue),transparent)}
+.card.y::before{background:linear-gradient(90deg,var(--yellow),transparent)}
+
+/* ── FORMULA ─────────────────────────────────────────────────────────── */
+.fx{
+  background:#090c14;border:1px solid var(--accent);border-radius:8px;
+  padding:1rem 1.5rem;margin:1rem 0;text-align:center;
+  font-size:1.1rem;overflow-x:auto;
+}
+.fx.multi{text-align:left;font-size:.98rem}
+.fx.o{border-color:var(--accent2)}
+.fx.g{border-color:var(--green)}
+.fx.b{border-color:var(--blue)}
+.flabel{
+  font-family:var(--mono);font-size:.66rem;color:var(--accent);
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem;
+}
+.flabel.o{color:var(--accent2)}
+.flabel.g{color:var(--green)}
+.flabel.b{color:var(--blue)}
+
+/* ── ALERTS ──────────────────────────────────────────────────────────── */
+.alert{
+  border-radius:8px;padding:.9rem 1.2rem;margin:.9rem 0;
+  display:flex;gap:.8rem;align-items:flex-start;font-size:.88rem;
+}
+.alert .ico{font-size:1.05rem;flex-shrink:0;margin-top:.05rem}
+.alert.tip{background:rgba(192,132,252,.08);border:1px solid rgba(192,132,252,.3);color:#d8b4fe}
+.alert.warn{background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.35);color:#fed7aa}
+.alert.key{background:rgba(52,211,153,.07);border:1px solid rgba(52,211,153,.3);color:#6ee7b7}
+.alert.trap{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);color:#fca5a5}
+.alert.blue{background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.3);color:#93c5fd}
+
+/* ── GRID ─────────────────────────────────────────────────────────────── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:1rem 0}
+.grid4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:.8rem;margin:1rem 0}
+@media(max-width:740px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+
+/* ── KPI ──────────────────────────────────────────────────────────────── */
+.kpi{
+  background:#090c14;border:1px solid var(--border);border-radius:8px;
+  padding:.9rem 1.1rem;
+}
+.kpi .lbl{font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.kpi .val{font-family:var(--mono);font-size:1.05rem;font-weight:700}
+.kpi .sub{font-size:.77rem;color:var(--muted);margin-top:.2rem}
+
+/* ── TABLE ────────────────────────────────────────────────────────────── */
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.88rem}
+th{
+  background:#090c14;color:var(--accent);font-family:var(--mono);
+  font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;
+  padding:.7rem 1rem;border-bottom:2px solid var(--accent);text-align:left;
+}
+th.o{color:var(--accent2);border-bottom-color:var(--accent2)}
+td{padding:.65rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.015)}
+.up{color:var(--green);font-weight:600}
+.dn{color:var(--red);font-weight:600}
+
+/* ── CANVAS ───────────────────────────────────────────────────────────── */
+.chart-wrap{
+  background:#090c14;border:1px solid var(--border);border-radius:10px;
+  padding:1rem;margin:1rem 0;
+}
+.chart-controls{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:.8rem;align-items:center}
+.chart-controls label{font-family:var(--mono);font-size:.73rem;color:var(--muted)}
+.chart-controls input[type=range]{accent-color:var(--accent);width:110px}
+.chart-controls select,.chart-controls input[type=number]{
+  background:var(--card);border:1px solid var(--border);color:var(--text);
+  font-family:var(--mono);font-size:.75rem;padding:.25rem .5rem;border-radius:5px;
+}
+.cval{font-family:var(--mono);font-size:.8rem;color:var(--accent);font-weight:700;min-width:2.8rem}
+.cval.o{color:var(--accent2)}
+canvas{display:block;width:100%;border-radius:6px}
+
+/* ── DETAILS / COLLAPSIBLE ────────────────────────────────────────────── */
+details{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:8px;margin:.7rem 0;overflow:hidden;
+}
+details[open]{border-color:var(--accent)}
+summary{
+  padding:.85rem 1.3rem;cursor:pointer;font-weight:600;font-size:.92rem;
+  display:flex;justify-content:space-between;align-items:center;
+  list-style:none;color:var(--text);
+}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'＋';font-family:var(--mono);color:var(--accent);font-size:1rem;transition:.2s}
+details[open] summary::after{content:'－'}
+.dbody{padding:.3rem 1.3rem 1.3rem;font-size:.9rem;color:var(--muted)}
+
+/* ── PAYOFF CARDS ─────────────────────────────────────────────────────── */
+.payoff-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+@media(max-width:640px){.payoff-grid{grid-template-columns:1fr}}
+.payoff-card{
+  background:#090c14;border-radius:10px;padding:1.2rem;
+  border:1px solid var(--border);position:relative;overflow:hidden;
+}
+.payoff-card .pc-label{
+  font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;
+  text-transform:uppercase;font-weight:700;margin-bottom:.6rem;
+}
+.payoff-card .pc-formula{font-size:.95rem;margin:.5rem 0}
+.payoff-card .pc-tag{
+  display:inline-block;font-family:var(--mono);font-size:.65rem;
+  padding:.15rem .5rem;border-radius:3px;margin-right:.4rem;margin-top:.4rem;font-weight:600;
+}
+.pc-long-call .pc-label{color:#60a5fa}
+.pc-long-call{border-top:2px solid #60a5fa}
+.pc-short-call .pc-label{color:var(--red)}
+.pc-short-call{border-top:2px solid var(--red)}
+.pc-long-put .pc-label{color:var(--green)}
+.pc-long-put{border-top:2px solid var(--green)}
+.pc-short-put .pc-label{color:var(--yellow)}
+.pc-short-put{border-top:2px solid var(--yellow)}
+
+/* ── BS VISUAL ────────────────────────────────────────────────────────── */
+.bs-visual{
+  background:#090c14;border:1px solid var(--border);border-radius:10px;
+  padding:1.8rem;margin:1rem 0;text-align:center;
+}
+.bs-eq{
+  font-size:1.3rem;display:grid;
+  grid-template-columns:130px 20px 170px;
+  justify-content:center;align-items:center;justify-items:center;
+  gap:.4rem .6rem;margin:0 auto;
+}
+.bs-part{
+  padding:.5rem 1rem;border-radius:8px;font-family:var(--mono);font-size:1rem;
+}
+.bs-asset{background:rgba(96,165,250,.12);border:1px solid rgba(96,165,250,.3);color:#93c5fd}
+.bs-minus{color:var(--muted);font-size:1.8rem;line-height:1}
+.bs-cash{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:#fca5a5}
+.bs-label{font-family:var(--mono);font-size:.65rem;color:var(--muted);margin-top:.4rem;letter-spacing:.08em;text-align:center}
+
+/* ── MONEYNESS BADGE ──────────────────────────────────────────────────── */
+.money-row{display:flex;align-items:center;gap:1rem;margin:.5rem 0;font-size:.9rem}
+.money-badge{
+  font-family:var(--mono);font-size:.72rem;font-weight:700;
+  padding:.25rem .7rem;border-radius:4px;min-width:3.5rem;text-align:center;letter-spacing:.06em;
+}
+.itm{background:rgba(52,211,153,.15);color:var(--green);border:1px solid rgba(52,211,153,.4)}
+.atm{background:rgba(251,191,36,.12);color:var(--yellow);border:1px solid rgba(251,191,36,.4)}
+.otm{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.35)}
+
+/* ── PROGRESS BAR (for vol drag) ───────────────────────────────────────── */
+.drag-bar{
+  background:var(--border);border-radius:4px;height:8px;
+  overflow:hidden;margin:.3rem 0;
+}
+.drag-fill{height:100%;border-radius:4px;transition:width .4s}
+
+/* ── BOUNDS TABLE ─────────────────────────────────────────────────────── */
+.bounds-cell{font-family:var(--mono);font-size:.82rem}
+
+/* ── SCROLL ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+/* ── CODE ─────────────────────────────────────────────────────────────── */
+code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgba(251,146,60,.1);padding:.1em .4em;border-radius:4px}
+
+/* ── FOOTER ───────────────────────────────────────────────────────────── */
+.footer{
+  margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--border);
+  font-family:var(--mono);font-size:.7rem;color:var(--muted);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;
+}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="tag">S&T PREP</div>
+  <div class="crumb"><a href="index.html">Derivatives</a> &nbsp;/&nbsp; <span>02 — Option Fundamentals</span></div>
+  <div class="mod">Module 02 / Options</div>
+</div>
+
+<div class="wrapper">
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Option Fundamentals</h1>
+  <p>From payoff mechanics to Black-Scholes intuition, ATM pricing shortcuts and no-arbitrage bounds. Everything you need to answer option questions fluently in an S&T interview.</p>
+  <div class="meta">
+    <span class="pill v">Sales &amp; Trading</span>
+    
+    <span class="pill">Quantitative Finance</span>
+    
+    <span class="pill g">Interactive</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="nav-tabs">
+  <div class="nav-tab active"  onclick="switchTab('prereqs',this)">Prerequisites</div>
+  <div class="nav-tab"         onclick="switchTab('basics',this)">Basics &amp; Notation</div>
+  <div class="nav-tab"         onclick="switchTab('payoffs',this)">Payoffs</div>
+  <div class="nav-tab"         onclick="switchTab('bs',this)">Black-Scholes</div>
+  <div class="nav-tab"         onclick="switchTab('atm',this)">ATM Approximation</div>
+  <div class="nav-tab"         onclick="switchTab('bounds',this)">Price Bounds</div>
+  <div class="nav-tab"         onclick="switchTab('intrinsic',this)">Intrinsic &amp; Time Value</div>
+  <div class="nav-tab"         onclick="switchTab('pcp',this)">Put-Call Parity</div>
+</div>
+
+<!-- ══════════════════════════ TAB 1: PREREQUISITES ════════════════════════ -->
+<div id="tab-prereqs" class="tab-content active">
+
+  <div class="sh">01 — Arithmetic vs Geometric Returns</div>
+  <div class="card">
+    <p>The distinction between <strong>arithmetic</strong> and <strong>geometric</strong> returns is foundational for options because it explains why <em>volatility has a cost</em> — the central idea behind option pricing.</p>
+    <div class="grid2" style="margin-top:1rem">
+      <div class="kpi">
+        <div class="lbl">Arithmetic Mean</div>
+        <div class="val">\(\mu_a = \frac{1}{n}\sum r_i\)</div>
+        <div class="sub">Simple average — what you'd get if returns were additive</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Geometric Mean (CAGR)</div>
+        <div class="val">\(\mu_g = \left(\prod(1+r_i)\right)^{1/n}-1\)</div>
+        <div class="sub">Actual compounded growth rate — what you actually earn</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh">02 — The Volatility Drag</div>
+  <div class="card y">
+    <div class="flabel">The Core Formula</div>
+    <div class="fx y" style="border-color:var(--yellow)">
+      \[ \mu_g \approx \mu_a - \frac{\sigma^2}{2} \]
+    </div>
+    <p>Compounding is <strong>multiplicative</strong>, not additive. A loss requires a proportionally larger gain to recover — the math is asymmetric:</p>
+    <div style="margin:1rem 0">
+      <div style="display:flex;align-items:center;gap:1rem;margin:.5rem 0;font-size:.88rem">
+        <span style="width:90px;color:var(--muted);font-family:var(--mono)">−10% loss</span>
+        <div class="drag-bar" style="flex:1"><div class="drag-fill" style="width:11.1%;background:var(--red)"></div></div>
+        <span style="color:var(--red);font-family:var(--mono);font-size:.8rem">Need +11.1% to break even</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;margin:.5rem 0;font-size:.88rem">
+        <span style="width:90px;color:var(--muted);font-family:var(--mono)">−25% loss</span>
+        <div class="drag-bar" style="flex:1"><div class="drag-fill" style="width:33.3%;background:var(--yellow)"></div></div>
+        <span style="color:var(--yellow);font-family:var(--mono);font-size:.8rem">Need +33.3% to break even</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:1rem;margin:.5rem 0;font-size:.88rem">
+        <span style="width:90px;color:var(--muted);font-family:var(--mono)">−50% loss</span>
+        <div class="drag-bar" style="flex:1"><div class="drag-fill" style="width:100%;background:var(--red)"></div></div>
+        <span style="color:var(--red);font-family:var(--mono);font-size:.8rem">Need +100% to break even</span>
+      </div>
+    </div>
+    <div class="alert warn">
+      <span class="ico">🎯</span>
+      <span><strong>Interview answer — "Why do we care about vol if E[r] &gt; 0?"</strong><br>
+      <em>"Because we don't eat arithmetic returns — we eat geometric returns. Volatility drag ensures that for the same expected return, a higher-vol strategy produces lower terminal wealth with certainty. The σ²/2 penalty grows quadratically with volatility."</em></span>
+    </div>
+  </div>
+
+  <!-- Interactive vol drag calculator -->
+  <div class="sh2">Volatility Drag Calculator</div>
+  <div class="chart-wrap">
+    <div class="chart-controls">
+      <label>Arithmetic return μ_a</label>
+      <input type="range" id="vd-mu" min="0" max="20" value="10" step="0.5" oninput="updateVD()">
+      <span class="cval" id="vd-mu-v">10%</span>
+      <label style="margin-left:1rem">Volatility σ</label>
+      <input type="range" id="vd-sig" min="0" max="60" value="20" step="1" oninput="updateVD()">
+      <span class="cval o" id="vd-sig-v">20%</span>
+      <label style="margin-left:1rem">Years T</label>
+      <input type="range" id="vd-T" min="1" max="30" value="10" step="1" oninput="updateVD()">
+      <span class="cval" id="vd-T-v">10</span>
+    </div>
+    <canvas id="vdCanvas" height="220"></canvas>
+    <div id="vd-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap"></div>
+  </div>
+
+  <div class="sh">03 — Log-Normal Distribution</div>
+  <div class="card b">
+    <p>Stock prices follow a <strong>log-normal distribution</strong> because <em>log-returns</em> (continuously compounded) are normally distributed. This is a core assumption in Black-Scholes.</p>
+    <div class="grid2" style="margin-top:1rem">
+      <div>
+        <div class="flabel b">Why Log-Normal (not Normal)?</div>
+        <ul style="margin:.5rem 0 0 1.2rem;font-size:.88rem;color:var(--muted)">
+          <li style="margin:.3rem 0">Prices can't go below zero — log-normal has a positive support</li>
+          <li style="margin:.3rem 0">Returns compound multiplicatively: \(S_T = S_0 \cdot e^{\mu T + \sigma W_T}\)</li>
+          <li style="margin:.3rem 0">Log-returns \(\ln(S_T/S_0)\) are normally distributed</li>
+          <li style="margin:.3rem 0">The distribution is right-skewed — large gains are possible, losses are bounded at −100%</li>
+        </ul>
+      </div>
+      <div>
+        <div class="flabel b">Key Parameters</div>
+        <div class="fx b" style="text-align:left;font-size:.92rem">
+          \[ \ln\!\left(\frac{S_T}{S_0}\right) \sim \mathcal{N}\!\left(\left(\mu - \frac{\sigma^2}{2}\right)T,\; \sigma^2 T\right) \]
+        </div>
+        <p style="font-size:.83rem;color:var(--muted)">Note the \(-\sigma^2/2\) term — this is the volatility drag appearing directly in the log-normal mean. The actual drift of log-prices is reduced by the variance penalty.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh">04 — Risk-Neutral Pricing</div>
+  <div class="card">
+    <p>One of the most counterintuitive ideas in finance: to price derivatives, we <strong>don't need the real-world expected return</strong> of the stock. Instead we price under the <em>risk-neutral measure</em> \(\mathbb{Q}\).</p>
+    <div class="grid2" style="margin-top:1rem">
+      <div class="kpi">
+        <div class="lbl">Real-World Measure ℙ</div>
+        <div class="val" style="font-size:.9rem;color:var(--text)">Stocks earn \(\mu &gt; r\)</div>
+        <div class="sub">Investors demand a risk premium. μ is unknown and hard to estimate.</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Risk-Neutral Measure ℚ</div>
+        <div class="val" style="font-size:.9rem;color:var(--accent)">Everything earns \(r\)</div>
+        <div class="sub">We price as if investors were risk-neutral. Only r matters for option pricing.</div>
+      </div>
+    </div>
+    <div class="fx" style="margin-top:1rem">
+      \[ V_0 = e^{-rT}\,\mathbb{E}^{\mathbb{Q}}[\text{Payoff}_T] \]
+    </div>
+    <div class="alert tip">
+      <span class="ico">💡</span>
+      <span><strong>The insight:</strong> Because we can <em>dynamically hedge</em> an option using the underlying, the risk premium cancels out. The only arbitrage-free price is the discounted expected payoff under ℚ. This is the fundamental theorem of asset pricing — and the real foundation of Black-Scholes.</span>
+    </div>
+    <div class="alert trap">
+      <span class="ico">🚩</span>
+      <span><strong>Common misconception:</strong> "The option price depends on where I think the stock will go." — Wrong. The option price only depends on <strong>σ, S, K, r, T</strong>. Your view on the stock's direction doesn't change the no-arbitrage price. What matters is your view on <em>volatility</em>.</span>
+    </div>
+  </div>
+
+</div><!-- /prereqs -->
+
+<!-- ══════════════════════════ TAB 2: BASICS ════════════════════════════ -->
+<div id="tab-basics" class="tab-content">
+
+  <div class="sh">Options — Definition &amp; Core Notation</div>
+  <div class="card">
+    <p>An <strong>option</strong> gives its holder a <em>right</em> (not an obligation) to buy or sell an underlying asset at a pre-agreed price. The seller (writer) takes on the corresponding <em>obligation</em>.</p>
+    <div class="grid2" style="margin-top:1rem">
+      <div class="kpi">
+        <div class="lbl">Long (Buyer)</div>
+        <div class="val" style="color:var(--green)">RIGHT</div>
+        <div class="sub">Pays premium upfront. Chooses whether to exercise. Max loss = premium.</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Short (Writer/Seller)</div>
+        <div class="val" style="color:var(--red)">OBLIGATION</div>
+        <div class="sub">Receives premium upfront. Must perform if exercised. Max gain = premium.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh2">Key Variables — Notation Reference</div>
+  <div class="card b">
+    <table>
+      <thead><tr><th>Symbol</th><th>Name</th><th>Intuition</th></tr></thead>
+      <tbody>
+        <tr><td><code>S</code> or <code>S₀</code></td><td>Current Spot Price</td><td>Where the underlying trades today</td></tr>
+        <tr><td><code>K</code></td><td>Strike Price</td><td>The agreed transaction price — fixed at inception</td></tr>
+        <tr><td><code>T</code></td><td>Time to Maturity</td><td>Life of the option in years</td></tr>
+        <tr><td><code>r</code></td><td>Risk-Free Rate</td><td>Continuously compounded — used to discount cash flows</td></tr>
+        <tr><td><code>σ</code></td><td>Implied Volatility</td><td>The market's consensus on future vol — the key unknown</td></tr>
+        <tr><td><code>C</code> / <code>P</code></td><td>Call / Put Premium</td><td>Current market price of the option</td></tr>
+        <tr><td><code>N(d)</code></td><td>Cumulative Normal CDF</td><td>Probability a standard normal ≤ d</td></tr>
+        <tr><td><code>q</code></td><td>Dividend Yield</td><td>Continuous yield — reduces effective call value</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sh2">European vs American Options</div>
+  <div class="grid2">
+    <div class="card">
+      <div class="flabel">European</div>
+      <p>Can only be exercised <strong>at maturity T</strong>. Cleaner to price analytically (Black-Scholes). Traded on most equity index options (e.g. SPX, CAC 40 options).</p>
+    </div>
+    <div class="card o">
+      <div class="flabel o">American</div>
+      <p>Can be exercised <strong>any time before T</strong>. Worth at least as much as European. Early exercise can be optimal for <em>puts</em> on near-zero stocks or <em>calls</em> on high-dividend stocks.</p>
+    </div>
+  </div>
+
+  <div class="sh2">Moneyness</div>
+  <div class="card">
+    <p>Moneyness describes the relationship between S (current spot) and K (strike). It determines the <em>intrinsic value</em> and the probability of exercise.</p>
+    <table>
+      <thead><tr><th>Moneyness</th><th>Call Condition</th><th>Put Condition</th><th>Intrinsic Value</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="money-badge itm">ITM</span> In-The-Money</td>
+          <td>\(S &gt; K\)</td><td>\(S &lt; K\)</td>
+          <td class="up">Positive — option has immediate exercise value</td>
+        </tr>
+        <tr>
+          <td><span class="money-badge atm">ATM</span> At-The-Money</td>
+          <td>\(S = K\)</td><td>\(S = K\)</td>
+          <td>Zero — spot equals strike</td>
+        </tr>
+        <tr>
+          <td><span class="money-badge otm">OTM</span> Out-of-The-Money</td>
+          <td>\(S &lt; K\)</td><td>\(S &gt; K\)</td>
+          <td class="dn">Zero — only time value remains</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="alert tip">
+      <span class="ico">💡</span>
+      <span><strong>ATM Spot vs. ATM Forward:</strong>
+      <br>Moneyness can be measured relative to either the current spot price or the forward price:
+      <ul>
+        <li><strong>ATM Spot (ATMS):</strong> Comparing the fixed strike \(K\) directly to the current spot price \(S_t\). The option is ATM Spot when \(K = S_t\) (with no interest rate or time factors).</li>
+        <li><strong>ATM Forward (ATMF):</strong> Comparing the fixed strike \(K\) to the forward price \(F_t = S_t e^{r(T-t)}\) (today's spot price forwarded to the expiration date). The option is ATM Forward when \(K = F_t\).</li>
+      </ul>
+      <strong>Why this distinction matters:</strong>
+      <br>If interest rates are positive (\(r > 0\)) and there is time remaining (\(T-t > 0\)), the forward price \(F_t\) is higher than the spot price \(S_t\).
+      <br>If you hold a call option with a strike \(K = 100\) when the stock trades at \(S_t = 100\), the option is <strong>ATM Spot</strong>. However, because the stock is expected to drift upwards over time due to interest rates, under risk-neutral pricing the stock is expected to end up above 100. To have a truly "neutral" option centered in the probability distribution at maturity, the strike would need to match the <strong>ATM Forward</strong> price (e.g., \(K = 105\)).
+      </span>
+    </div>
+  </div>
+
+</div><!-- /basics -->
+
+<!-- ══════════════════════════ TAB 3: PAYOFFS ════════════════════════════ -->
+<div id="tab-payoffs" class="tab-content">
+
+  <div class="sh">The Four Vanilla Payoffs</div>
+
+  <div class="payoff-grid">
+    <!-- Long Call -->
+    <div class="payoff-card pc-long-call">
+      <div class="pc-label">📈 Long Call</div>
+      <div class="pc-formula">\(\text{Payoff} = \max(S_T - K,\; 0)\)</div>
+      <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Pay the premium upfront, receive upside above K. Right to <strong>buy</strong>.</p>
+      <div>
+        <span class="pc-tag" style="background:rgba(52,211,153,.12);color:var(--green)">Max Loss: Premium</span>
+        <span class="pc-tag" style="background:rgba(96,165,250,.12);color:var(--blue)">Upside: Unlimited</span>
+      </div>
+      <div style="margin-top:.7rem;font-size:.82rem;color:var(--muted)">
+        <strong style="color:var(--text)">Breakeven:</strong> \(K + \text{Premium}\)
+      </div>
+    </div>
+    <!-- Short Call -->
+    <div class="payoff-card pc-short-call">
+      <div class="pc-label">📉 Short Call</div>
+      <div class="pc-formula">\(\text{Payoff} = -\max(S_T - K,\; 0)\)</div>
+      <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Collect premium, bear unlimited upside risk if S rises. Obligation to <strong>sell</strong>.</p>
+      <div>
+        <span class="pc-tag" style="background:rgba(251,191,36,.1);color:var(--yellow)">Max Gain: Premium</span>
+        <span class="pc-tag" style="background:rgba(248,113,113,.12);color:var(--red)">Loss: Unlimited</span>
+      </div>
+      <div style="margin-top:.7rem;font-size:.82rem;color:var(--muted)">
+        <strong style="color:var(--text)">Breakeven:</strong> \(K + \text{Premium}\)
+      </div>
+    </div>
+    <!-- Long Put -->
+    <div class="payoff-card pc-long-put">
+      <div class="pc-label">🛡️ Long Put</div>
+      <div class="pc-formula">\(\text{Payoff} = \max(K - S_T,\; 0)\)</div>
+      <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Pay premium, profit when S falls below K. Right to <strong>sell</strong>. Portfolio insurance.</p>
+      <div>
+        <span class="pc-tag" style="background:rgba(52,211,153,.12);color:var(--green)">Max Loss: Premium</span>
+        <span class="pc-tag" style="background:rgba(52,211,153,.15);color:var(--green)">Profit if S → 0</span>
+      </div>
+      <div style="margin-top:.7rem;font-size:.82rem;color:var(--muted)">
+        <strong style="color:var(--text)">Breakeven:</strong> \(K - \text{Premium}\)
+      </div>
+    </div>
+    <!-- Short Put -->
+    <div class="payoff-card pc-short-put">
+      <div class="pc-label">⚡ Short Put</div>
+      <div class="pc-formula">\(\text{Payoff} = -\max(K - S_T,\; 0)\)</div>
+      <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Collect premium, obligated to buy at K if S crashes. Obligation to <strong>buy</strong>.</p>
+      <div>
+        <span class="pc-tag" style="background:rgba(251,191,36,.1);color:var(--yellow)">Max Gain: Premium</span>
+        <span class="pc-tag" style="background:rgba(248,113,113,.12);color:var(--red)">Max Loss: K − Prem</span>
+      </div>
+      <div style="margin-top:.7rem;font-size:.82rem;color:var(--muted)">
+        <strong style="color:var(--text)">Breakeven:</strong> \(K - \text{Premium}\)
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE PAYOFF DIAGRAM -->
+  <div class="sh2">Interactive Payoff Diagram</div>
+  <div class="chart-wrap">
+    <div class="chart-controls">
+      <label>Type:</label>
+      <select id="po-type" onchange="drawPayoffs()">
+        <option value="lc">Long Call</option>
+        <option value="sc">Short Call</option>
+        <option value="lp">Long Put</option>
+        <option value="sp">Short Put</option>
+        <option value="straddle">Long Straddle</option>
+        <option value="strangle">Long Strangle</option>
+        <option value="spread">Bull Call Spread</option>
+      </select>
+      <label style="margin-left:.8rem">K =</label>
+      <input type="range" id="po-k" min="60" max="140" value="100" oninput="drawPayoffs()">
+      <span class="cval" id="po-k-v">100</span>
+      <label style="margin-left:.8rem">Premium =</label>
+      <input type="range" id="po-prem" min="1" max="20" value="5" oninput="drawPayoffs()">
+      <span class="cval o" id="po-prem-v">5</span>
+    </div>
+    <canvas id="payoffCanvas" height="250"></canvas>
+    <div id="po-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
+  </div>
+
+  <div class="alert key">
+    <span class="ico">🔑</span>
+    <span><strong>Zero-sum game:</strong> Options are a zero-sum transfer of risk. Every dollar the long makes, the short loses. The premium is the price of that risk transfer. <br><br>
+    <strong>Straddle:</strong> Long call + long put (same K, same T). Profits from large moves in either direction. Cost = C + P ≈ 0.8·σ√T·S (see ATM tab). Selling a straddle = betting the stock stays still.</span>
+  </div>
+
+  <div class="sh2">Profit vs Payoff — Don't Confuse Them</div>
+  <div class="card o">
+    <div class="grid2">
+      <div>
+        <div class="flabel o">Payoff (at maturity)</div>
+        <div class="fx o">\[\text{Payoff} = \max(S_T - K,\; 0)\]</div>
+        <p style="font-size:.87rem;color:var(--muted)">The <em>gross</em> cash flow at expiry. Does not account for what you paid to enter the trade.</p>
+      </div>
+      <div>
+        <div class="flabel o">Profit (P&amp;L)</div>
+        <div class="fx o">\[\text{Profit} = \text{Payoff} - \text{Premium} \cdot e^{rT}\]</div>
+        <p style="font-size:.87rem;color:var(--muted)">The <em>net</em> gain/loss, including the future value of the premium paid. This is what matters for performance.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /payoffs -->
+
+<!-- ══════════════════════════ TAB 4: BLACK-SCHOLES ════════════════════ -->
+<div id="tab-bs" class="tab-content">
+
+  <div class="sh">Black-Scholes — Intuitive Decomposition</div>
+
+  <div class="bs-visual">
+    <div style="font-family:var(--mono);font-size:.75rem;color:var(--muted);letter-spacing:.1em;margin-bottom:1rem">CALL PRICE = ASSET PART − CASH PART</div>
+    <div class="bs-eq">
+      <!-- Row 1: Formula parts and minus sign -->
+      <div class="bs-part bs-asset" style="grid-column: 1; grid-row: 1;">\(S \cdot N(d_1)\)</div>
+      <div class="bs-minus" style="grid-column: 2; grid-row: 1;">−</div>
+      <div class="bs-part bs-cash" style="grid-column: 3; grid-row: 1;">\(K e^{-rT} \cdot N(d_2)\)</div>
+      
+      <!-- Row 2: Explanatory labels -->
+      <div class="bs-label" style="grid-column: 1; grid-row: 2;">ASSET PART<br>"What you receive"<br>δ-hedged stock position</div>
+      <div class="bs-label" style="grid-column: 3; grid-row: 2;">CASH PART<br>"What you pay"<br>PV of strike × prob. exercise</div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card b">
+      <div class="flabel b">Asset Part — S·N(d₁)</div>
+      <p style="font-size:.88rem;color:var(--muted)">You are synthetically <strong>long the stock</strong>. Since you don't own the full share, you hold a fraction equal to <strong>Delta = N(d₁)</strong>. Delta is how many shares of stock you need to perfectly hedge the option.</p>
+      <div class="fx b" style="margin-top:.8rem">\[N(d_1) = \Delta = \frac{\partial C}{\partial S}\]</div>
+    </div>
+    <div class="card r">
+      <div class="flabel" style="color:var(--red)">Cash Part — Ke^(-rT)·N(d₂)</div>
+      <p style="font-size:.88rem;color:var(--muted)">You are <strong>short a bond</strong> (borrowed money to buy the stock). The amount owed is the present value of the strike K, but only paid with probability N(d₂) — the risk-neutral probability the option expires ITM.</p>
+      <div class="fx" style="border-color:var(--red);margin-top:.8rem">\[N(d_2) = \mathbb{P}^{\mathbb{Q}}(S_T > K)\]</div>
+    </div>
+  </div>
+
+  <div class="sh2">d₁ and d₂ — Full Formulas</div>
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <div class="flabel b">d₁ — The Replicating Component</div>
+        <div class="fx b">
+          \[ d_1 = \frac{\ln(S/K) + (r + \frac{\sigma^2}{2})T}{\sigma\sqrt{T}} \]
+        </div>
+        <p style="font-size:.85rem;color:var(--muted)">A Z-score measuring distance to strike, adjusted <em>upward</em> by σ²/2. N(d₁) = Delta — the hedge ratio, the fraction of a share to hold.</p>
+      </div>
+      <div>
+        <div class="flabel" style="color:var(--red)">d₂ — The Probability Component</div>
+        <div class="fx" style="border-color:var(--red)">
+          \[ d_2 = d_1 - \sigma\sqrt{T} = \frac{\ln(S/K) + (r - \frac{\sigma^2}{2})T}{\sigma\sqrt{T}} \]
+        </div>
+        <p style="font-size:.85rem;color:var(--muted)">The Z-score without the vol adjustment. N(d₂) = risk-neutral probability of ending ITM. Note the −σ²/2 vs +σ²/2 difference — this is the volatility drag again!</p>
+      </div>
+    </div>
+    <div class="alert tip">
+      <span class="ico">💡</span>
+      <span><strong>Why d₁ &gt; d₂ always?</strong> Because of the log-normal distribution's right skew — high vol creates a fatter right tail. The stock needs a higher "push" to stay ITM (measured by d₁/Delta) than the pure probability of finishing ITM (d₂). The gap is exactly <strong>σ√T</strong> — proportional to how much volatility drag matters over the horizon.</span>
+    </div>
+  </div>
+
+  <div class="sh2">Put Formula</div>
+  <div class="card">
+    <div class="grid2">
+      <div>
+        <div class="flabel">Put via Black-Scholes</div>
+        <div class="fx">
+          \[ P = K e^{-rT} \cdot N(-d_2) - S \cdot N(-d_1) \]
+        </div>
+      </div>
+      <div>
+        <div class="flabel">Put via Put-Call Parity (shortcut)</div>
+        <div class="fx g">
+          \[ P = C - S + K e^{-rT} \]
+        </div>
+      </div>
+    </div>
+    <div class="alert key">
+      <span class="ico">🔑</span>
+      <span>In practice, traders derive the put price from the call price via put-call parity — they don't re-run BS separately. This is faster and avoids rounding errors.</span>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE BS CALCULATOR -->
+  <div class="sh2">Black-Scholes Calculator</div>
+  <div class="chart-wrap">
+    <div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
+      <div><label>S₀</label><br>
+        <input type="number" id="bs-s" value="100" min="0" style="width:70px" oninput="calcBS()">
+      </div>
+      <div><label>K</label><br>
+        <input type="number" id="bs-k" value="100" min="0" style="width:70px" oninput="calcBS()">
+      </div>
+      <div><label>σ (%)</label><br>
+        <input type="number" id="bs-sig" value="20" min="0" style="width:60px" oninput="calcBS()">
+      </div>
+      <div><label>r (%)</label><br>
+        <input type="number" id="bs-r" value="4" style="width:55px" oninput="calcBS()">
+      </div>
+      <div><label>T (years)</label><br>
+        <input type="number" id="bs-t" value="1" min="0" step="0.25" style="width:70px" oninput="calcBS()">
+      </div>
+    </div>
+    <div id="bs-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.8rem;margin-top:.8rem"></div>
+    <canvas id="bsCanvas" height="240" style="margin-top:1rem"></canvas>
+  </div>
+
+  <div class="sh2">The Replication Argument — Why BS Works</div>
+  <div class="card">
+    <p style="margin-bottom:.8rem">Black-Scholes is really just the cost of a <strong>dynamic hedging strategy</strong>:</p>
+    <div class="grid3">
+      <div class="kpi">
+        <div class="lbl">Step 1</div>
+        <div class="val" style="font-size:.88rem">Sell the option, collect C</div>
+        <div class="sub">You're now short gamma — dangerous if stock moves</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Step 2</div>
+        <div class="val" style="font-size:.88rem">Buy Δ = N(d₁) shares</div>
+        <div class="sub">Delta-hedge: neutralise directional exposure instantly</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Step 3 (continuous)</div>
+        <div class="val" style="font-size:.88rem">Rebalance Δ daily</div>
+        <div class="sub">As S moves, Δ changes — you buy high and sell low to stay hedged. This cost IS the option premium.</div>
+      </div>
+    </div>
+    <div class="alert warn" style="margin-top:1rem">
+      <span class="ico">⚠️</span>
+      <span><strong>The real-world complication:</strong> Continuous rebalancing is impossible. Discrete hedging introduces residual risk ("gamma P&L"). The actual cost of hedging is path-dependent — realised vol determines whether the hedge makes or loses money vs the premium collected. This is why traders obsess over <strong>realised vs implied vol</strong>.</span>
+    </div>
+  </div>
+
+</div><!-- /bs -->
+
+<!-- ══════════════════════════ TAB 5: ATM APPROXIMATION ════════════════ -->
+<div id="tab-atm" class="tab-content">
+
+  <div class="sh">The ATM Rule-of-Thumb — A Trader's Mental Math</div>
+  <div class="card y">
+    <div class="flabel" style="color:var(--yellow)">The Formula</div>
+    <div class="fx" style="border-color:var(--yellow);font-size:1.3rem">
+      \[ C_{\text{ATM}} \approx 0.4 \cdot \sigma \cdot \sqrt{T} \cdot S_0 \]
+    </div>
+    <div class="alert warn" style="margin-top:1rem">
+      <span class="ico">⚡</span>
+      <span><strong>Where does 0.4 come from?</strong><br>
+      When S = K and r ≈ 0, BS simplifies to \(C \approx S \cdot \sigma\sqrt{T} \cdot \frac{1}{\sqrt{2\pi}}\). Since \(\frac{1}{\sqrt{2\pi}} \approx 0.3989\), traders round to <strong>0.4</strong>. This is the height of the standard normal density PDF at zero.</span>
+    </div>
+    
+    <details style="margin-top: 0.8rem;">
+      <summary>Show Step-by-Step Mathematical Derivation</summary>
+      <div class="dbody">
+        <p>To derive the approximation, we start with the standard Black-Scholes Call formula and assume ATM Spot (\(S = K\)) and zero interest rates (\(r = 0\)):</p>
+        <ol style="margin-left: 1.2rem; line-height: 1.6;">
+          <li style="margin-bottom: .6rem;"><strong>Simplify the Black-Scholes Formula:</strong>
+            <br>Since \(r = 0\), the discount factor \(e^{-rT} = 1\). With \(S = K\), the equation reduces to:
+            \[ C = S \cdot \left[ N(d_1) - N(d_2) \right] \]
+          </li>
+          <li style="margin-bottom: .6rem;"><strong>Simplify \(d_1\) and \(d_2\):</strong>
+            <br>Since \(S = K\), the term \(\ln(S/K) = 0\). The formula for \(d_1\) becomes:
+            \[ d_1 = \frac{\frac{\sigma^2}{2}T}{\sigma\sqrt{T}} = \frac{1}{2}\sigma\sqrt{T} \]
+            Since \(d_2 = d_1 - \sigma\sqrt{T}\), we get:
+            \[ d_2 = -\frac{1}{2}\sigma\sqrt{T} \]
+          </li>
+          <li style="margin-bottom: .6rem;"><strong>First-Order Taylor Expansion of \(N(x)\):</strong>
+            <br>For short-dated options, the variance term \(\sigma\sqrt{T}\) is small. We can approximate the cumulative normal CDF \(N(x)\) around \(x = 0\) using its tangent line:
+            \[ N(x) \approx N(0) + N'(0)\cdot x \]
+            Where:
+            <ul>
+              <li>\(N(0) = 0.5\) (50% probability at the center).</li>
+              <li>\(N'(0) = n(0) = \frac{1}{\sqrt{2\pi}} \approx 0.3989\) (the height of the standard normal density at 0).</li>
+            </ul>
+            So, \(N(x) \approx 0.5 + 0.3989 \cdot x\).
+          </li>
+          <li style="margin-bottom: .6rem;"><strong>Substitute \(d_1\) and \(d_2\) into the approximation:</strong>
+            \[ N(d_1) - N(d_2) \approx \left[ 0.5 + 0.3989\left(\frac{1}{2}\sigma\sqrt{T}\right) \right] - \left[ 0.5 - 0.3989\left(\frac{1}{2}\sigma\sqrt{T}\right) \right] \]
+            Simplifying this yields:
+            \[ N(d_1) - N(d_2) \approx 2 \cdot 0.3989 \cdot \left(\frac{1}{2}\sigma\sqrt{T}\right) = 0.3989 \cdot \sigma\sqrt{T} \]
+          </li>
+          <li><strong>Final Substitution:</strong>
+            \[ C \approx S \cdot 0.3989 \cdot \sigma\sqrt{T} \approx 0.4 \cdot \sigma\sqrt{T} \cdot S \]
+          </li>
+        </ol>
+      </div>
+    </details>
+  </div>
+
+  <div class="sh2">What This Formula Tells You</div>
+  <div class="grid3">
+    <div class="card">
+      <div class="flabel">Vol Linearity</div>
+      <p style="font-size:.87rem;color:var(--muted)">Option price is <strong>directly proportional to σ</strong>. Double the vol → double the price. This is only true ATM — OTM options have a non-linear vol relationship (the smile).</p>
+    </div>
+    <div class="card">
+      <div class="flabel">√T Scaling</div>
+      <p style="font-size:.87rem;color:var(--muted)">Time value grows with <strong>√T</strong>, not T. A 4-year option costs twice a 1-year option, not four times. Theta (time decay) is not linear — it accelerates near expiry.</p>
+    </div>
+    <div class="card">
+      <div class="flabel">Straddle = 2×</div>
+      <p style="font-size:.87rem;color:var(--muted)">Since ATM call ≈ ATM put (by put-call parity when r ≈ 0), a <strong>straddle costs ≈ 0.8·σ√T·S</strong>. This is the market's "implied move" — what the market prices in as the expected move.</p>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE ATM CALCULATOR -->
+  <div class="sh2">Mental Math Trainer</div>
+  <div class="chart-wrap">
+    <div class="chart-controls" style="gap:1.2rem">
+      <div>
+        <label>S₀</label>
+        <input type="range" id="atm-s" min="1000" max="6000" value="4000" step="100" oninput="updateATM()">
+        <span class="cval" id="atm-s-v">4000</span>
+      </div>
+      <div>
+        <label>σ (%)</label>
+        <input type="range" id="atm-sig" min="5" max="80" value="20" oninput="updateATM()">
+        <span class="cval o" id="atm-sig-v">20%</span>
+      </div>
+      <div>
+        <label>T (months)</label>
+        <input type="range" id="atm-t" min="1" max="24" value="12" oninput="updateATM()">
+        <span class="cval" id="atm-t-v">12m</span>
+      </div>
+    </div>
+    <div id="atm-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:.8rem;margin-top:1rem"></div>
+    <canvas id="atmCanvas" height="220" style="margin-top:1rem"></canvas>
+  </div>
+
+  <div class="sh2">Interview Instant-Answer Scenarios</div>
+  <div class="card">
+    <table>
+      <thead>
+        <tr>
+          <th>Scenario (S, σ, T)</th>
+          <th>Step 1: S·σ</th>
+          <th>Step 2: ×0.4</th>
+          <th>Step 3: ×√T</th>
+          <th>ATM Call ≈</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>S&P 4000, 20% vol, 1Y</td>
+          <td>4000 × 0.20 = 800</td>
+          <td>800 × 0.4 = 320</td>
+          <td>×√1 = 320</td>
+          <td class="up"><strong>~320 pts</strong></td>
+        </tr>
+        <tr>
+          <td>S&P 4000, 20% vol, 3M</td>
+          <td>4000 × 0.20 = 800</td>
+          <td>800 × 0.4 = 320</td>
+          <td>×√0.25 = 160</td>
+          <td class="up"><strong>~160 pts</strong></td>
+        </tr>
+        <tr>
+          <td>Stock $100, 40% vol, 6M</td>
+          <td>100 × 0.40 = 40</td>
+          <td>40 × 0.4 = 16</td>
+          <td>×√0.5 ≈ 11.3</td>
+          <td class="up"><strong>~$11.3</strong></td>
+        </tr>
+        <tr>
+          <td>EUR/USD 1.08, 8% vol, 1Y</td>
+          <td>1.08 × 0.08 = 0.0864</td>
+          <td>× 0.4 = 0.0346</td>
+          <td>×√1 = 0.0346</td>
+          <td class="up"><strong>~346 pips</strong></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="alert trap">
+      <span class="ico">🚩</span>
+      <span><strong>When it fails:</strong> This approximation is only accurate for <em>short-to-medium term ATM options</em> where r and q are small. For deep OTM options (wings), rates &gt; 3%, or LEAPS (&gt;2 years), use the full BS formula. The approximation also assumes ATMF = ATM, which breaks down when r·T is large.</span>
+    </div>
+  </div>
+
+  <div class="sh2">The Straddle as a "Volatility Price Tag"</div>
+  <div class="card b">
+    <div class="grid2">
+      <div>
+        <div class="flabel b">Implied Move</div>
+        <div class="fx b">
+          \[ \text{Expected Move} \approx 0.8 \cdot \sigma \cdot \sqrt{T} \cdot S_0 \]
+        </div>
+        <p style="font-size:.86rem;color:var(--muted)">The straddle price is what the market is implying the stock will move by, on average. This is how traders "read" the vol surface — the straddle price <em>is</em> the market's implied move.</p>
+      </div>
+      <div>
+        <div class="flabel b">Daily Move Estimate</div>
+        <div class="fx b">
+          \[ \text{Daily Move} \approx \sigma \cdot S_0 \cdot \frac{1}{\sqrt{252}} \approx \frac{\sigma \cdot S_0}{16} \]
+        </div>
+        <p style="font-size:.86rem;color:var(--muted)">Quick rule: divide annual vol by 16 (≈√252) to get the expected daily move in dollar terms. At 20% vol on a $100 stock → $1.25/day expected move.</p>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /atm -->
+
+<!-- ══════════════════════════ TAB 6: PRICE BOUNDS ════════════════════ -->
+<div id="tab-bounds" class="tab-content">
+
+  <div class="sh">No-Arbitrage Price Boundaries</div>
+  <div class="card">
+    <p>These bounds are enforced by pure arbitrage logic — no model assumptions needed. Violating them creates a risk-free profit.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Option</th>
+          <th>Upper Bound</th>
+          <th>Lower Bound (European)</th>
+          <th>Lower Bound (American)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Call</strong></td>
+          <td class="bounds-cell">\(S_t\)</td>
+          <td class="bounds-cell">\(\max\!\left(0,\; S_t - Ke^{-rT}\right)\)</td>
+          <td class="bounds-cell">\(\max(0,\; S_t - K)\)</td>
+        </tr>
+        <tr>
+          <td><strong>Put</strong></td>
+          <td class="bounds-cell">\(Ke^{-rT}\) (Eur) / \(K\) (Am)</td>
+          <td class="bounds-cell">\(\max\!\left(0,\; Ke^{-rT} - S_t\right)\)</td>
+          <td class="bounds-cell">\(\max(0,\; K - S_t)\)</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sh2">Intuition for Each Bound</div>
+
+  <details open>
+    <summary>Call Upper Bound: C ≤ S</summary>
+    <div class="dbody">
+      <p>A call is the right to buy the stock. It can <strong>never be worth more than the stock itself</strong> — the stock is the best-case scenario for the call holder (if K = 0, the call IS the stock). If C &gt; S, sell the call and buy the stock: instant risk-free profit.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>European Call Lower Bound: C ≥ S − Ke^(−rT)</summary>
+    <div class="dbody">
+      <p>You don't pay K until maturity T. So the effective cost of exercising is only the <strong>present value of K</strong>, not K itself. The European lower bound accounts for the time value of the cash you defer paying.<br><br>
+      <strong>Arbitrage if violated:</strong> If \(C &lt; S - Ke^{-rT}\), then: (1) buy the call, (2) short the stock, (3) invest PV(K) at r. At T: use proceeds to deliver stock via call exercise → guaranteed profit.</p>
+      <div class="fx">\[C \geq S_t - K e^{-rT} \geq 0\]</div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Put Upper Bound: P ≤ Ke^(−rT) [European] / P ≤ K [American]</summary>
+    <div class="dbody">
+      <p><strong>European:</strong> The best outcome is that \(S_T = 0\), giving a payoff of \(K\) received at \(T\). Discounted: \(\text{PV} = K e^{-rT}\).<br><br>
+      <strong>American:</strong> Since you can exercise immediately, you could receive \(K\) right now — so the American put's max value is the full \(K\) (not PV of \(K\)). This is why American puts are sometimes worth more than European puts.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Early Exercise — When Does It Make Sense?</summary>
+    <div class="dbody">
+      <div class="grid2">
+        <div>
+          <div class="flabel b">American Call — Almost Never Early Exercise</div>
+          <p>For non-dividend stocks: the European lower bound \(S - Ke^{-rT}\) > the American lower bound \(S - K\) because \(Ke^{-rT} &lt; K\). You "get more" by holding — the money you haven't paid yet earns interest. Better to sell the call than exercise early.<br><br>
+          <strong>Exception:</strong> Deep ITM call on high-dividend stock just before ex-date. The dividend makes early exercise worthwhile if its PV exceeds the lost optionality.</p>
+        </div>
+        <div>
+          <div class="flabel" style="color:var(--yellow)">American Put — Sometimes Early Exercise</div>
+          <p>If the stock approaches zero, receiving K <em>now</em> is better than receiving K at T (time value of money). There's also no downside optionality left (S can't go below 0).<br><br>
+          The intuition: for a put, you want to exercise when the interest earned on the strike proceeds (r × K × T) exceeds the remaining time value of the put. Deep ITM puts on near-zero stocks → exercise immediately.</p>
+        </div>
+      </div>
+      <div class="alert tip">
+        <span class="ico">💡</span>
+        <span><strong>Summary rule:</strong> Never early-exercise an American call on a non-dividend stock. May early-exercise an American put when deeply ITM. This asymmetry is why American calls and European calls have the same price on non-dividend stocks, but American puts are worth more than European puts.</span>
+      </div>
+    </div>
+  </details>
+
+  <!-- INTERACTIVE BOUNDS VISUALISER -->
+  <div class="sh2">Bounds Visualiser</div>
+  <div class="chart-wrap">
+    <div class="chart-controls">
+      <label>K =</label>
+      <input type="range" id="bnd-k" min="60" max="140" value="100" oninput="drawBounds()">
+      <span class="cval" id="bnd-k-v">100</span>
+      <label style="margin-left:.8rem">r (%) =</label>
+      <input type="range" id="bnd-r" min="0" max="10" value="4" oninput="drawBounds()">
+      <span class="cval o" id="bnd-r-v">4%</span>
+      <label style="margin-left:.8rem">T (years) =</label>
+      <input type="range" id="bnd-t" min="0.1" max="3" value="1" step="0.1" oninput="drawBounds()">
+      <span class="cval" id="bnd-t-v">1.0</span>
+      <label style="margin-left:.8rem">Type:</label>
+      <select id="bnd-type" onchange="drawBounds()">
+        <option value="call">Call</option>
+        <option value="put">Put</option>
+      </select>
+    </div>
+    <canvas id="boundsCanvas" height="260"></canvas>
+  </div>
+
+</div><!-- /bounds -->
+
+<!-- ══════════════════════════ TAB 7: INTRINSIC + TIME VALUE ═══════════ -->
+<div id="tab-intrinsic" class="tab-content">
+
+  <div class="sh">Premium = Intrinsic Value + Time Value</div>
+  <div class="card">
+    <div class="fx" style="font-size:1.15rem">
+      \[ \underbrace{C}_{\text{Premium}} = \underbrace{\max(S - K,\; 0)}_{\text{Intrinsic Value}} + \underbrace{\text{TV}}_{\text{Time Value}} \]
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="flabel">Intrinsic Value</div>
+      <p style="font-size:.88rem;color:var(--muted)">The value if exercised <em>right now</em>. The "real money" component. Only ITM options have positive intrinsic value.</p>
+      <div class="fx" style="font-size:.95rem;margin-top:.7rem">
+        \[ IV_{\text{call}} = \max(S - K,\; 0) \]
+        \[ IV_{\text{put}} = \max(K - S,\; 0) \]
+      </div>
+      <p style="font-size:.83rem;color:var(--muted);margin-top:.5rem">ATM and OTM options: IV = 0. All premium is time value.</p>
+    </div>
+    <div class="card o">
+      <div class="flabel o">Time Value (Extrinsic Value)</div>
+      <p style="font-size:.88rem;color:var(--muted)">The premium above intrinsic value. It reflects <strong>optionality</strong> — the possibility that the option moves further ITM before expiry. Time value is maximised ATM.</p>
+      <div class="fx o" style="font-size:.95rem;margin-top:.7rem">
+        \[ \text{TV} = C - \max(S - K,\; 0) \]
+      </div>
+      <p style="font-size:.83rem;color:var(--muted);margin-top:.5rem">TV → 0 as T → 0. This decay is Theta (Θ) — the daily "rent" you pay for holding an option.</p>
+    </div>
+  </div>
+
+  <div class="sh2">Key Drivers of Time Value</div>
+  <div class="card b">
+    <table>
+      <thead><tr><th>Driver</th><th>Effect on TV</th><th>Intuition</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Volatility (σ)</strong></td><td class="up">↑ σ → ↑ TV</td><td>More chance of big moves into the money. Vol is essentially the price of time value.</td></tr>
+        <tr><td><strong>Time to Expiry (T)</strong></td><td class="up">↑ T → ↑ TV</td><td>More time = more opportunities for the stock to move ITM. TV → 0 at expiry.</td></tr>
+        <tr><td><strong>Moneyness</strong></td><td>ATM maximises TV</td><td>Deep ITM/OTM options have low TV. ATM has maximum uncertainty → maximum optionality value.</td></tr>
+        <tr><td><strong>Risk-Free Rate (r)</strong></td><td class="up">↑ r → ↑ Call TV, ↓ Put TV</td><td>Higher r → lower PV of strike → call cheaper to finance, put less attractive to exercise early.</td></tr>
+        <tr><td><strong>Dividends (q)</strong></td><td class="dn">↑ q → ↓ Call TV, ↑ Put TV</td><td>Dividends reduce S (ex-date drop) → less upside for call, more downside protection value for put.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sh2">Theta — The Cost of Holding Time</div>
+  <div class="card r">
+    <div class="flabel" style="color:var(--red)">Time Decay Formula (Approximation)</div>
+    <div class="fx" style="border-color:var(--red)">
+      \[ \Theta \approx -\frac{S \cdot \sigma}{2\sqrt{T}} \cdot \frac{1}{\sqrt{2\pi}} \approx -\frac{C_{\text{ATM}}}{2T} \]
+    </div>
+    <div class="grid2" style="margin-top:1rem">
+      <div>
+        <p style="font-size:.87rem;color:var(--muted)">Theta is negative for option buyers — time decay is a cost. The ATM option loses roughly <strong>half its value in the last quarter of its life</strong>. Theta is not constant — it accelerates as expiry approaches.</p>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Practical Rule</div>
+        <div class="val" style="font-size:.9rem"><span class="katex-inline"></span>Theta ≈ \(−C_{ATM}\) / (2T)</span></div>
+        <div class="sub">For a $10 ATM option with T=1 year, Theta ≈ −$5/year = −$0.02/day</div>
+      </div>
+    </div>
+    <div class="alert trap">
+      <span class="ico">🚩</span>
+      <span><strong>Gamma vs Theta trade-off:</strong> Long options are long gamma (you profit from large moves) and short theta (you pay daily decay). Short options are short gamma and long theta. This is the central tension in options trading: <em>you're always selling convexity to someone, or buying it from them.</em></span>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE INTRINSIC/TIME VALUE DIAGRAM -->
+  <div class="sh2">Premium Decomposition — Visualiser</div>
+  <div class="chart-wrap">
+    <div class="chart-controls">
+      <label>σ (%) =</label>
+      <input type="range" id="iv-sig" min="0" max="60" value="20" oninput="drawIV()">
+      <span class="cval o" id="iv-sig-v">20%</span>
+      <label style="margin-left:.8rem">T (years) =</label>
+      <input type="range" id="iv-t" min="0" max="5" value="1" step="0.05" oninput="drawIV()">
+      <span class="cval" id="iv-t-v">1.0</span>
+    </div>
+    <canvas id="ivCanvas" height="250"></canvas>
+  </div>
+
+</div><!-- /intrinsic -->
+
+<!-- ══════════════════════════ TAB 8: PUT-CALL PARITY ══════════════════ -->
+<div id="tab-pcp" class="tab-content">
+
+  <div class="sh">Put-Call Parity</div>
+  <div class="card">
+    <div class="flabel">The Fundamental Relationship</div>
+    <div class="fx" style="font-size:1.25rem">
+      \[ C - P = S_0 - K e^{-rT} \]
+    </div>
+    <p style="margin:.8rem 0;font-size:.9rem">Or equivalently, the portfolio identity:</p>
+    <div class="fx" style="font-size:1.1rem">
+      \[ C + K e^{-rT} = P + S_0 \]
+    </div>
+  </div>
+
+  <div class="sh2">Proof by No-Arbitrage (Two Portfolios)</div>
+  <div class="grid2">
+    <div class="card b">
+      <div class="flabel b">Portfolio A — "Insured Stock"</div>
+      <p style="font-size:.87rem;color:var(--muted)">Long the stock <strong>+</strong> Long a put (strike \(K\))<br>Payoff at \(T\): \(\max(S_T, K)\)</p>
+      <ul style="margin:.5rem 0 0 1.2rem;font-size:.85rem;color:var(--muted)">
+        <li>If \(S_T > K\): worth \(S_T\) (put expires worthless)</li>
+        <li>If \(S_T < K\): worth \(K\) (put pays \(K - S_T\))</li>
+      </ul>
+    </div>
+    <div class="card g">
+      <div class="flabel g">Portfolio B — "Cash + Call"</div>
+      <p style="font-size:.87rem;color:var(--muted)">Long a call (strike \(K\)) <strong>+</strong> Invest \(K e^{-rT}\) in bonds<br>Payoff at \(T\): \(\max(S_T, K)\)</p>
+      <ul style="margin:.5rem 0 0 1.2rem;font-size:.85rem;color:var(--muted)">
+        <li>If \(S_T > K\): call pays \(S_T - K\), bond pays \(K\) &rarr; total \(S_T\)</li>
+        <li>If \(S_T < K\): call worthless, bond pays \(K\) &rarr; total \(K\)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="alert key">
+    <span class="ico">🔑</span>
+    <span>Both portfolios have identical payoffs in every scenario → they must cost the same today: <strong>\(P + S_0 = C + K e^{-rT}\)</strong>. This requires <em>no model assumptions</em> — it is a pure no-arbitrage result.</span>
+  </div>
+
+  <div class="sh2">What Put-Call Parity Implies</div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Rearrangement</th><th>Interpretation</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>\(C = P + S_0 - Ke^{-rT}\)</td>
+          <td>Call = Put + Long Stock + Borrowing PV(K)</td>
+        </tr>
+        <tr>
+          <td>\(P = C - S_0 + Ke^{-rT}\)</td>
+          <td>Put = Call + Short Stock + Lending PV(K)</td>
+        </tr>
+        <tr>
+          <td>\(C - P = S_0 - Ke^{-rT}\)</td>
+          <td>Standard Put-Call Parity (expressed in terms of spot price \(S_0\))</td>
+        </tr>
+        <tr>
+          <td>\(C - P = (F_0 - K)e^{-rT}\)</td>
+          <td>Synthetic Forward: Long call + Short put at strike \(K\) is identical to a forward contract at strike \(K\)</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="alert tip">
+      <span class="ico">💡</span>
+      <span><strong>The forward connection:</strong> A long call + short put at the same strike and maturity is identical to a forward contract to buy the stock at K. This is the key link between the derivatives tabs: <br>Forward price = \(S_0 e^{rT}\) → set K = F₀ → C = P (for ATMF options). That's why ATMF calls and puts have the same price.</span>
+    </div>
+  </div>
+
+  <div class="sh2">Synthetic Positions via Put-Call Parity</div>
+  <div class="card b">
+    <table>
+      <thead><tr><th>You want to replicate...</th><th>Build it synthetically with...</th><th>Use case</th></tr></thead>
+      <tbody>
+        <tr><td>Long Forward</td><td>Long Call + Short Put (K = F₀)</td><td>Access forward exposure via options</td></tr>
+        <tr><td>Long Put (protective)</td><td>Long Call + Short Stock + Invest PV(K)</td><td>Portfolio insurance without buying puts</td></tr>
+        <tr><td>Long Call</td><td>Long Put + Long Stock + Borrow PV(K)</td><td>Replicate call from put market</td></tr>
+        <tr><td>Risk Reversal</td><td>Long OTM Call + Short OTM Put</td><td>Capture vol skew, zero-cost hedge</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sh2">Cost of Hedging — The Dealer's Perspective</div>
+  <div class="card">
+    <p>The option's price should reflect the <strong>cost of dynamically hedging it</strong>. From the dealer's viewpoint:</p>
+    <div class="grid2" style="margin-top:1rem">
+      <div>
+        <div class="flabel">Selling a Call</div>
+        <ul style="margin:.5rem 0 0 1.2rem;font-size:.86rem;color:var(--muted)">
+          <li style="margin:.3rem 0">Must buy Δ shares of stock to hedge (delta hedge)</li>
+          <li style="margin:.3rem 0">As stock rises, buy more shares (buy high)</li>
+          <li style="margin:.3rem 0">As stock falls, sell shares (sell low)</li>
+          <li style="margin:.3rem 0">The net cost of this rebalancing = the option premium</li>
+        </ul>
+      </div>
+      <div>
+        <div class="flabel" style="color:var(--accent2)">Realised vs Implied Vol</div>
+        <ul style="margin:.5rem 0 0 1.2rem;font-size:.86rem;color:var(--muted)">
+          <li style="margin:.3rem 0">Premium charged reflects <em>implied vol (IV)</em></li>
+          <li style="margin:.3rem 0">Actual hedge cost depends on <em>realised vol (RV)</em></li>
+          <li style="margin:.3rem 0">P&amp;L of delta-hedger = ½ × Gamma × S² × (RV² − IV²) × dt</li>
+          <li style="margin:.3rem 0">If RV &gt; IV → hedging costs more than premium → loss</li>
+          <li style="margin:.3rem 0">If RV &lt; IV → hedging costs less than premium → profit</li>
+        </ul>
+      </div>
+    </div>
+    <div class="alert warn">
+      <span class="ico">🎯</span>
+      <span><strong>S&T interview perspective:</strong> "Selling options is selling volatility. Your P&L depends not on where the stock ends up, but on whether the stock moved more or less than the vol implied in the price you sold. You make money if the market overpriced vol (IV &gt; RV). You lose if you underpriced it."</span>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE PCP CALCULATOR -->
+  <div class="sh2">Put-Call Parity Checker</div>
+  <div class="card" style="margin-bottom: 1.5rem;">
+    <p>
+      This interactive tool allows you to verify the <strong>Put-Call Parity</strong> relationship in real-time. 
+      By entering market inputs for the spot price (\(S_0\)), strike price (\(K\)), call price (\(C\)), put price (\(P\)), risk-free rate (\(r\)), and time to maturity (\(T\)), the checker validates if the no-arbitrage condition holds.
+    </p>
+    <div class="grid2" style="margin-top:1rem">
+      <div>
+        <div class="flabel" style="color:var(--blue)">How to Use the Checker</div>
+        <ul style="margin:.3rem 0 0 1.2rem;font-size:.85rem;color:var(--muted)">
+          <li style="margin:.2rem 0"><strong>Compare Portfolios:</strong> Observe whether Portfolio A (\(C + K e^{-rT}\)) and Portfolio B (\(P + S_0\)) are equal.</li>
+          <li style="margin:.2rem 0"><strong>Check for Violations:</strong> If the difference is non-zero, a <em>PCP Violation</em> will show the absolute discrepancy (arbitrage gap).</li>
+          <li style="margin:.2rem 0"><strong>Implied Put Price:</strong> The checker calculates the theoretical put price (\(P_{\text{implied}} = C - S_0 + K e^{-rT}\)) dictated by the other parameters.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="flabel" style="color:var(--accent2)">Key Concepts &amp; Anomalies</div>
+        <ul style="margin:.3rem 0 0 1.2rem;font-size:.85rem;color:var(--muted)">
+          <li style="margin:.2rem 0"><strong>Negative Implied Put:</strong> Occurs when the input call price \(C\) violates its absolute lower boundary (\(C < S_0 - K e^{-rT}\)). In markets, this represents a severe call underpricing.</li>
+          <li style="margin:.2rem 0"><strong>Arbitrage Trade:</strong> If \(C + K e^{-rT} < P + S_0\), buy Portfolio A (buy call, lend cash) and sell Portfolio B (short spot, write put) for a risk-free profit.</li>
+          <li style="margin:.2rem 0"><strong>Black-Scholes Reference:</strong> A reference pricing (using \(\sigma = 20\%\)) is provided to compare your custom inputs against standard theoretical values.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="chart-wrap">
+    <div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
+      <div>
+        <label>S₀</label>
+        <input type="number" id="pcp-s" value="100" min="0" style="width:70px" oninput="checkPCP()">
+      </div>
+      <div>
+        <label>K</label>
+        <input type="number" id="pcp-k" value="100" min="0" style="width:70px" oninput="checkPCP()">
+      </div>
+      <div>
+        <label>Call Price C</label>
+        <input type="number" id="pcp-c" value="10" min="0" step="0.1" style="width:70px" oninput="checkPCP()">
+      </div>
+      <div>
+        <label>Put Price P</label>
+        <input type="number" id="pcp-p" value="6.08" min="0" step="0.1" style="width:70px" oninput="checkPCP()">
+      </div>
+      <div>
+        <label>r (%)</label>
+        <input type="number" id="pcp-r" value="4" style="width:55px" oninput="checkPCP()">
+      </div>
+      <div>
+        <label>T (years)</label>
+        <input type="number" id="pcp-t" value="1" min="0" step="0.25" style="width:70px" oninput="checkPCP()">
+      </div>
+    </div>
+    <div id="pcp-results" style="margin-top:1rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.8rem"></div>
+  </div>
+
+</div><!-- /pcp -->
+
+<div class="footer">
+  <span>Option Fundamentals — S&T Interview Guide · Quantitative Finance · 2025-2026</span>
+  <span>Module 02 · Quantitative Finance · KaTeX · No-arbitrage · σ√T · Δ = N(d₁)</span>
+</div>
+
+</div><!-- /wrapper -->
+
+<script>
+/* ── TABS ─────────────────────────────────────────────────────────────── */
+function switchTab(id, el){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  setTimeout(()=>{
+    if(id==='prereqs') { updateVD(); }
+    if(id==='payoffs') { drawPayoffs(); }
+    if(id==='bs')      { calcBS(); }
+    if(id==='atm')     { updateATM(); }
+    if(id==='bounds')  { drawBounds(); }
+    if(id==='intrinsic'){ drawIV(); }
+    if(id==='pcp')     { checkPCP(); }
+  }, 40);
+}
+
+/* ── MATH UTILS ──────────────────────────────────────────────────────── */
+function erf(x){
+  const t=1/(1+0.3275911*Math.abs(x));
+  const p=t*(0.254829592+t*(-0.284496736+t*(1.421413741+t*(-1.453152027+t*1.061405429))));
+  const s=1-p*Math.exp(-x*x);
+  return x>=0?s:-s;
+}
+function normcdf(x){ return 0.5*(1+erf(x/Math.SQRT2)) }
+function normpdf(x){ return Math.exp(-0.5*x*x)/Math.sqrt(2*Math.PI) }
+
+function bsCall(S,K,r,sig,T){
+  if(T<=0) return Math.max(S-K,0);
+  if(sig<=0) return Math.max(S-K*Math.exp(-r*T),0);
+  const d1=(Math.log(S/K)+(r+0.5*sig*sig)*T)/(sig*Math.sqrt(T));
+  const d2=d1-sig*Math.sqrt(T);
+  return S*normcdf(d1)-K*Math.exp(-r*T)*normcdf(d2);
+}
+function bsPut(S,K,r,sig,T){
+  if(T<=0) return Math.max(K-S,0);
+  return bsCall(S,K,r,sig,T)-S+K*Math.exp(-r*T);
+}
+function bsGreeks(S,K,r,sig,T){
+  if(T<=0) return {delta:S>K?1:0,gamma:0,theta:0,vega:0,d1:0,d2:0,nd1:0,nd2:0};
+  if(sig<=0){
+    const d=S>K*Math.exp(-r*T)?1:0;
+    return {delta:d,gamma:0,theta:d*(-r*K*Math.exp(-r*T))/365,vega:0,d1:0,d2:0,nd1:d,nd2:d};
+  }
+  const d1=(Math.log(S/K)+(r+0.5*sig*sig)*T)/(sig*Math.sqrt(T));
+  const d2=d1-sig*Math.sqrt(T);
+  const delta=normcdf(d1);
+  const gamma=normpdf(d1)/(S*sig*Math.sqrt(T));
+  const theta=(-S*normpdf(d1)*sig/(2*Math.sqrt(T))-r*K*Math.exp(-r*T)*normcdf(d2))/365;
+  const vega=S*normpdf(d1)*Math.sqrt(T)/100;
+  return {delta,gamma,theta,vega,d1,d2,nd1:normcdf(d1),nd2:normcdf(d2)};
+}
+
+/* ── CANVAS UTILS ────────────────────────────────────────────────────── */
+function setupCanvas(id,H){
+  const canvas=document.getElementById(id);
+  if(!canvas) return null;
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.parentElement.clientWidth-32;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  return {ctx,W,H};
+}
+
+function drawAxes(ctx,pad,W,H,xMin,xMax,yMin,yMax,xLabel,yLabel,ticksX,ticksY,xFmt,yFmt){
+  ctx.fillStyle='#090c14'; ctx.fillRect(0,0,W,H);
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+  const toX=x=>pad.l+(x-xMin)/(xMax-xMin)*cw;
+  const toY=y=>pad.t+(1-(y-yMin)/(yMax-yMin))*ch;
+
+  // grid
+  ctx.strokeStyle='#1a2035'; ctx.lineWidth=1;
+  (ticksY||[]).forEach(y=>{
+    const py=toY(y);
+    ctx.beginPath(); ctx.moveTo(pad.l,py); ctx.lineTo(pad.l+cw,py); ctx.stroke();
+  });
+  (ticksX||[]).forEach(x=>{
+    const px=toX(x);
+    ctx.beginPath(); ctx.moveTo(px,pad.t); ctx.lineTo(px,pad.t+ch); ctx.stroke();
+  });
+
+  // zero line
+  if(yMin<0&&yMax>0){
+    ctx.strokeStyle='#334155'; ctx.lineWidth=1.5;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(pad.l,toY(0)); ctx.lineTo(pad.l+cw,toY(0)); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // axes
+  ctx.strokeStyle='#334155'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ch); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t+ch); ctx.lineTo(pad.l+cw,pad.t+ch); ctx.stroke();
+
+  // labels
+  ctx.fillStyle='#7c8db0'; ctx.font='11px Fira Code,monospace';
+  ctx.textAlign='right';
+  (ticksY||[]).forEach(y=>{ ctx.fillText(yFmt?yFmt(y):y.toFixed(0), pad.l-6, toY(y)+4) });
+  ctx.textAlign='center';
+  (ticksX||[]).forEach(x=>{ ctx.fillText(xFmt?xFmt(x):x.toFixed(0), toX(x), pad.t+ch+16) });
+
+  if(xLabel){ ctx.fillText(xLabel, pad.l+cw/2, H-4) }
+  if(yLabel){
+    ctx.save(); ctx.translate(12,pad.t+ch/2); ctx.rotate(-Math.PI/2);
+    ctx.fillText(yLabel,0,0); ctx.restore();
+  }
+  return {toX,toY,cw,ch};
+}
+
+/* ── VOL DRAG ────────────────────────────────────────────────────────── */
+function updateVD(){
+  const mu=parseFloat(document.getElementById('vd-mu').value)/100;
+  const sig=parseFloat(document.getElementById('vd-sig').value)/100;
+  const T=parseFloat(document.getElementById('vd-T').value);
+  document.getElementById('vd-mu-v').textContent=(mu*100).toFixed(1)+'%';
+  document.getElementById('vd-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  document.getElementById('vd-T-v').textContent=T;
+
+  const mug=mu-0.5*sig*sig;
+  const Wa=Math.pow(1+mu,T);
+  const Wg=Math.exp(mug*T);
+  const drag=Wa-Wg;
+
+  const s=document.getElementById('vd-stats');
+  s.innerHTML=`
+    <div class="kpi"><div class="lbl">Arithmetic μ_a</div><div class="val" style="color:var(--accent)">${(mu*100).toFixed(1)}%</div></div>
+    <div class="kpi"><div class="lbl">Geometric μ_g (CAGR)</div><div class="val" style="color:var(--accent2)">${(mug*100).toFixed(2)}%</div></div>
+    <div class="kpi"><div class="lbl">Drag = σ²/2</div><div class="val" style="color:var(--red)">${(0.5*sig*sig*100).toFixed(2)}%</div></div>
+    <div class="kpi"><div class="lbl">Wealth (Arith.) after ${T}Y</div><div class="val">${Wa.toFixed(2)}×</div></div>
+    <div class="kpi"><div class="lbl">Wealth (Geom.) after ${T}Y</div><div class="val" style="color:var(--accent2)">${Wg.toFixed(2)}×</div></div>
+    <div class="kpi"><div class="lbl">Total Drag Loss</div><div class="val" style="color:var(--red)">-${((1-Wg/Wa)*100).toFixed(1)}%</div></div>
+  `;
+
+  const r=setupCanvas('vdCanvas',220);
+  if(!r) return;
+  const {ctx,W,H}=r;
+  const years=Array.from({length:T*12+1},(_,i)=>i/12);
+  const wA=years.map(t=>Math.pow(1+mu,t));
+  const wG=years.map(t=>Math.exp(mug*t));
+  const yMax=Math.max(...wA)*1.05, yMin=Math.min(...wG)*0.97;
+  const pad={l:55,r:20,t:15,b:35};
+  const {toX,toY}=drawAxes(ctx,pad,W,H,0,T,yMin,yMax,'Time (years)','Wealth (×)',
+    Array.from({length:T+1},(_,i)=>i),
+    [yMin,(yMin+yMax)/2,yMax].map(v=>parseFloat(v.toFixed(2))),
+    null,v=>v.toFixed(2));
+  // arithmetic
+  ctx.strokeStyle='#60a5fa'; ctx.lineWidth=2; ctx.beginPath();
+  years.forEach((t,i)=>i===0?ctx.moveTo(toX(t),toY(wA[i])):ctx.lineTo(toX(t),toY(wA[i])));
+  ctx.stroke();
+  // geometric
+  ctx.strokeStyle='#c084fc'; ctx.lineWidth=2.5; ctx.beginPath();
+  years.forEach((t,i)=>i===0?ctx.moveTo(toX(t),toY(wG[i])):ctx.lineTo(toX(t),toY(wG[i])));
+  ctx.stroke();
+  // shade gap
+  ctx.fillStyle='rgba(248,113,113,.07)';
+  ctx.beginPath();
+  years.forEach((t,i)=>i===0?ctx.moveTo(toX(t),toY(wA[i])):ctx.lineTo(toX(t),toY(wA[i])));
+  years.slice().reverse().forEach((t,i,a)=>ctx.lineTo(toX(t),toY(wG[a.length-1-i])));
+  ctx.closePath(); ctx.fill();
+  // legend
+  ctx.font='11px Fira Code,monospace'; ctx.textAlign='left';
+  ctx.fillStyle='#60a5fa'; ctx.fillRect(pad.l+10,pad.t+8,18,3); ctx.fillText('Arithmetic',pad.l+32,pad.t+12);
+  ctx.fillStyle='#c084fc'; ctx.fillRect(pad.l+10,pad.t+20,18,3); ctx.fillText('Geometric (CAGR)',pad.l+32,pad.t+24);
+}
+
+/* ── PAYOFFS ──────────────────────────────────────────────────────────── */
+function drawPayoffs(){
+  const K=parseFloat(document.getElementById('po-k').value);
+  const prem=parseFloat(document.getElementById('po-prem').value);
+  const type=document.getElementById('po-type').value;
+  document.getElementById('po-k-v').textContent=K;
+  document.getElementById('po-prem-v').textContent=prem;
+
+  const r=setupCanvas('payoffCanvas',250);
+  if(!r) return;
+  const {ctx,W,H}=r;
+
+  const Ss=Array.from({length:200},(_,i)=>K-60+i*120/200);
+  const K2=K+15; // for strangle/spread
+
+  function payoff(S, tp){
+    switch(tp){
+      case 'lc': return Math.max(S-K,0)-prem;
+      case 'sc': return -(Math.max(S-K,0))+prem;
+      case 'lp': return Math.max(K-S,0)-prem;
+      case 'sp': return -(Math.max(K-S,0))+prem;
+      case 'straddle': return Math.max(S-K,0)+Math.max(K-S,0)-2*prem;
+      case 'strangle': return Math.max(S-K2,0)+Math.max(K-S,0)-2*prem;
+      case 'spread': return Math.max(S-K,0)-Math.max(S-K2,0)-prem;
+      default: return 0;
+    }
+  }
+
+  const pnls=Ss.map(s=>payoff(s,type));
+  const yMax=Math.max(...pnls,prem+2)*1.2;
+  const yMin=Math.min(...pnls,-prem-2)*1.2;
+  const pad={l:55,r:20,t:20,b:35};
+
+  const ticksY=[];
+  for(let v=Math.ceil(yMin/10)*10;v<=yMax;v+=10) ticksY.push(v);
+  const ticksX=[K-40,K-20,K,K+20,K+40];
+
+  const {toX,toY}=drawAxes(ctx,pad,W,H,K-60,K+60,yMin,yMax,'Spot at Expiry (S_T)','P&L',
+    ticksX,ticksY);
+
+  // fill areas
+  const posPath=new Path2D(), negPath=new Path2D();
+  Ss.forEach((s,i)=>{
+    const p=pnls[i], x=toX(s), y=toY(Math.max(p,0));
+    if(i===0){ posPath.moveTo(x,y); negPath.moveTo(x,toY(Math.min(p,0))); }
+    else{ posPath.lineTo(x,y); negPath.lineTo(x,toY(Math.min(p,0))); }
+  });
+  Ss.slice().reverse().forEach(s=>{ posPath.lineTo(toX(s),toY(0)) });
+  Ss.slice().reverse().forEach(s=>{ negPath.lineTo(toX(s),toY(0)) });
+  ctx.fillStyle='rgba(52,211,153,.12)'; ctx.fill(posPath);
+  ctx.fillStyle='rgba(248,113,113,.12)'; ctx.fill(negPath);
+
+  // payoff line
+  const colors={lc:'#60a5fa',sc:'#f87171',lp:'#34d399',sp:'#fbbf24',straddle:'#c084fc',strangle:'#fb923c',spread:'#60a5fa'};
+  ctx.strokeStyle=colors[type]||'#c084fc'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  Ss.forEach((s,i)=>i===0?ctx.moveTo(toX(s),toY(pnls[i])):ctx.lineTo(toX(s),toY(pnls[i])));
+  ctx.stroke();
+
+  // strike line
+  ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+  const cw=W-pad.l-20,ch=H-pad.t-35;
+  ctx.beginPath(); ctx.moveTo(toX(K),pad.t); ctx.lineTo(toX(K),pad.t+ch); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#c084fc'; ctx.font='11px Fira Code,monospace'; ctx.textAlign='center';
+  ctx.fillText('K='+K,toX(K),pad.t-6);
+
+  // stats
+  const be=[];
+  for(let i=1;i<pnls.length;i++){
+    if(pnls[i-1]*pnls[i]<0) be.push(((Ss[i-1]+Ss[i])/2).toFixed(1));
+  }
+  const maxP=Math.max(...pnls), minP=Math.min(...pnls);
+  document.getElementById('po-stats').innerHTML=`
+    <span>Max Profit: <strong style="color:var(--green)">${maxP===Infinity?'∞':maxP.toFixed(1)}</strong></span>
+    <span>Max Loss: <strong style="color:var(--red)">${minP===-Infinity?'-∞':minP.toFixed(1)}</strong></span>
+    <span>Breakeven: <strong style="color:var(--accent)">${be.length?be.join(', '):'—'}</strong></span>
+  `;
+}
+
+/* ── BS CALCULATOR ────────────────────────────────────────────────────── */
+function calcBS(){
+  const S=Math.max(0, parseFloat(document.getElementById('bs-s').value)||100);
+  const K=Math.max(0, parseFloat(document.getElementById('bs-k').value)||100);
+  const sig=Math.max(0, parseFloat(document.getElementById('bs-sig').value)/100||0.2);
+  const r=parseFloat(document.getElementById('bs-r').value)/100||0.04;
+  const T=Math.max(0, parseFloat(document.getElementById('bs-t').value)||1);
+
+  const C=bsCall(S,K,r,sig,T);
+  const P=bsPut(S,K,r,sig,T);
+  const g=bsGreeks(S,K,r,sig,T);
+  const atm=0.4*sig*Math.sqrt(T)*S;
+
+  document.getElementById('bs-results').innerHTML=`
+    <div class="kpi"><div class="lbl">Call Price (C)</div><div class="val" style="color:var(--blue)">${C.toFixed(3)}</div><div class="sub">N(d₁)=${g.nd1.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">Put Price (P)</div><div class="val" style="color:var(--red)">${P.toFixed(3)}</div><div class="sub">N(-d₁)=${(1-g.nd1).toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">d₁</div><div class="val">${g.d1.toFixed(4)}</div><div class="sub">Δ = N(d₁)</div></div>
+    <div class="kpi"><div class="lbl">d₂</div><div class="val">${g.d2.toFixed(4)}</div><div class="sub">ℚ(ITM) = N(d₂) = ${g.nd2.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">Delta (Δ)</div><div class="val" style="color:var(--accent)">${g.delta.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl">Gamma (Γ)</div><div class="val">${g.gamma.toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl">Vega (per 1%)</div><div class="val" style="color:var(--accent2)">${g.vega.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl">Theta (per day)</div><div class="val" style="color:var(--red)">${g.theta.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl">ATM Approx.</div><div class="val" style="color:var(--yellow)">${atm.toFixed(3)}</div><div class="sub">0.4·σ·√T·S</div></div>
+  `;
+
+  // draw call price as function of S
+  const rc=setupCanvas('bsCanvas',240);
+  if(!rc) return;
+  const {ctx,W,H}=rc;
+  const Srange=Array.from({length:200},(_,i)=>K*0.5+i*K/200);
+  const calls=Srange.map(s=>bsCall(s,K,r,sig,T));
+  const puts=Srange.map(s=>bsPut(s,K,r,sig,T));
+  const IV=Srange.map(s=>Math.max(s-K,0));
+  const yMax=Math.max(...calls)*1.1, yMin=0;
+  const pad={l:55,r:15,t:15,b:35};
+  const ticksY=[0,yMax*0.25,yMax*0.5,yMax*0.75,yMax].map(v=>parseFloat(v.toFixed(1)));
+  const ticksX=[K*0.6,K*0.8,K,K*1.2,K*1.4];
+  const {toX,toY}=drawAxes(ctx,pad,W,H,K*0.5,K*1.5,yMin,yMax,'Spot Price S','Option Value',ticksX,ticksY);
+
+  // intrinsic
+  ctx.strokeStyle='#334155'; ctx.lineWidth=1.5; ctx.setLineDash([5,3]);
+  ctx.beginPath();
+  Srange.forEach((s,i)=>i===0?ctx.moveTo(toX(s),toY(IV[i])):ctx.lineTo(toX(s),toY(IV[i])));
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // put
+  ctx.strokeStyle='#f87171'; ctx.lineWidth=1.8;
+  ctx.beginPath();
+  Srange.forEach((s,i)=>i===0?ctx.moveTo(toX(s),toY(puts[i])):ctx.lineTo(toX(s),toY(puts[i])));
+  ctx.stroke();
+
+  // call
+  ctx.strokeStyle='#60a5fa'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  Srange.forEach((s,i)=>i===0?ctx.moveTo(toX(s),toY(calls[i])):ctx.lineTo(toX(s),toY(calls[i])));
+  ctx.stroke();
+
+  // current S dot
+  ctx.fillStyle='#c084fc'; ctx.beginPath();
+  ctx.arc(toX(S),toY(bsCall(S,K,r,sig,T)),5,0,Math.PI*2); ctx.fill();
+
+  // legend
+  ctx.font='11px Fira Code,monospace'; ctx.textAlign='left';
+  ctx.fillStyle='#60a5fa'; ctx.fillText('Call',pad.l+8,pad.t+14);
+  ctx.fillStyle='#f87171'; ctx.fillText('Put',pad.l+45,pad.t+14);
+  ctx.fillStyle='#334155'; ctx.fillText('Intrinsic',pad.l+78,pad.t+14);
+}
+
+/* ── ATM APPROXIMATION ────────────────────────────────────────────────── */
+function updateATM(){
+  const S=parseFloat(document.getElementById('atm-s').value);
+  const sig=parseFloat(document.getElementById('atm-sig').value)/100;
+  const Tm=parseFloat(document.getElementById('atm-t').value);
+  const T=Tm/12;
+  document.getElementById('atm-s-v').textContent=S;
+  document.getElementById('atm-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  document.getElementById('atm-t-v').textContent=Tm+'m';
+
+  const atmC=0.4*sig*Math.sqrt(T)*S;
+  const atmS=0.8*sig*Math.sqrt(T)*S;
+  const daily=sig*S/16;
+  const trueC=bsCall(S,S,0.04,sig,T);
+
+  document.getElementById('atm-results').innerHTML=`
+    <div class="kpi"><div class="lbl">ATM Call (approx)</div><div class="val" style="color:var(--yellow)">${atmC.toFixed(2)}</div><div class="sub">0.4·σ·√T·S</div></div>
+    <div class="kpi"><div class="lbl">ATM Straddle (approx)</div><div class="val" style="color:var(--accent)">${atmS.toFixed(2)}</div><div class="sub">0.8·σ·√T·S — implied move</div></div>
+    <div class="kpi"><div class="lbl">BS True Call Price</div><div class="val" style="color:var(--green)">${trueC.toFixed(2)}</div><div class="sub">Error: ${((atmC-trueC)/trueC*100).toFixed(1)}%</div></div>
+    <div class="kpi"><div class="lbl">Expected Daily Move</div><div class="val" style="color:var(--blue)">${daily.toFixed(2)}</div><div class="sub">σ·S/16 (≈σ/√252)</div></div>
+    <div class="kpi"><div class="lbl">Implied Move (1σ)</div><div class="val" style="color:var(--accent2)">${(sig*Math.sqrt(T)*S).toFixed(2)}</div><div class="sub">±σ√T·S</div></div>
+  `;
+
+  // Vol vs Price chart
+  const ra=setupCanvas('atmCanvas',220);
+  if(!ra) return;
+  const {ctx,W,H}=ra;
+  const vols=Array.from({length:100},(_,i)=>0.05+i*0.75/100);
+  const prices=vols.map(v=>0.4*v*Math.sqrt(T)*S);
+  const priceBs=vols.map(v=>bsCall(S,S,0.04,v,T));
+  const yMax=Math.max(...prices)*1.1;
+  const pad={l:60,r:20,t:15,b:35};
+  const ticksY=[0,yMax*0.25,yMax*0.5,yMax*0.75,yMax].map(v=>parseFloat(v.toFixed(0)));
+  const ticksX=[10,20,30,40,50,60,70];
+  const {toX,toY}=drawAxes(ctx,pad,W,H,5,80,0,yMax,'Volatility σ (%)', 'ATM Call Price',
+    ticksX,ticksY,v=>v+'%');
+
+  // approximation
+  ctx.strokeStyle='#fbbf24'; ctx.lineWidth=2; ctx.setLineDash([6,3]);
+  ctx.beginPath();
+  vols.forEach((v,i)=>i===0?ctx.moveTo(toX(v*100),toY(prices[i])):ctx.lineTo(toX(v*100),toY(prices[i])));
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // true BS
+  ctx.strokeStyle='#c084fc'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  vols.forEach((v,i)=>i===0?ctx.moveTo(toX(v*100),toY(priceBs[i])):ctx.lineTo(toX(v*100),toY(priceBs[i])));
+  ctx.stroke();
+
+  // current vol dot
+  ctx.fillStyle='#fb923c'; ctx.beginPath();
+  ctx.arc(toX(sig*100),toY(atmC),5,0,Math.PI*2); ctx.fill();
+
+  ctx.font='11px Fira Code,monospace'; ctx.textAlign='left';
+  ctx.fillStyle='#fbbf24'; ctx.fillText('0.4·σ√T·S (approx)',pad.l+8,pad.t+14);
+  ctx.fillStyle='#c084fc'; ctx.fillText('Black-Scholes',pad.l+8,pad.t+28);
+}
+
+/* ── BOUNDS ────────────────────────────────────────────────────────────── */
+function drawBounds(){
+  const K=parseFloat(document.getElementById('bnd-k').value);
+  const r=parseFloat(document.getElementById('bnd-r').value)/100;
+  const T=parseFloat(document.getElementById('bnd-t').value);
+  const type=document.getElementById('bnd-type').value;
+  document.getElementById('bnd-k-v').textContent=K;
+  document.getElementById('bnd-r-v').textContent=(r*100).toFixed(0)+'%';
+  document.getElementById('bnd-t-v').textContent=parseFloat(T).toFixed(1);
+
+  const rb=setupCanvas('boundsCanvas',260);
+  if(!rb) return;
+  const {ctx,W,H}=rb;
+  const Srange=Array.from({length:200},(_,i)=>K*0.3+i*K*1.4/200);
+  const KD=K*Math.exp(-r*T);
+  const sig=0.2;
+
+  let upper, lower, bsPrice;
+  if(type==='call'){
+    upper=Srange.map(s=>s);
+    lower=Srange.map(s=>Math.max(0,s-KD));
+    bsPrice=Srange.map(s=>bsCall(s,K,r,sig,T));
+  } else {
+    upper=Srange.map(s=>KD);
+    lower=Srange.map(s=>Math.max(0,KD-s));
+    bsPrice=Srange.map(s=>bsPut(s,K,r,sig,T));
+  }
+
+  const yMax=Math.max(...upper.slice(0,upper.length))*0.5;
+  const yMin=0;
+  const pad={l:55,r:15,t:20,b:35};
+  const ticksY=[0,yMax*0.25,yMax*0.5,yMax*0.75,yMax].map(v=>parseFloat(v.toFixed(0)));
+  const {toX,toY}=drawAxes(ctx,pad,W,H,K*0.3,K*1.7,yMin,yMax,'Spot S','Option Price',
+    [K*0.5,K*0.75,K,K*1.25,K*1.5],ticksY);
+
+  // fill between bounds
+  ctx.fillStyle='rgba(192,132,252,.06)';
+  ctx.beginPath();
+  Srange.forEach((s,i)=>i===0?ctx.moveTo(toX(s),toY(Math.min(upper[i],yMax))):ctx.lineTo(toX(s),toY(Math.min(upper[i],yMax))));
+  Srange.slice().reverse().forEach((s,i,a)=>ctx.lineTo(toX(s),toY(lower[a.length-1-i])));
+  ctx.closePath(); ctx.fill();
+
+  // upper bound
+  ctx.strokeStyle='rgba(248,113,113,.7)'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+  ctx.beginPath();
+  Srange.forEach((s,i)=>{ const v=Math.min(upper[i],yMax); if(i===0)ctx.moveTo(toX(s),toY(v)); else ctx.lineTo(toX(s),toY(v)); });
+  ctx.stroke();
+
+  // lower bound
+  ctx.strokeStyle='rgba(52,211,153,.7)'; ctx.lineWidth=1.5;
+  ctx.beginPath();
+  Srange.forEach((s,i)=>i===0?ctx.moveTo(toX(s),toY(lower[i])):ctx.lineTo(toX(s),toY(lower[i])));
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // BS price
+  ctx.strokeStyle='#c084fc'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  Srange.forEach((s,i)=>{ const v=bsPrice[i]; if(v>yMax||v<0) return; if(i===0||bsPrice[i-1]>yMax)ctx.moveTo(toX(s),toY(v)); else ctx.lineTo(toX(s),toY(v)); });
+  ctx.stroke();
+
+  // strike
+  ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(toX(K),pad.t); ctx.lineTo(toX(K),H-35); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#c084fc'; ctx.font='11px Fira Code,monospace'; ctx.textAlign='center';
+  ctx.fillText('K='+K.toFixed(0),toX(K),pad.t-5);
+
+  // legend
+  ctx.textAlign='left'; ctx.font='11px Fira Code,monospace';
+  ctx.fillStyle='#c084fc'; ctx.fillText('BS Price',pad.l+8,pad.t+14);
+  ctx.fillStyle='#f87171'; ctx.fillText('Upper Bound',pad.l+8,pad.t+26);
+  ctx.fillStyle='#34d399'; ctx.fillText('Lower Bound',pad.l+8,pad.t+38);
+}
+
+/* ── INTRINSIC / TIME VALUE ─────────────────────────────────────────────── */
+function drawIV(){
+  const K=100;
+  const sig=parseFloat(document.getElementById('iv-sig').value)/100;
+  const T=parseFloat(document.getElementById('iv-t').value);
+  document.getElementById('iv-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  document.getElementById('iv-t-v').textContent=T.toFixed(2);
+
+  const ri=setupCanvas('ivCanvas',250);
+  if(!ri) return;
+  const {ctx,W,H}=ri;
+  const Srange=Array.from({length:201},(_,i)=>i);
+  const IV=Srange.map(s=>Math.max(s-K,0));
+  const BS=Srange.map(s=>bsCall(s,K,0.04,sig,T));
+  const TV=BS.map((b,i)=>b-IV[i]);
+
+  const yMax=120;
+  const pad={l:55,r:15,t:15,b:35};
+  const ticksY=[0,20,40,60,80,100,120];
+  const {toX,toY}=drawAxes(ctx,pad,W,H,0,200,0,yMax,'Spot Price S','Call Value',
+    [50, 100, 150, 200],ticksY);
+
+  // fill time value (between BS and IV)
+  ctx.fillStyle='rgba(251,146,60,.12)';
+  ctx.beginPath();
+  Srange.forEach((s,i)=>i===0?ctx.moveTo(toX(s),toY(BS[i])):ctx.lineTo(toX(s),toY(BS[i])));
+  Srange.slice().reverse().forEach((s,i,a)=>ctx.lineTo(toX(s),toY(IV[a.length-1-i])));
+  ctx.closePath(); ctx.fill();
+
+  // fill intrinsic value
+  ctx.fillStyle='rgba(52,211,153,.1)';
+  ctx.beginPath();
+  Srange.forEach((s,i)=>i===0?ctx.moveTo(toX(s),toY(IV[i])):ctx.lineTo(toX(s),toY(IV[i])));
+  Srange.slice().reverse().forEach(s=>ctx.lineTo(toX(s),toY(0)));
+  ctx.closePath(); ctx.fill();
+
+  // intrinsic
+  ctx.strokeStyle='#34d399'; ctx.lineWidth=1.8; ctx.setLineDash([5,3]);
+  ctx.beginPath();
+  Srange.forEach((s,i)=>i===0?ctx.moveTo(toX(s),toY(IV[i])):ctx.lineTo(toX(s),toY(IV[i])));
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // BS call
+  ctx.strokeStyle='#c084fc'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  Srange.forEach((s,i)=>i===0?ctx.moveTo(toX(s),toY(BS[i])):ctx.lineTo(toX(s),toY(BS[i])));
+  ctx.stroke();
+
+  // max TV dot (ATM)
+  const atmIdx=Srange.findIndex(s=>s>=K);
+  if(atmIdx>0){
+    ctx.fillStyle='#fb923c'; ctx.beginPath();
+    ctx.arc(toX(Srange[atmIdx]),toY(BS[atmIdx]),5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#fb923c'; ctx.font='11px Fira Code,monospace'; ctx.textAlign='left';
+    ctx.fillText('Max TV (ATM)',toX(K)+8,toY(BS[atmIdx])-5);
+  }
+
+  // strike line
+  ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(toX(K),pad.t); ctx.lineTo(toX(K),H-35); ctx.stroke();
+  ctx.setLineDash([]);
+
+  ctx.textAlign='left'; ctx.font='11px Fira Code,monospace';
+  ctx.fillStyle='#c084fc'; ctx.fillText('Call Price (BS)',pad.l+8,pad.t+14);
+  ctx.fillStyle='#34d399'; ctx.fillText('Intrinsic Value',pad.l+8,pad.t+26);
+  ctx.fillStyle='#fb923c'; ctx.fillText('Time Value (shaded orange)',pad.l+8,pad.t+38);
+}
+
+/* ── PUT-CALL PARITY CHECKER ─────────────────────────────────────────── */
+function checkPCP(){
+  const S=Math.max(0, parseFloat(document.getElementById('pcp-s').value)||100);
+  const K=Math.max(0, parseFloat(document.getElementById('pcp-k').value)||100);
+  const C=Math.max(0, parseFloat(document.getElementById('pcp-c').value)||10);
+  const P=Math.max(0, parseFloat(document.getElementById('pcp-p').value)||6.08);
+  const r=parseFloat(document.getElementById('pcp-r').value)/100||0.04;
+  const T=Math.max(0, parseFloat(document.getElementById('pcp-t').value)||1);
+
+  const KD=K*Math.exp(-r*T);
+  const impliedP=C-S+KD; // from PCP
+  const lhs=C+KD;
+  const rhs=P+S;
+  const diff=Math.abs(lhs-rhs);
+
+  const bsC=bsCall(S,K,r,0.2,T);
+  const bsP=bsPut(S,K,r,0.2,T);
+
+  const ok=diff<0.01;
+  document.getElementById('pcp-results').innerHTML=`
+    <div class="kpi"><div class="lbl">PV(K) = Ke<sup>-rT</sup></div><div class="val">${KD.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">Implied Put Price</div><div class="val" style="color:${impliedP<0?'var(--red)':'var(--green)'}">${impliedP.toFixed(3)}</div><div class="sub">P<sub>implied</sub> = C − S + Ke<sup>-rT</sup></div></div>
+    <div class="kpi"><div class="lbl">Portfolio A: C + Ke<sup>-rT</sup></div><div class="val" style="color:var(--blue)">${lhs.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">Portfolio B: P + S</div><div class="val" style="color:var(--blue)">${rhs.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">PCP Violation?</div><div class="val" style="color:${ok?'var(--green)':'var(--red)'}">${ok?'✓ None':'⚠️ '+diff.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">BS Reference (σ=20%)</div><div class="val" style="font-size:.85rem">C=${bsC.toFixed(2)} / P=${bsP.toFixed(2)}</div></div>
+  `;
+}
+
+/* ── INIT ─────────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded',()=>{
+  renderMathInElement(document.body,{
+    delimiters:[
+      {left:'$$',right:'$$',display:true},
+      {left:'\\[',right:'\\]',display:true},
+      {left:'\\(',right:'\\)',display:false}
+    ],
+    throwOnError:false
+  });
+  setTimeout(()=>{
+    updateVD();
+    drawPayoffs();
+    calcBS();
+    updateATM();
+    drawBounds();
+    drawIV();
+    checkPCP();
+  },300);
+});
+</script>
+</body>
+</html>

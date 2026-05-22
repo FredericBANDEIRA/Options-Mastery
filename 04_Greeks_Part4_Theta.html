@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Greeks — Part IV: Theta | S&amp;T Prep</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" rel="stylesheet"/>
+<script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+
+<style>
+:root{
+  --bg:#060810;
+  --surface:#090c18;
+  --card:#0d1020;
+  --border:#181d35;
+  --theta:#38bdf8;   /* sky blue — Theta */
+  --theta2:#0ea5e9;
+  --vega:#a78bfa;    /* violet — Vega */
+  --vega2:#7c3aed;
+  --gamma:#fbbf24;   /* amber — continuity */
+  --red:#f87171;
+  --green:#4ade80;
+  --pink:#f472b6;
+  --teal:#2dd4bf;
+  --orange:#fb923c;
+  --text:#e2e8f0;
+  --muted:#4a5575;
+  --mono:'Fira Code','Cascadia Code',monospace;
+  --sans:'IBM Plex Sans','Segoe UI',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.74;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9990;
+  background-image:linear-gradient(rgba(56,189,248,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(167,139,250,.025) 1px,transparent 1px);
+  background-size:36px 36px;}
+
+/* ── TOPBAR ── */
+.topbar{background:var(--surface);border-bottom:2px solid var(--theta);padding:.6rem 2rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:200;backdrop-filter:blur(14px)}
+.tag{font-family:var(--mono);font-size:.67rem;letter-spacing:.13em;background:var(--theta);color:#000;padding:.2rem .55rem;border-radius:3px;font-weight:800}
+.crumb{font-family:var(--mono);font-size:.74rem;color:var(--muted)} .crumb a{color:inherit;text-decoration:none;transition:color .2s} .crumb a:hover{color:var(--text)}
+.crumb span{color:var(--theta)}
+.topbar-right{margin-left:auto;display:flex;gap:.8rem;align-items:center;font-family:var(--mono);font-size:.75rem}
+.theta-badge{color:var(--theta);border:1px solid rgba(56,189,248,.3);padding:.15rem .5rem;border-radius:3px}
+.vega-badge{color:var(--vega);border:1px solid rgba(167,139,250,.3);padding:.15rem .5rem;border-radius:3px}
+
+/* ── LAYOUT ── */
+.wrapper{max-width:1150px;margin:0 auto;padding:2.5rem 1.5rem 6rem}
+
+/* ── HERO ── */
+.hero{padding:2.8rem 0 2.2rem;border-bottom:1px solid var(--border);margin-bottom:2.5rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;right:-10px;top:-10px;font-family:var(--mono);font-size:10rem;font-weight:900;line-height:1;user-select:none;pointer-events:none;
+  background:linear-gradient(135deg,rgba(56,189,248,.06),rgba(167,139,250,.06));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero .sub{font-size:.9rem;color:var(--muted);margin-bottom:.3rem;font-family:var(--mono);letter-spacing:.08em}
+.hero h1{font-size:3rem;font-weight:800;letter-spacing:-.04em;line-height:1.05;
+  background:linear-gradient(120deg,var(--theta) 0%,#bae6fd 35%,var(--vega) 70%,#c4b5fd 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.4rem;position:relative}
+.hero p{color:var(--muted);font-size:.92rem;max-width:660px;margin-top:.5rem;position:relative}
+.meta{display:flex;gap:.65rem;margin-top:1.1rem;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:.67rem;font-weight:600;border:1px solid var(--border);padding:.2rem .65rem;border-radius:99px;color:var(--muted);letter-spacing:.06em}
+.pill.t{border-color:var(--theta);color:var(--theta)}
+.pill.v{border-color:var(--vega);color:var(--vega)}
+.pill.g{border-color:var(--gamma);color:var(--gamma)}
+
+/* ── TABS ── */
+.nav-tabs{display:flex;gap:.3rem;flex-wrap:wrap;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+.nav-tab{font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:.07em;padding:.5rem .85rem;border-radius:6px 6px 0 0;cursor:pointer;border:1px solid transparent;border-bottom:none;color:var(--muted);background:transparent;transition:all .18s;position:relative;top:1px;text-transform:uppercase}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active-t{background:var(--card);border-color:var(--border);color:var(--theta);border-bottom:2px solid var(--card)}
+.nav-tab.active-v{background:var(--card);border-color:var(--border);color:var(--vega);border-bottom:2px solid var(--card)}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* ── SECTION DIVIDER ── */
+.greek-divider{display:flex;align-items:center;gap:1rem;margin:2.5rem 0 1.5rem;padding:1rem 1.4rem;border-radius:8px}
+.greek-divider.theta-div{background:rgba(56,189,248,.05);border:1px solid rgba(56,189,248,.2)}
+.greek-divider.vega-div{background:rgba(167,139,250,.05);border:1px solid rgba(167,139,250,.2)}
+.greek-symbol{font-family:var(--mono);font-size:2.5rem;font-weight:900;line-height:1}
+.greek-info h2{font-size:1.3rem;font-weight:700;margin-bottom:.2rem}
+.greek-info p{font-size:.84rem;color:var(--muted)}
+
+/* ── HEADINGS ── */
+.sh-t{font-size:1.18rem;font-weight:700;color:var(--theta);margin:2.5rem 0 1rem;display:flex;align-items:center;gap:.7rem}
+.sh-t::before{content:'Θ';font-family:var(--mono);font-size:.85rem;opacity:.6}
+.sh-v{font-size:1.18rem;font-weight:700;color:var(--vega);margin:2.5rem 0 1rem;display:flex;align-items:center;gap:.7rem}
+.sh-v::before{content:'ν';font-family:var(--mono);font-size:.85rem;opacity:.6}
+.sh2-t{font-size:.93rem;font-weight:700;color:var(--theta2);margin:1.8rem 0 .8rem;padding-left:1rem;border-left:3px solid var(--theta2)}
+.sh2-v{font-size:.93rem;font-weight:700;color:var(--vega);margin:1.8rem 0 .8rem;padding-left:1rem;border-left:3px solid var(--vega)}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.35rem 1.55rem;margin-bottom:1.2rem;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--theta),transparent)}
+.card.v::before{background:linear-gradient(90deg,var(--vega),transparent)}
+.card.g::before{background:linear-gradient(90deg,var(--gamma),transparent)}
+.card.r::before{background:linear-gradient(90deg,var(--red),transparent)}
+.card.green::before{background:linear-gradient(90deg,var(--green),transparent)}
+.card.p::before{background:linear-gradient(90deg,var(--pink),transparent)}
+
+/* ── FORMULA ── */
+.fx{background:#030508;border:1px solid var(--theta);border-radius:8px;padding:1rem 1.5rem;margin:1rem 0;text-align:center;font-size:1.1rem;overflow-x:auto}
+.fx.v{border-color:var(--vega);background:#060408}
+.fx.g{border-color:var(--gamma)}
+.fx.r{border-color:var(--red)}
+.fx.multi{text-align:left;font-size:.96rem}
+.flabel{font-family:var(--mono);font-size:.64rem;color:var(--theta);letter-spacing:.13em;text-transform:uppercase;margin-bottom:.5rem}
+.flabel.v{color:var(--vega)}.flabel.g{color:var(--gamma)}.flabel.r{color:var(--red)}.flabel.green{color:var(--green)}
+
+/* ── ALERTS ── */
+.alert{border-radius:8px;padding:.88rem 1.2rem;margin:.85rem 0;display:flex;gap:.8rem;align-items:flex-start;font-size:.87rem}
+.alert .ico{font-size:1.05rem;flex-shrink:0;margin-top:.05rem}
+.alert.tip{background:rgba(56,189,248,.06);border:1px solid rgba(56,189,248,.25);color:#bae6fd}
+.alert.tipv{background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.25);color:#ddd6fe}
+.alert.warn{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.25);color:#fde68a}
+.alert.key{background:rgba(52,211,153,.06);border:1px solid rgba(52,211,153,.25);color:#99f6e4}
+.alert.trap{background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.25);color:#fca5a5}
+.alert.pro{background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.25);color:#99f6e4}
+.alert.desk{background:rgba(244,114,182,.06);border:1px solid rgba(244,114,182,.25);color:#f9a8d4}
+
+/* ── GRID ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:1rem 0}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin:1rem 0}
+@media(max-width:740px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+
+/* ── KPI ── */
+.kpi{background:#030508;border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem;transition:border-color .2s}
+.kpi:hover{border-color:var(--theta)}
+.kpi .lbl{font-family:var(--mono);font-size:.63rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.kpi .val{font-family:var(--mono);font-size:1rem;font-weight:700}
+.kpi .sub{font-size:.76rem;color:var(--muted);margin-top:.2rem}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.87rem}
+th{background:#030508;color:var(--theta);font-family:var(--mono);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;padding:.7rem 1rem;border-bottom:2px solid var(--theta);text-align:left}
+th.v{color:var(--vega);border-bottom-color:var(--vega)}
+th.g{color:var(--gamma);border-bottom-color:var(--gamma)}
+td{padding:.65rem 1rem;border-bottom:1px solid var(--border);vertical-align:top;font-size:.86rem}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(56,189,248,.02)}
+.up{color:var(--green);font-weight:600}.dn{color:var(--red);font-weight:600}
+
+/* ── CHARTS ── */
+.chart-wrap{background:#030508;border:1px solid var(--border);border-radius:10px;padding:1rem;margin:1rem 0}
+.chart-controls{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:.8rem;align-items:center}
+.chart-controls label{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.chart-controls input[type=range]{accent-color:var(--theta);width:100px}
+.chart-controls input[type=range].vslider{accent-color:var(--vega)}
+.chart-controls select,.chart-controls input[type=number]{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.74rem;padding:.25rem .5rem;border-radius:5px}
+.cval{font-family:var(--mono);font-size:.77rem;color:var(--theta);font-weight:700;min-width:2.8rem}
+.cval.v{color:var(--vega)}.cval.g{color:var(--gamma)}.cval.r{color:var(--red)}
+canvas{display:block;width:100%;border-radius:6px}
+
+/* ── PDE VISUAL ── */
+.pde-eq{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.7rem;padding:1.3rem;background:#030508;border-radius:8px;border:1px solid var(--border);margin:1rem 0}
+.pde-term{text-align:center;padding:.6rem .9rem;border-radius:7px;font-family:var(--mono);font-size:.88rem}
+.pde-theta{background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:#bae6fd}
+.pde-gamma{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);color:#fde68a}
+.pde-delta{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.3);color:#86efac}
+.pde-op{font-size:1.3rem;color:var(--muted)}
+
+/* ── VEGA MATRIX ── */
+.vega-matrix{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin:1rem 0;font-family:var(--mono);font-size:.72rem}
+.vm-header{background:#0d1020;color:var(--muted);text-align:center;padding:.4rem .3rem;border-radius:4px;letter-spacing:.05em;font-size:.65rem}
+.vm-cell{border-radius:4px;padding:.5rem .3rem;text-align:center;font-weight:700;cursor:pointer;transition:transform .15s}
+.vm-cell:hover{transform:scale(1.05)}
+
+/* ── COLLAPSIBLE ── */
+details{background:var(--card);border:1px solid var(--border);border-radius:8px;margin:.7rem 0;overflow:hidden}
+details[open]{border-color:var(--theta)}
+details.v[open]{border-color:var(--vega)}
+summary{padding:.85rem 1.3rem;cursor:pointer;font-weight:600;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;list-style:none;color:var(--text)}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'＋';font-family:var(--mono);color:var(--theta)}
+details.v summary::after{color:var(--vega)}
+details[open] summary::after{content:'－'}
+.dbody{padding:.3rem 1.3rem 1.3rem;font-size:.89rem;color:var(--muted)}
+
+code{font-family:var(--mono);font-size:.82em;color:var(--theta2);background:rgba(56,189,248,.1);padding:.1em .4em;border-radius:4px}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--border);font-family:var(--mono);font-size:.7rem;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+</style>
+</head>
+<body>
+<div class="topbar">
+<div class="tag">S&amp;T PREP</div>
+<div class="crumb"><a href="index.html">Derivatives</a> &nbsp;/&nbsp; <span>04 — The Greeks · Part IV: Theta</span></div>
+<div class="topbar-right">
+<span class="theta-badge">Θ = ∂V/∂t</span>
+</div>
+</div>
+<div class="wrapper">
+<div class="hero">
+<div class="hero-bg">Θ</div>
+<div class="sub">THE GREEKS — PART 4 OF 7</div>
+<h1>Theta &amp; Time Decay</h1>
+<p>Time decay as "rent for Gamma." The certain daily loss on a long option position, the Gamma-Theta PDE relationship, and everything you need to know for interviews about theta and interest rate financing.</p>
+<div class="meta"><span class="pill t">Theta — Time Decay</span><span class="pill">Option Greeks</span><span class="pill c">Part 4 / 7</span></div>
+</div>
+<div class="nav-tabs"><div class="nav-tab active-t" onclick="switchTab('tintro',this,'t')">Θ Introduction</div><div class="nav-tab" onclick="switchTab('tfeatures',this,'t')">Θ Features</div><div class="nav-tab" onclick="switchTab('tmoneyness',this,'t')">Θ vs Moneyness</div><div class="nav-tab" onclick="switchTab('tvol',this,'t')">Θ vs Vol &amp; PDE</div></div>
+<!-- ════════════════════ THETA TABS ════════════════════════════════════ -->
+<!-- TAB 1: THETA INTRO -->
+<div class="tab-content active" id="tab-tintro">
+<div class="greek-divider theta-div">
+<div class="greek-symbol" style="color:var(--theta)">Θ</div>
+<div class="greek-info">
+<h2 style="color:var(--theta)">Theta — Time Decay</h2>
+<p>The "rent" you pay to own Gamma. The certain daily loss on a long option position from the passage of time alone.</p>
+</div>
+</div>
+<div class="sh-t">The Gamma-Theta Symbiosis — No Free Lunch</div>
+<div class="card">
+<p>In the Black-Scholes world, Gamma and Theta are the two sides of the same coin. You <em>cannot</em> have one without paying for the other:</p>
+<div class="grid2" style="margin-top:1rem">
+<div class="card green" style="margin:0">
+<div class="flabel green">Long Gamma (Γ &gt; 0)</div>
+<p style="font-size:.87rem;color:var(--muted)">You profit from realised volatility. Buy the dips, sell the rallies. Every move generates ½Γ(dS)² of P&amp;L. The "paycheck."</p>
+</div>
+<div class="card r" style="margin:0">
+<div class="flabel r">Negative Theta (Θ &lt; 0)</div>
+<p style="font-size:.87rem;color:var(--muted)">The "rent" you pay for that Gamma. Every day that passes, the option loses time value — even if spot doesn't move. The certain, daily cost.</p>
+</div>
+</div>
+<div class="alert tip">
+<span class="ico">🎯</span>
+<span><strong>Classic interview answer — "How do you make money if you're long Gamma but the market is flat?"</strong><br/>You don't. You <em>bleed</em> Theta every day. Being long Gamma is a bet that realised vol will be high enough to offset the daily time decay. A flat market means you lose the rent without collecting the paycheck.</span>
+</div>
+</div>
+<div class="sh2-t">The Black-Scholes Theta Decomposition</div>
+<div class="card">
+<p style="margin-bottom:.8rem">Theta splits into two economically distinct components:</p>
+<div class="fx multi" style="font-size:.95rem">
+      \[ \Theta_{\text{call}} = \underbrace{-\frac{S\,\sigma\,N'(d_1)}{2\sqrt{T}}}_{\text{Pure Time Decay}} \underbrace{- r\,K\,e^{-rT}\,N(d_2)}_{\text{Carry Effect (call)}} \]
+    </div>
+<div class="grid2" style="margin-top:1rem">
+<div class="kpi">
+<div class="lbl">Term 1 — Pure Decay (Diffusion)</div>
+<div class="val" style="color:var(--theta);font-size:.88rem">−Sσ·N'(d₁) / 2√T</div>
+<div class="sub">Always negative. Driven by N'(d₁) — peaks ATM. This is the erosion of pure optionality. The Theta-Gamma relationship: Θ ≈ −½σ²S²Γ</div>
+</div>
+<div class="kpi">
+<div class="lbl">Term 2 — Carry Effect</div>
+<div class="val" style="color:var(--gamma);font-size:.88rem">±rKe^(−rT)·N(±d₂)</div>
+<div class="sub">Call: negative (PV of strike payment increases). Put: can be <span style="color:var(--green)">positive</span> for deep ITM — you're waiting to receive K, and time makes that receipt closer in PV terms.</div>
+</div>
+</div>
+</div>
+<div class="sh2-t">The Bleed Equation — Linking Θ and Γ</div>
+<div class="card">
+<div class="fx" style="font-size:1.1rem">
+      \[ \Theta \approx -\frac{1}{2}\,\sigma^2\,S^2\,\Gamma \]
+    </div>
+<p style="margin:.7rem 0;font-size:.87rem">For a delta-neutral portfolio with zero interest rates. This is the core relationship: Theta and Gamma are <strong>proportional</strong>. High Gamma = high Theta. You always pay for convexity.</p>
+<div class="grid3" style="margin-top:1rem">
+<div class="kpi"><div class="lbl">High σ effect</div><div class="val" style="color:var(--theta)">↑|Θ| and ↓Γ</div><div class="sub">σ² dominates in the equation — higher vol → more Theta despite lower Gamma</div></div>
+<div class="kpi"><div class="lbl">High Γ effect</div><div class="val" style="color:var(--gamma)">↑|Θ| directly</div><div class="sub">More convexity = more daily rent. They scale together.</div></div>
+<div class="kpi"><div class="lbl">Break-even condition</div><div class="val" style="color:var(--green)">RV = IV</div><div class="sub">Daily Gamma P&amp;L = Daily Theta cost only when realised vol equals implied vol</div></div>
+</div>
+</div>
+<!-- Interactive Theta calculator -->
+<div class="sh2-t">Theta Calculator</div>
+<div class="chart-wrap">
+<div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
+<div><label>S₀</label><br/><input id="tc-s" oninput="calcTheta()" style="width:70px" type="number" value="100"/></div>
+<div><label>K</label><br/><input id="tc-k" oninput="calcTheta()" style="width:70px" type="number" value="100"/></div>
+<div><label>σ (%)</label><br/><input id="tc-sig" oninput="calcTheta()" style="width:60px" type="number" value="20"/></div>
+<div><label>r (%)</label><br/><input id="tc-r" oninput="calcTheta()" style="width:55px" type="number" value="4"/></div>
+<div><label>T (years)</label><br/><input id="tc-t" oninput="calcTheta()" step="0.1" style="width:70px" type="number" value="0.5"/></div>
+</div>
+<div id="tc-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:.8rem;margin:.8rem 0"></div>
+</div>
+<div class="sh2-t">Summary Table</div>
+<div class="card">
+<table>
+<thead><tr><th>Factor</th><th>Impact on |Θ|</th><th>Reason</th></tr></thead>
+<tbody>
+<tr><td><strong>Moneyness</strong></td><td class="dn">Highest at ATM</td><td>Maximum uncertainty → maximum optionality to decay</td></tr>
+<tr><td><strong>Volatility (σ↑)</strong></td><td class="dn">Increases |Θ|</td><td>Higher option price → more value to lose per day (σ² dominates)</td></tr>
+<tr><td><strong>Time near expiry</strong></td><td class="dn">↑↑ for ATM</td><td>"Theta cliff" — time value must evaporate rapidly at the end</td></tr>
+<tr><td><strong>Deep ITM/OTM</strong></td><td class="up">Decreases |Θ|</td><td>Outcome certain → no optionality left to decay</td></tr>
+</tbody>
+</table>
+</div>
+</div><!-- /tintro -->
+<!-- TAB 2: THETA FEATURES -->
+<div class="tab-content" id="tab-tfeatures">
+<div class="sh-t">Non-Linearity — The Theta Cliff</div>
+<div class="card">
+<p style="margin-bottom:.8rem">Time decay is <strong>not linear</strong>. The rate of decay accelerates as expiry approaches — driven by the 1/√T term in the formula:</p>
+<div class="fx">\[\Theta \propto -\frac{1}{\sqrt{T}} \implies \text{as } T \to 0,\; |\Theta| \to \infty\]</div>
+<div class="grid2" style="margin-top:1rem">
+<div class="kpi">
+<div class="lbl">Early in life (T large)</div>
+<div class="val" style="color:var(--green)">Small daily decay</div>
+<div class="sub">One day lost is a tiny fraction of total remaining optionality. The stock still has time to move ITM.</div>
+</div>
+<div class="kpi">
+<div class="lbl">Near expiry (T small)</div>
+<div class="val" style="color:var(--red)">Accelerating decay</div>
+<div class="sub">Every hour represents a massive chunk of remaining uncertainty. ATM options enter "Theta cliff" mode.</div>
+</div>
+</div>
+</div>
+<!-- Theta vs Time multi-line chart -->
+<div class="sh2-t">Theta vs Time — The Cliff Effect</div>
+<div class="chart-wrap">
+<div class="chart-controls">
+<label>K =</label>
+<input id="tt-k" max="120" min="80" oninput="drawThetaTime()" type="range" value="100"/>
+<span class="cval" id="tt-k-v">100</span>
+<label style="margin-left:.8rem">σ (%) =</label>
+<input id="tt-sig" max="60" min="5" oninput="drawThetaTime()" type="range" value="20"/>
+<span class="cval" id="tt-sig-v">20%</span>
+<label style="margin-left:.8rem">r (%) =</label>
+<input id="tt-r" max="10" min="0" oninput="drawThetaTime()" type="range" value="4"/>
+<span class="cval" id="tt-r-v">4%</span>
+</div>
+<canvas height="280" id="thetaTimeCanvas"></canvas>
+</div>
+<div class="sh2-t">Path Dependency — "We Only Know Theta Today"</div>
+<div class="card">
+<p style="margin-bottom:.8rem">A critical interview insight: while we know the option will have zero time value at T=0, the <em>path</em> of decay depends entirely on where spot goes:</p>
+<div class="grid3">
+<div class="kpi">
+<div class="lbl">If option stays ATM</div>
+<div class="val" style="color:var(--red);font-size:.88rem">Theta cliff</div>
+<div class="sub">Decay accelerates to the very last second. Most painful scenario for a long option holder.</div>
+</div>
+<div class="kpi">
+<div class="lbl">If option moves ITM</div>
+<div class="val" style="color:var(--green);font-size:.88rem">Decay slows</div>
+<div class="sub">Behaves more like a forward. Less "optionality" left to decay. Theta burden eases.</div>
+</div>
+<div class="kpi">
+<div class="lbl">If option moves OTM</div>
+<div class="val" style="color:var(--gamma);font-size:.88rem">Decay slows</div>
+<div class="sub">Converging to zero — but the option is also nearly worthless. Theta becomes irrelevant.</div>
+</div>
+</div>
+<div class="alert warn">
+<span class="ico">⚠️</span>
+<span><strong>The trap:</strong> You cannot simply divide the total premium by the number of days to get your daily Theta cost. The actual daily cost depends on moneyness at each future point — which is path-dependent and unknowable today.</span>
+</div>
+</div>
+<div class="sh2-t">Interview-Ready Feature Table</div>
+<div class="card">
+<table>
+<thead><tr><th>Feature</th><th>Why it matters for a trader</th></tr></thead>
+<tbody>
+<tr><td><strong>Non-linearity (1/√T)</strong></td><td>Can't amortise premium linearly. Daily cost is smallest early in life and explodes near expiry.</td></tr>
+<tr><td><strong>Moneyness dependency</strong></td><td>ATM options have "exponential" decay near expiry; ITM/OTM options have "linear-ish" decay as the outcome becomes certain.</td></tr>
+<tr><td><strong>Path dependency</strong></td><td>Theta today is knowable; Theta tomorrow depends on where spot is. You can't budget daily costs.</td></tr>
+<tr><td><strong>Pin Risk at expiry</strong></td><td>As T→0, Theta and Gamma for ATM options both → ∞. The "danger zone" where small moves cause massive P&amp;L swings.</td></tr>
+</tbody>
+</table>
+<div class="alert pro">
+<span class="ico">💡</span>
+<span><strong>Pro tip — "Why would you ever buy a near-expiry ATM option with massive Theta decay?"</strong> Because you're betting on Gamma. If the stock realises vol in those final hours that exceeds the implied vol you paid, the Gamma P&amp;L overwhelms the Theta cost. Near-expiry long-Gamma bets are pure vol plays on imminent events.</span>
+</div>
+</div>
+</div><!-- /tfeatures -->
+<!-- TAB 3: THETA vs MONEYNESS -->
+<div class="tab-content" id="tab-tmoneyness">
+<div class="sh-t">Theta vs Moneyness — The Inverse Bell Curve</div>
+<div class="card">
+<p>When r = q = 0, Theta is a symmetric <strong>inverse bell curve</strong> — peaked (most negative) at ATM, approaching zero at deep ITM and OTM. When rates or dividends are non-zero, the carry effect distorts the tails.</p>
+</div>
+<div class="chart-wrap">
+<div class="chart-controls">
+<label>K =</label>
+<input id="tm-k" max="120" min="80" oninput="drawThetaMoneyness()" type="range" value="100"/>
+<span class="cval" id="tm-k-v">100</span>
+<label style="margin-left:.8rem">σ (%) =</label>
+<input id="tm-sig" max="60" min="5" oninput="drawThetaMoneyness()" type="range" value="20"/>
+<span class="cval" id="tm-sig-v">20%</span>
+<label style="margin-left:.8rem">T (years) =</label>
+<input id="tm-t" max="2" min="0.05" oninput="drawThetaMoneyness()" step="0.05" type="range" value="0.25"/>
+<span class="cval" id="tm-t-v">0.25</span>
+<label style="margin-left:.8rem">r (%) =</label>
+<input id="tm-r" max="10" min="0" oninput="drawThetaMoneyness()" type="range" value="4"/>
+<span class="cval" id="tm-r-v">4%</span>
+</div>
+<canvas height="270" id="thetaMoneynessCanvas"></canvas>
+<div id="tm-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
+</div>
+<div class="sh2-t">The Carry Effect — When Theta Goes Positive</div>
+<div class="grid2">
+<details open="" style="margin:0">
+<summary>High r — Deep ITM Put gets Positive Theta</summary>
+<div class="dbody">
+<p>A deep ITM put gives you the right to receive K. As time passes, the present value of that future receipt increases — this is a <em>benefit</em> that can outweigh the pure optionality decay.</p>
+<div class="alert tip"><span class="ico">💡</span><span><strong>Result:</strong> Deep ITM European Puts can have Θ &gt; 0. You make money just by sitting still — time is on your side because you're effectively holding a bond that matures sooner each day.</span></div>
+<div class="alert trap"><span class="ico">🚩</span><span><strong>Early exercise trigger:</strong> Positive Theta ↔ Negative Time Value ↔ Option below intrinsic. For American puts: exercise immediately and earn r on the cash received.</span></div>
+</div>
+</details>
+<details style="margin:0">
+<summary>High q — Deep ITM Call gets Positive Theta</summary>
+<div class="dbody">
+<p>Dividends cause the forward price Se^{-qT} to be below spot. As T→0, the forward converges upward to spot. For deep ITM calls, this "convergence effect" — capturing the dividend discount — can create positive Theta.</p>
+<div class="alert tip"><span class="ico">💡</span><span>You are capturing the "recovery" of the price drop that was priced into the forward. Conversely, high q makes deep ITM Put Theta <em>more negative</em> (the dividend hurts the put's forward component).</span></div>
+</div>
+</details>
+</div>
+<div class="sh2-t">Summary — Theta Sign by Scenario</div>
+<div class="card">
+<table>
+<thead><tr><th>Scenario</th><th>Deep ITM Call Θ</th><th>Deep ITM Put Θ</th><th>Driver</th></tr></thead>
+<tbody>
+<tr><td>r=0, q=0</td><td>≈ 0 (Negative)</td><td>≈ 0 (Negative)</td><td>Pure optionality decay only</td></tr>
+<tr><td>High r (e.g. 5%+)</td><td class="dn">More Negative</td><td class="up">Can be Positive ✓</td><td>Carry: PV of strike K increases</td></tr>
+<tr><td>High q (dividends)</td><td class="up">Can be Positive ✓</td><td class="dn">More Negative</td><td>Forward convergence: Se^{-qT} → S</td></tr>
+</tbody>
+</table>
+<div class="alert warn">
+<span class="ico">🎯</span>
+<span><strong>Interview question:</strong> "I'm long a deep ITM Put and Theta is positive. What does that tell me about Time Value?"<br/><strong>Answer:</strong> Time Value is negative (Price &lt; Intrinsic Value). For an American option, I should exercise immediately to capture the intrinsic value and invest the proceeds at the risk-free rate.</span>
+</div>
+</div>
+</div><!-- /tmoneyness -->
+<!-- TAB 4: THETA vs VOL & PDE -->
+<div class="tab-content" id="tab-tvol">
+<div class="sh-t">Theta &amp; Volatility — "Rent" vs Opportunity</div>
+<div class="card">
+<div class="fx" style="font-size:1.1rem">
+      \[\Theta \approx -\frac{1}{2}\sigma^2 S^2 \Gamma \implies \text{Higher } \sigma \implies \text{Higher } |\Theta|\]
+    </div>
+<p style="margin:.8rem 0;font-size:.88rem">Higher vol means a more expensive option. Since that option must reach zero time value by maturity, the daily decay (|Θ|) must be larger. The paradox: higher vol also means lower ATM Gamma — but σ² dominates in the equation above.</p>
+</div>
+<div class="chart-wrap">
+<div class="chart-controls">
+<label>K =</label>
+<input id="tv-k" max="120" min="80" oninput="drawThetaVol()" type="range" value="100"/>
+<span class="cval" id="tv-k-v">100</span>
+<label style="margin-left:.8rem">T (years) =</label>
+<input id="tv-t" max="2" min="0.05" oninput="drawThetaVol()" step="0.05" type="range" value="0.5"/>
+<span class="cval" id="tv-t-v">0.5</span>
+<label style="margin-left:.8rem">r (%) =</label>
+<input id="tv-r" max="8" min="0" oninput="drawThetaVol()" type="range" value="4"/>
+<span class="cval" id="tv-r-v">4%</span>
+</div>
+<canvas height="280" id="thetaVolCanvas"></canvas>
+</div>
+<div class="grid2" style="margin-top:1rem">
+<div class="card">
+<div class="flabel">Low Vol — Sharp Needle</div>
+<p style="font-size:.87rem;color:var(--muted)">Theta is nearly zero unless you're exactly at the strike. Decay is highly concentrated. The "uncertainty" is narrow — only the tiny zone around K bleeds meaningfully.</p>
+</div>
+<div class="card r">
+<div class="flabel r">High Vol — Wide, Deep Bowl</div>
+<p style="font-size:.87rem;color:var(--muted)">Theta is larger (deeper) and wider. You don't have to be precisely ATM to experience heavy decay. Even significantly OTM/ITM options bleed because the high vol keeps uncertainty — and thus time value — alive across a wide spot range.</p>
+</div>
+</div>
+<div class="sh-t">The Black-Scholes PDE — The Balancing Act</div>
+<div class="card">
+<p style="margin-bottom:.8rem">The BS PDE is not just a pricing formula — it's a <strong>break-even condition</strong>:</p>
+<div class="pde-eq">
+<div class="pde-term pde-theta">
+<div style="font-size:.65rem;color:#7dd3fc;margin-bottom:.2rem">TIME DECAY</div>
+        \(\Theta\)
+      </div>
+<div class="pde-op">+</div>
+<div class="pde-term pde-gamma">
+<div style="font-size:.65rem;color:#fde68a;margin-bottom:.2rem">CONVEXITY GAIN</div>
+        \(\tfrac{1}{2}\sigma^2 S^2\Gamma\)
+      </div>
+<div class="pde-op">+</div>
+<div class="pde-term pde-delta">
+<div style="font-size:.65rem;color:#86efac;margin-bottom:.2rem">FINANCING</div>
+        \(rS\Delta\)
+      </div>
+<div class="pde-op">=</div>
+<div class="pde-term" style="background:rgba(255,255,255,.04);border:1px solid var(--border)">
+<div style="font-size:.65rem;color:var(--muted);margin-bottom:.2rem">RISK-FREE RETURN</div>
+        \(rV\)
+      </div>
+</div>
+<div class="fx multi" style="margin-top:.5rem;font-size:.93rem">
+      \[\frac{\partial V}{\partial t} + \frac{1}{2}\sigma^2 S^2 \frac{\partial^2 V}{\partial S^2} + rS\frac{\partial V}{\partial S} - rV = 0\]
+    </div>
+<table style="margin-top:1rem">
+<thead><tr><th>Component</th><th>Greek</th><th>P&amp;L interpretation</th></tr></thead>
+<tbody>
+<tr><td>\(\partial V/\partial t\)</td><td style="color:var(--theta)">Theta (Θ)</td><td>The "Rent" — daily time cost</td></tr>
+<tr><td>\(\partial^2 V/\partial S^2\)</td><td style="color:var(--gamma)">Gamma (Γ)</td><td>The "Paycheck" — convexity profit from moves</td></tr>
+<tr><td>\(\partial V/\partial S\)</td><td style="color:var(--green)">Delta (Δ)</td><td>Hedged out — financing cost of the hedge</td></tr>
+<tr><td>Equality</td><td>No-Arbitrage</td><td>Break-even: if stock moves "normally," gains = costs</td></tr>
+</tbody>
+</table>
+<div class="alert pro">
+<span class="ico">🧠</span>
+<span><strong>Interview pro tip:</strong> When asked "What is the Black-Scholes equation?", don't recite the call pricing formula. Give them the PDE. Explain it as a break-even condition: the time decay of an option plus its convexity gain from the "typical" σ√dt move must equal the risk-free return of the delta-hedged portfolio. <strong>This is the answer that separates interns from analysts.</strong></span>
+</div>
+</div>
+<div class="sh2-t">Sampling Realised Vol — The Core of Delta-Hedging P&amp;L</div>
+<div class="card">
+<div class="fx" style="font-size:1.1rem">
+      \[\text{Daily P\&amp;L} \approx \frac{1}{2}S^2\Gamma\left(\sigma_R^2 - \sigma_{IV}^2\right)dt\]
+    </div>
+<div class="grid3" style="margin-top:1rem">
+<div class="kpi"><div class="lbl">σ_R &gt; σ_IV</div><div class="val" style="color:var(--green)">Profit</div><div class="sub">Stock moved more than priced. Gamma scalping exceeded Theta bleed.</div></div>
+<div class="kpi"><div class="lbl">σ_R = σ_IV</div><div class="val" style="color:var(--gamma)">Break-even</div><div class="sub">The BS assumption holds exactly. Zero edge.</div></div>
+<div class="kpi"><div class="lbl">σ_R &lt; σ_IV</div><div class="val" style="color:var(--red)">Loss</div><div class="sub">You overpaid for vol. Theta bled you more than Gamma earned.</div></div>
+</div>
+<div class="alert warn">
+<span class="ico">⚡</span>
+<span><strong>Stress test Q: "Long Gamma, market gaps +10% overnight. Good or bad?"</strong><br/>Excellent. A gap = massive realised vol in one move. Your Gamma P&amp;L (½Γ·gap²) will dwarf the single night of Theta. Gaps are the long-Gamma trader's best friend.<br/><br/><strong>Stress test Q: "Long option, flat spot, IV drops 5%. What happens?"</strong><br/>You lose on both fronts simultaneously: Theta bleeds your time value AND the Vega drop reduces your mark-to-market. Double punishment.</span>
+</div>
+</div>
+</div><!-- /tvol -->
+<!-- ════════════════════ VEGA TABS ════════════════════════════════════ -->
+<!-- TAB 5: VEGA INTRO -->
+<!-- /vintro -->
+<!-- TAB 6: VEGA RISK -->
+<!-- /vrisk -->
+<!-- TAB 7: VEGA UNDER BS -->
+<!-- /vbs -->
+<!-- TAB 8: VEGA SENSITIVITIES -->
+<!-- /vsens -->
+<div class="footer">
+<span>The Greeks Pt.4 — Theta · S&amp;T Interview Guide · Quantitative Finance · 2025-2026</span>
+<span>Θ = ∂V/∂t · Theta Cliff · Vol &amp; PDE · Module 04</span>
+</div>
+</div><!-- /wrapper -->
+<script>
+/* ─── TABS ─────────────────────────────────────────────────────────── */
+function switchTab(id,el,type){
+  document.querySelectorAll('.nav-tab').forEach(t=>{t.classList.remove('active-t');t.classList.remove('active-v')});
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active-'+type);
+  document.getElementById('tab-'+id).classList.add('active');
+  setTimeout(()=>{
+    const fns={tintro:calcTheta,tfeatures:drawThetaTime,tmoneyness:drawThetaMoneyness,tvol:()=>{drawThetaVol();},
+      vintro:calcVega,vrisk:buildVegaMatrix,vbs:()=>{calcVega();drawVegaGammaComp();},vsens:()=>{drawVegaSens();drawVegaTime();}};
+    if(fns[id]) fns[id]();
+  },40);
+}
+
+/* ─── MATH ──────────────────────────────────────────────────────────── */
+function erf(x){const t=1/(1+.3275911*Math.abs(x));const p=t*(.254829592+t*(-.284496736+t*(1.421413741+t*(-1.453152027+t*1.061405429))));const s=1-p*Math.exp(-x*x);return x>=0?s:-s}
+function normcdf(x){return 0.5*(1+erf(x/Math.SQRT2))}
+function normpdf(x){return Math.exp(-.5*x*x)/Math.sqrt(2*Math.PI)}
+function d1(S,K,r,sig,T){return(Math.log(S/K)+(r+.5*sig*sig)*T)/(sig*Math.sqrt(T))}
+function d2(S,K,r,sig,T){return d1(S,K,r,sig,T)-sig*Math.sqrt(T)}
+function bsTheta(S,K,r,sig,T,isCall=true){
+  if(T<=0||sig<=0) return 0;
+  const dd1=d1(S,K,r,sig,T),dd2=dd1-sig*Math.sqrt(T);
+  const term1=-S*normpdf(dd1)*sig/(2*Math.sqrt(T));
+  const term2=isCall?(-r*K*Math.exp(-r*T)*normcdf(dd2)):(r*K*Math.exp(-r*T)*normcdf(-dd2));
+  return term1+term2;
+}
+function bsVega(S,K,r,sig,T){
+  if(T<=0||sig<=0) return 0;
+  const dd1=d1(S,K,r,sig,T);
+  return S*Math.sqrt(T)*normpdf(dd1)/100; // per 1% vol move
+}
+function bsGamma(S,K,r,sig,T){
+  if(T<=0||sig<=0) return 0;
+  const dd1=d1(S,K,r,sig,T);
+  return normpdf(dd1)/(S*sig*Math.sqrt(T));
+}
+function bsCall(S,K,r,sig,T){
+  if(T<=0||sig<=0) return Math.max(S-K,0);
+  const dd1=d1(S,K,r,sig,T),dd2=dd1-sig*Math.sqrt(T);
+  return S*normcdf(dd1)-K*Math.exp(-r*T)*normcdf(dd2);
+}
+
+/* ─── CANVAS SETUP ──────────────────────────────────────────────────── */
+function setupCanvas(id,H){
+  const c=document.getElementById(id);if(!c)return null;
+  const dpr=window.devicePixelRatio||1,W=c.parentElement.clientWidth-32;
+  c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';
+  const ctx=c.getContext('2d');ctx.scale(dpr,dpr);return{ctx,W,H};
+}
+function drawAxes(ctx,pad,W,H,xMin,xMax,yMin,yMax,xLbl,yLbl,txX,txY,xFmt,yFmt){
+  ctx.fillStyle='#030508';ctx.fillRect(0,0,W,H);
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+  const toX=x=>pad.l+(x-xMin)/(xMax-xMin)*cw;
+  const toY=y=>pad.t+(1-(y-yMin)/(yMax-yMin))*ch;
+  ctx.strokeStyle='#0d1020';ctx.lineWidth=1;
+  (txY||[]).forEach(y=>{ctx.beginPath();ctx.moveTo(pad.l,toY(y));ctx.lineTo(pad.l+cw,toY(y));ctx.stroke()});
+  (txX||[]).forEach(x=>{ctx.beginPath();ctx.moveTo(toX(x),pad.t);ctx.lineTo(toX(x),pad.t+ch);ctx.stroke()});
+  if(yMin<0&&yMax>0){ctx.strokeStyle='#1a2050';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(pad.l,toY(0));ctx.lineTo(pad.l+cw,toY(0));ctx.stroke();ctx.setLineDash([])}
+  ctx.strokeStyle='#1a2050';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ch);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t+ch);ctx.lineTo(pad.l+cw,pad.t+ch);ctx.stroke();
+  ctx.fillStyle='#4a5575';ctx.font='11px Fira Code,monospace';
+  ctx.textAlign='right';(txY||[]).forEach(y=>ctx.fillText(yFmt?yFmt(y):y.toFixed(2),pad.l-5,toY(y)+4));
+  ctx.textAlign='center';(txX||[]).forEach(x=>ctx.fillText(xFmt?xFmt(x):x.toFixed(0),toX(x),pad.t+ch+16));
+  if(xLbl){ctx.fillText(xLbl,pad.l+cw/2,H-4)}
+  if(yLbl){ctx.save();ctx.translate(12,pad.t+ch/2);ctx.rotate(-Math.PI/2);ctx.fillText(yLbl,0,0);ctx.restore()}
+  return{toX,toY,cw,ch};
+}
+
+/* ─── THETA CALCULATOR ──────────────────────────────────────────────── */
+function calcTheta(){
+  const S=parseFloat(document.getElementById('tc-s').value)||100;
+  const K=parseFloat(document.getElementById('tc-k').value)||100;
+  const sig=parseFloat(document.getElementById('tc-sig').value)/100||.2;
+  const r=parseFloat(document.getElementById('tc-r').value)/100||.04;
+  const T=parseFloat(document.getElementById('tc-t').value)||.5;
+  if(T<=0||sig<=0) return;
+  const thC=bsTheta(S,K,r,sig,T,true),thP=bsTheta(S,K,r,sig,T,false);
+  const gma=bsGamma(S,K,r,sig,T);
+  const approxTheta=-.5*sig*sig*S*S*gma;
+  const C=bsCall(S,K,r,sig,T);
+  document.getElementById('tc-results').innerHTML=`
+    <div class="kpi"><div class="lbl">Theta_call (annual)</div><div class="val" style="color:var(--theta)">${thC.toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl">Theta_call (daily)</div><div class="val" style="color:var(--theta)">${(thC/365).toFixed(5)}</div><div class="sub">Value lost per calendar day</div></div>
+    <div class="kpi"><div class="lbl">Theta_put (annual)</div><div class="val" style="color:var(--red)">${thP.toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl">Approx −½σ²S²Γ</div><div class="val" style="color:var(--gamma)">${approxTheta.toFixed(5)}</div><div class="sub">Cross-check via PDE</div></div>
+    <div class="kpi"><div class="lbl">Gamma Γ</div><div class="val" style="color:var(--gamma)">${gma.toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl">|Θ|/Γ ratio</div><div class="val">${(Math.abs(thC)/gma).toFixed(3)}</div><div class="sub">Breakeven daily move needed</div></div>
+  `;
+}
+
+/* ─── THETA vs TIME ─────────────────────────────────────────────────── */
+function drawThetaTime(){
+  const K=parseFloat(document.getElementById('tt-k').value)||100;
+  const sig=parseFloat(document.getElementById('tt-sig').value)/100||.2;
+  const r=parseFloat(document.getElementById('tt-r').value)/100||.04;
+  document.getElementById('tt-k-v').textContent=K;
+  document.getElementById('tt-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  document.getElementById('tt-r-v').textContent=(r*100).toFixed(0)+'%';
+  const Srange=Array.from({length:300},(_,i)=>50+i*100/300);
+  const mats=[[1/252,'1D','#f87171'],[7/252,'1W','#fb923c'],[1/12,'1M','#fbbf24'],[3/12,'3M','#4ade80'],[0.5,'6M','#38bdf8'],[1,'1Y','#818cf8'],[3,'3Y','#f472b6']];
+  const allT=mats.flatMap(([T])=>Srange.map(S=>bsTheta(S,K,r,sig,T,true)));
+  const yMin=Math.max(Math.min(...allT)*1.1,-.5),yMax=0.01;
+  const rk=setupCanvas('thetaTimeCanvas',280);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const pad={l:60,r:85,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,50,150,yMin,yMax,'Spot S','Theta (annual)',
+    [60,75,100,125,140],[yMin,yMin/2,0].map(v=>parseFloat(v.toFixed(4))),
+    null,v=>v.toFixed(4));
+  mats.forEach(([T,label,col])=>{
+    const thetas=Srange.map(S=>Math.max(bsTheta(S,K,r,sig,T,true),yMin));
+    ctx.strokeStyle=col;ctx.lineWidth=T<.1?2.5:1.8;ctx.beginPath();
+    Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(thetas[i])):ctx.lineTo(toX(S),toY(thetas[i])));ctx.stroke();
+  });
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#38bdf8';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+  ctx.textAlign='left';ctx.font='10px Fira Code,monospace';
+  mats.forEach(([T,label,col],i)=>{ctx.fillStyle=col;ctx.fillRect(W-80,pad.t+i*16,14,2);ctx.fillStyle=col;ctx.fillText(label,W-62,pad.t+i*16+4)});
+}
+
+/* ─── THETA vs MONEYNESS ────────────────────────────────────────────── */
+function drawThetaMoneyness(){
+  const K=parseFloat(document.getElementById('tm-k').value)||100;
+  const sig=parseFloat(document.getElementById('tm-sig').value)/100||.2;
+  const T=parseFloat(document.getElementById('tm-t').value)||.25;
+  const r=parseFloat(document.getElementById('tm-r').value)/100||.04;
+  document.getElementById('tm-k-v').textContent=K;document.getElementById('tm-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  document.getElementById('tm-t-v').textContent=T.toFixed(2);document.getElementById('tm-r-v').textContent=(r*100).toFixed(0)+'%';
+  const Srange=Array.from({length:300},(_,i)=>40+i*120/300);
+  const thetaCall=Srange.map(S=>bsTheta(S,K,r,sig,T,true));
+  const thetaPut=Srange.map(S=>bsTheta(S,K,r,sig,T,false));
+  const yMin=Math.max(Math.min(...thetaCall,...thetaPut)*1.1,-.2);
+  const yMax=Math.max(...thetaCall,...thetaPut)*1.1+.002;
+  const rk=setupCanvas('thetaMoneynessCanvas',270);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const pad={l:65,r:15,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,40,160,yMin,yMax,'Spot S','Theta',
+    [50,70,90,100,110,130,150],[yMin,yMin/2,0,yMax].map(v=>parseFloat(v.toFixed(4))),
+    null,v=>v.toFixed(4));
+  // fill under call curve
+  ctx.fillStyle='rgba(56,189,248,.06)';ctx.beginPath();ctx.moveTo(toX(Srange[0]),toY(Math.max(yMin,thetaCall[0])));
+  Srange.forEach((S,i)=>ctx.lineTo(toX(S),toY(Math.max(yMin,thetaCall[i]))));
+  ctx.lineTo(toX(Srange[Srange.length-1]),toY(0));ctx.lineTo(toX(Srange[0]),toY(0));ctx.closePath();ctx.fill();
+  // call theta
+  ctx.strokeStyle='#38bdf8';ctx.lineWidth=2.5;ctx.beginPath();
+  Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(Math.max(yMin,thetaCall[i]))):ctx.lineTo(toX(S),toY(Math.max(yMin,thetaCall[i]))));ctx.stroke();
+  // put theta
+  ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.beginPath();
+  Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(Math.max(yMin,thetaPut[i]))):ctx.lineTo(toX(S),toY(Math.max(yMin,thetaPut[i]))));ctx.stroke();ctx.setLineDash([]);
+  // strike & label
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#38bdf8';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K='+K,toX(K),pad.t-5);
+  ctx.textAlign='left';ctx.fillStyle='#38bdf8';ctx.fillText('Call Θ',pad.l+8,pad.t+14);
+  ctx.fillStyle='#a78bfa';ctx.fillText('Put Θ',pad.l+8,pad.t+26);
+  const tAtm=bsTheta(K,K,r,sig,T,true),tPutAtm=bsTheta(K,K,r,sig,T,false);
+  const hasPosThetaPut=thetaPut.some(v=>v>0.0001);
+  document.getElementById('tm-stats').innerHTML=`
+    <span>Θ_call(ATM) = <strong style="color:var(--theta)">${tAtm.toFixed(5)}</strong></span>
+    <span>Θ_put(ATM) = <strong style="color:var(--vega)">${tPutAtm.toFixed(5)}</strong></span>
+    <span>Put Positive Θ? <strong style="color:${hasPosThetaPut?'var(--green)':'var(--muted)'}">${hasPosThetaPut?'Yes — deep ITM put':'No'}</strong></span>
+  `;
+}
+
+/* ─── THETA vs VOL ──────────────────────────────────────────────────── */
+function drawThetaVol(){
+  const K=parseFloat(document.getElementById('tv-k').value)||100;
+  const T=parseFloat(document.getElementById('tv-t').value)||.5;
+  const r=parseFloat(document.getElementById('tv-r').value)/100||.04;
+  document.getElementById('tv-k-v').textContent=K;document.getElementById('tv-t-v').textContent=T.toFixed(2);
+  document.getElementById('tv-r-v').textContent=(r*100).toFixed(0)+'%';
+  const vols=[[.10,'IV 10%','#f87171'],[.20,'IV 20%','#fb923c'],[.30,'IV 30%','#fbbf24'],[.50,'IV 50%','#34d399'],[.80,'IV 80%','#818cf8']];
+  const Srange=Array.from({length:300},(_,i)=>20+i*280/300);
+  const allT=vols.flatMap(([v])=>Srange.map(S=>bsTheta(S,K,r,v,T,true)));
+  const yMin=Math.max(Math.min(...allT)*1.1,-.12);
+  const rk=setupCanvas('thetaVolCanvas',280);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const pad={l:65,r:90,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,20,300,yMin,0,'Spot S','Theta',
+    [50,100,150,200,250],[yMin,yMin/2,0].map(v=>parseFloat(v.toFixed(4))),
+    null,v=>v.toFixed(4));
+  vols.forEach(([sig,label,col])=>{
+    const thetas=Srange.map(S=>Math.max(bsTheta(S,K,r,sig,T,true),yMin));
+    ctx.strokeStyle=col;ctx.lineWidth=sig===.10?2.5:1.8;ctx.beginPath();
+    Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(thetas[i])):ctx.lineTo(toX(S),toY(thetas[i])));ctx.stroke();
+  });
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#38bdf8';ctx.textAlign='center';ctx.font='11px Fira Code,monospace';ctx.fillText('K',toX(K),pad.t-5);
+  ctx.textAlign='left';ctx.font='10px Fira Code,monospace';
+  vols.forEach(([v,label,col],i)=>{ctx.fillStyle=col;ctx.fillRect(W-85,pad.t+i*16,14,2);ctx.fillStyle=col;ctx.fillText(label,W-67,pad.t+i*16+4)});
+}
+
+/* ─── INIT ──────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded',()=>{
+  renderMathInElement(document.body,{
+    delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],
+    throwOnError:false
+  });
+  setTimeout(()=>{
+    calcTheta();drawThetaTime();drawThetaMoneyness();drawThetaVol();
+  },300);
+});
+</script>
+</body>
+</html>

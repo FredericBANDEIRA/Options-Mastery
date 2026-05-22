@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Forwards & Futures — S&T Interview Guide</title>
+
+<!-- KaTeX -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────────────────── */
+:root{
+  --bg:       #0d0f14;
+  --surface:  #141720;
+  --card:     #1a1e2b;
+  --border:   #252c40;
+  --accent:   #f0b429;        /* amber / gold */
+  --accent2:  #38bdf8;        /* cyan */
+  --accent3:  #a3e635;        /* lime */
+  --red:      #f87171;
+  --green:    #34d399;
+  --text:     #e2e8f0;
+  --muted:    #94a3b8;
+  --mono:     'JetBrains Mono', 'Fira Code', monospace;
+  --sans:     'IBM Plex Sans', 'Segoe UI', sans-serif;
+}
+
+/* ─── RESET / BASE ──────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.7;
+  min-height:100vh;
+}
+a{color:var(--accent2);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ─── SCANLINE OVERLAY ───────────────────────────────────────────────── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background:repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,.06) 2px,
+    rgba(0,0,0,.06) 4px
+  );
+  pointer-events:none;
+  z-index:9999;
+  opacity:.4;
+}
+
+/* ─── TOP BAR ─────────────────────────────────────────────────────────── */
+.topbar{
+  background:var(--surface);
+  border-bottom:2px solid var(--accent);
+  padding:.6rem 2rem;
+  display:flex;align-items:center;gap:1rem;
+  position:sticky;top:0;z-index:100;
+}
+.topbar .tag{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.12em;
+  background:var(--accent);color:#000;
+  padding:.2rem .55rem;border-radius:3px;font-weight:700;
+}
+.topbar .breadcrumb{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.topbar .breadcrumb a{color:inherit;text-decoration:none;transition:color .2s}
+.topbar .breadcrumb a:hover{color:var(--accent)}
+.topbar .breadcrumb span{color:var(--accent)}
+.topbar .ticker-scroll{
+  margin-left:auto;font-family:var(--mono);font-size:.72rem;
+  color:var(--muted);white-space:nowrap;overflow:hidden;
+}
+.topbar .ticker-scroll span{animation:ticker 18s linear infinite}
+@keyframes ticker{from{opacity:1}to{opacity:1}}
+
+/* ─── LAYOUT ──────────────────────────────────────────────────────────── */
+.wrapper{max-width:1100px;margin:0 auto;padding:2.5rem 1.5rem 5rem}
+
+/* ─── HERO ────────────────────────────────────────────────────────────── */
+.hero{
+  padding:2.5rem 0 2rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:2.5rem;
+}
+.hero h1{
+  font-size:2.6rem;font-weight:800;letter-spacing:-.03em;
+  background:linear-gradient(135deg,var(--accent) 0%,#f6e3a0 50%,var(--accent2) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  margin-bottom:.4rem;
+}
+.hero p{color:var(--muted);font-size:.95rem;max-width:640px}
+.hero .meta{display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap}
+.pill{
+  font-family:var(--mono);font-size:.7rem;font-weight:600;
+  border:1px solid var(--border);padding:.25rem .7rem;border-radius:99px;
+  color:var(--muted);letter-spacing:.08em;
+}
+.pill.hot{border-color:var(--accent);color:var(--accent)}
+.pill.info{border-color:var(--accent2);color:var(--accent2)}
+
+/* ─── NAV TABS ────────────────────────────────────────────────────────── */
+.nav-tabs{
+  display:flex;gap:.4rem;flex-wrap:wrap;
+  margin-bottom:2.5rem;
+  border-bottom:1px solid var(--border);
+  padding-bottom:0;
+}
+.nav-tab{
+  font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.08em;
+  padding:.5rem 1rem;border-radius:6px 6px 0 0;cursor:pointer;
+  border:1px solid transparent;border-bottom:none;
+  color:var(--muted);background:transparent;
+  transition:all .2s;position:relative;top:1px;
+  text-transform:uppercase;
+}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{
+  background:var(--card);border-color:var(--border);
+  color:var(--accent);border-bottom:2px solid var(--card);
+}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ─── SECTION HEADING ─────────────────────────────────────────────────── */
+.section-h{
+  font-size:1.25rem;font-weight:700;color:var(--accent);
+  margin:2.5rem 0 1rem;
+  display:flex;align-items:center;gap:.7rem;
+}
+.section-h::before{
+  content:'▶';font-size:.65rem;color:var(--accent);
+}
+.section-h2{
+  font-size:1rem;font-weight:700;color:var(--accent2);
+  margin:1.8rem 0 .8rem;
+  padding-left:1rem;
+  border-left:3px solid var(--accent2);
+}
+
+/* ─── CARDS ───────────────────────────────────────────────────────────── */
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:10px;
+  padding:1.4rem 1.6rem;margin-bottom:1.4rem;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--accent),transparent);
+}
+.card.blue::before{background:linear-gradient(90deg,var(--accent2),transparent)}
+.card.green::before{background:linear-gradient(90deg,var(--green),transparent)}
+.card.red::before{background:linear-gradient(90deg,var(--red),transparent)}
+
+/* ─── FORMULA BOX ─────────────────────────────────────────────────────── */
+.formula-box{
+  background:#0d1117;border:1px solid var(--accent);border-radius:8px;
+  padding:1rem 1.4rem;margin:1rem 0;
+  text-align:center;font-size:1.1rem;overflow-x:auto;
+}
+.formula-box.multi{text-align:left;font-size:.98rem}
+.formula-label{
+  font-family:var(--mono);font-size:.68rem;color:var(--accent);
+  letter-spacing:.1em;margin-bottom:.5rem;text-transform:uppercase;
+}
+
+/* ─── TABLE ───────────────────────────────────────────────────────────── */
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.88rem}
+th{
+  background:#0d1117;color:var(--accent);font-family:var(--mono);
+  font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+  padding:.7rem 1rem;border-bottom:2px solid var(--accent);text-align:left;
+}
+td{padding:.65rem 1rem;border-bottom:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+td .up{color:var(--green);font-weight:600}
+td .dn{color:var(--red);font-weight:600}
+
+/* ─── ALERT BOXES ──────────────────────────────────────────────────────── */
+.alert{
+  border-radius:8px;padding:.9rem 1.2rem;margin:1rem 0;
+  display:flex;gap:.8rem;align-items:flex-start;font-size:.9rem;
+}
+.alert .ico{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+.alert.warn{background:rgba(240,180,41,.08);border:1px solid rgba(240,180,41,.35);color:#f6d07a}
+.alert.tip{background:rgba(56,189,248,.07);border:1px solid rgba(56,189,248,.3);color:#7dd3fc}
+.alert.trap{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.3);color:#fca5a5}
+.alert.key{background:rgba(163,230,53,.07);border:1px solid rgba(163,230,53,.3);color:#bef264}
+
+/* ─── GRID ────────────────────────────────────────────────────────────── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:1rem 0}
+@media(max-width:720px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* ─── KPI CHIPS ───────────────────────────────────────────────────────── */
+.kpi-chip{
+  background:#0d1117;border:1px solid var(--border);border-radius:8px;
+  padding:.9rem 1.1rem;
+}
+.kpi-chip .label{font-family:var(--mono);font-size:.67rem;color:var(--muted);letter-spacing:.1em;margin-bottom:.3rem;text-transform:uppercase}
+.kpi-chip .value{font-family:var(--mono);font-size:1.1rem;font-weight:700;color:var(--text)}
+.kpi-chip .sub{font-size:.75rem;color:var(--muted);margin-top:.2rem}
+
+/* ─── PAYOFF DIAGRAM ─────────────────────────────────────────────────── */
+canvas{display:block;width:100%;height:260px;border-radius:8px}
+.chart-wrapper{background:#0d1117;border:1px solid var(--border);border-radius:10px;padding:1rem;margin:1rem 0}
+.chart-controls{display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.8rem;align-items:center}
+.chart-controls label{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.chart-controls input[type=range]{accent-color:var(--accent);width:120px}
+.chart-controls select{
+  background:var(--card);border:1px solid var(--border);color:var(--text);
+  font-family:var(--mono);font-size:.75rem;padding:.25rem .5rem;border-radius:5px;
+}
+.chart-controls .val{
+  font-family:var(--mono);font-size:.8rem;color:var(--accent);font-weight:700;min-width:2rem
+}
+
+/* ─── TIMELINE ────────────────────────────────────────────────────────── */
+.timeline{position:relative;padding-left:2rem;margin:1rem 0}
+.timeline::before{
+  content:'';position:absolute;left:.7rem;top:.3rem;bottom:.3rem;
+  width:2px;background:var(--border);
+}
+.tl-item{position:relative;margin-bottom:1.4rem}
+.tl-dot{
+  position:absolute;left:-1.65rem;top:.35rem;width:12px;height:12px;
+  background:var(--accent);border-radius:50%;border:2px solid var(--bg);
+}
+.tl-item h4{font-size:.9rem;font-weight:700;color:var(--accent);margin-bottom:.3rem}
+.tl-item p{font-size:.87rem;color:var(--muted)}
+
+/* ─── MARGIN WALKTHROUGH ─────────────────────────────────────────────── */
+.margin-table td:first-child{font-family:var(--mono);font-size:.8rem}
+.margin-call-row td{background:rgba(248,113,113,.1)!important;color:var(--red)!important}
+
+/* ─── COLLAPSIBLE ──────────────────────────────────────────────────────── */
+details{
+  background:var(--card);border:1px solid var(--border);border-radius:8px;
+  margin:.7rem 0;overflow:hidden;
+}
+details[open]{border-color:var(--accent2)}
+summary{
+  padding:.8rem 1.2rem;cursor:pointer;font-weight:600;font-size:.9rem;
+  display:flex;justify-content:space-between;align-items:center;
+  list-style:none;
+}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'＋';font-family:var(--mono);color:var(--accent2);transition:.2s}
+details[open] summary::after{content:'－'}
+.details-body{padding:.2rem 1.2rem 1.2rem;font-size:.9rem;color:var(--muted)}
+
+/* ─── FOOTER ──────────────────────────────────────────────────────────── */
+.footer{
+  margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--border);
+  font-family:var(--mono);font-size:.72rem;color:var(--muted);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem;
+}
+
+/* ─── HIGHLIGHT MONO ────────────────────────────────────────────────────── */
+code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgba(56,189,248,.1);padding:.1em .4em;border-radius:4px}
+
+/* ─── SCROLLBAR ───────────────────────────────────────────────────────── */
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="tag">S&T PREP</div>
+  <div class="breadcrumb"><a href="index.html">Derivatives</a> &nbsp;/&nbsp; <span>01 — Forwards &amp; Futures</span></div>
+  <div class="ticker-scroll">
+    &nbsp;&nbsp;ES Z5&nbsp;&nbsp;◈&nbsp;&nbsp;CL 1&nbsp;&nbsp;◈&nbsp;&nbsp;GC Z5&nbsp;&nbsp;◈&nbsp;&nbsp;EUR/USD 1M FWD&nbsp;&nbsp;◈&nbsp;&nbsp;LIBOR → SOFR&nbsp;&nbsp;◈
+  </div>
+</div>
+
+<div class="wrapper">
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Forwards &amp; Futures</h1>
+  <p>Interview-grade review — concepts, formulas, mechanics, and intuition for Sales &amp; Trading roles. Quantitative Finance foundation.</p>
+  <div class="meta">
+    <span class="pill hot">Sales &amp; Trading</span>
+    
+    <span class="pill">Quantitative Finance</span>
+    <span class="pill info">Interactive</span>
+  </div>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchTab('overview')">Overview</div>
+  <div class="nav-tab" onclick="switchTab('pricing')">Pricing</div>
+  <div class="nav-tab" onclick="switchTab('payoffs')">Payoffs &amp; Value</div>
+  <div class="nav-tab" onclick="switchTab('futures')">Futures Mechanics</div>
+  <div class="nav-tab" onclick="switchTab('curve')">Forward Curve</div>
+  <div class="nav-tab" onclick="switchTab('basis')">Basis Risk &amp; Hedging</div>
+  <div class="nav-tab" onclick="switchTab('conventions')">Conventions</div>
+</div>
+
+<!-- ═══════════════════════════ TAB 1: OVERVIEW ═══════════════════════════ -->
+<div id="tab-overview" class="tab-content active">
+
+  <div class="section-h">What is a Forward Contract?</div>
+  <div class="card">
+    <p>A <strong>forward contract</strong> is a bilateral, OTC agreement to buy or sell an underlying asset at a <em>pre-agreed price</em> (the <strong>forward price F₀</strong>) on a <em>specified future date T</em>. No money changes hands at inception — the contract has <strong>zero initial value</strong> by construction (the forward price is set so that V₀ = 0).</p>
+    <br>
+    <div class="grid2">
+      <div class="kpi-chip">
+        <div class="label">Settlement</div>
+        <div class="value">At Maturity T</div>
+        <div class="sub">No daily mark-to-market</div>
+      </div>
+      <div class="kpi-chip">
+        <div class="label">Counterparty Risk</div>
+        <div class="value">Full Exposure</div>
+        <div class="sub">Bilateral credit risk — no Central Counterparty (CCP)</div>
+      </div>
+      <div class="kpi-chip">
+        <div class="label">Initial Cost</div>
+        <div class="value">Zero</div>
+        <div class="sub">V₀ = 0 by no-arbitrage</div>
+      </div>
+      <div class="kpi-chip">
+        <div class="label">Customisation</div>
+        <div class="value">Fully Flexible</div>
+        <div class="sub">Any notional, date, asset</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-h2">Key Parties</div>
+  <div class="grid2">
+    <div class="card">
+      <div class="formula-label">Long (Buyer)</div>
+      <p>Agrees to <strong>buy</strong> the asset at F₀. Profits when <span class="katex-inline">\(S_T > F_0\)</span>. Classic use: importer hedging FX, or speculator expecting price rise.</p>
+    </div>
+    <div class="card red">
+      <div class="formula-label">Short (Seller)</div>
+      <p>Agrees to <strong>sell</strong> the asset at F₀. Profits when <span class="katex-inline">\(S_T < F_0\)</span>. Classic use: exporter hedging receivables, producer hedging output price.</p>
+    </div>
+  </div>
+
+  <div class="section-h">Forwards vs Futures — Quick Comparison</div>
+  <div class="card">
+    <table>
+      <thead>
+        <tr><th>Feature</th><th>Forward</th><th>Futures</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Trading Venue</td><td>OTC (bilateral)</td><td>Exchange (CME, Eurex…)</td></tr>
+        <tr><td>Standardisation</td><td>Fully customisable</td><td>Standardised contracts</td></tr>
+        <tr><td>Settlement</td><td>At maturity only</td><td>Daily MTM (variation margin)</td></tr>
+        <tr><td>Counterparty Risk</td><td><span class="dn">Full bilateral risk</span></td><td><span class="up">CCP-cleared (nearly zero)</span></td></tr>
+        <tr><td>Margin</td><td>None (or ISDA - International Swaps and Derivatives Association Credit Support Annex)</td><td>Initial + Variation Margin</td></tr>
+        <tr><td>Liquidity</td><td>Illiquid (bespoke)</td><td><span class="up">Highly liquid</span></td></tr>
+        <tr><td>Price Transparency</td><td>Private</td><td>Public, real-time</td></tr>
+        <tr><td>Typical Users</td><td>Corporates, banks (hedging)</td><td>Traders, funds, hedgers</td></tr>
+        <tr><td>MTM Gains</td><td>Reinvested at uncertain rate</td><td><span class="up">Earn interest on gains daily</span></td></tr>
+      </tbody>
+    </table>
+    <div class="alert tip">
+      <span class="ico">💡</span>
+      <span><strong>Interview nuance:</strong> When interest rates are <em>positively correlated</em> with the underlying (e.g. bond futures), futures prices are <em>slightly higher</em> than forward prices because daily gains are reinvested at higher rates. This is the <strong>futures-forward price difference</strong> — examiners love this.</span>
+    </div>
+  </div>
+
+</div><!-- end tab-overview -->
+
+<!-- ═══════════════════════════ TAB 2: PRICING ═══════════════════════════ -->
+<div id="tab-pricing" class="tab-content">
+
+  <div class="section-h">No-Arbitrage Pricing — Cost of Carry</div>
+  <div class="card">
+    <p>The forward price is derived by asking: <em>"What does it cost to synthetically replicate owning the asset at time T?"</em>. You borrow cash today, buy the spot asset, and carry it to maturity. The no-arbitrage forward price equals the <strong>cost of that carry strategy</strong>.</p>
+
+    <div class="alert warn">
+      <span class="ico">⚠️</span>
+      <span><strong>Core insight:</strong> The forward price is NOT a forecast of the future spot price. It is the <em>no-arbitrage price</em> that makes both sides of the contract equally attractive at inception.</span>
+    </div>
+  </div>
+
+  <div class="section-h2">The Four Canonical Formulas</div>
+
+  <details open>
+    <summary>1. No Income Asset (e.g. non-dividend stock, gold)</summary>
+    <div class="details-body">
+      <div class="formula-box">
+        \[ F_0 = S_0 \cdot e^{rT} \]
+      </div>
+      <p>You borrow S₀ at the risk-free rate r, buy the asset, and carry it for T years. At maturity you owe <span class="katex-inline">\(S_0 e^{rT}\)</span> — that's what the buyer must pay.</p>
+      <table>
+        <tr><th>Symbol</th><th>Meaning</th></tr>
+        <tr><td><code>S₀</code></td><td>Current spot price</td></tr>
+        <tr><td><code>r</code></td><td>Continuously-compounded risk-free rate</td></tr>
+        <tr><td><code>T</code></td><td>Time to maturity (in years)</td></tr>
+      </table>
+    </div>
+  </details>
+
+  <details>
+    <summary>2. Known Discrete Cash Income (e.g. dividend-paying stock, coupon bond)</summary>
+    <div class="details-body">
+      <div class="formula-box">
+        \[ F_0 = (S_0 - I) \cdot e^{rT} \]
+      </div>
+      <p>Where <span class="katex-inline">\(I\)</span> is the present value of all cash flows (dividends, coupons) received during the life of the forward. The long does NOT receive those cash flows — they reduce what you effectively pay to carry the asset.</p>
+      <div class="alert tip">
+        <span class="ico">💡</span>
+        <span>Think of it as: you only need to borrow <span class="katex-inline">\(S_0 - I\)</span> because the income stream "offsets" part of your financing cost.</span>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>3. Continuous Dividend Yield (e.g. equity index, FX)</summary>
+    <div class="details-body">
+      <div class="formula-box">
+        \[ F_0 = S_0 \cdot e^{(r - q)T} \]
+      </div>
+      <p><span class="katex-inline">\(q\)</span> is the continuous dividend yield. Used for equity indices (S&amp;P 500 futures) and currencies (where the foreign risk-free rate plays the role of <span class="katex-inline">\(q\)</span> — <strong>Interest Rate Parity</strong>).</p>
+      <div class="formula-box multi">
+        <div class="formula-label">FX Forward — Covered Interest Rate Parity</div>
+        \[ F_0 = S_0 \cdot e^{(r_d - r_f)T} \]
+        <p style="margin-top:.5rem;font-size:.8rem;color:#94a3b8">Where \(r_d\) = domestic rate, \(r_f\) = foreign rate. The currency with the higher interest rate trades at a forward <em>discount</em>.</p>
+        <div style="margin-top:.8rem; padding:.7rem; background:rgba(56,189,248,.04); border-left:3px solid var(--accent2); border-radius:4px; font-size:.82rem; line-height:1.5">
+          <strong style="color:var(--accent2)">EUR/USD Example:</strong> In the <strong>EUR/USD</strong> pair, <strong>EUR</strong> is the Base (Foreign) currency and <strong>USD</strong> is the Quote (Domestic) currency.
+          <div style="margin:.4rem 0">Formula: \(F_{\text{EUR/USD}} = S_{\text{EUR/USD}} \cdot e^{(r_{\text{USD}} - r_{\text{EUR}})T}\)</div>
+          • If USD rate (\(r_{\text{USD}}\)) is <strong>5%</strong> and EUR rate (\(r_{\text{EUR}}\)) is <strong>3%</strong>, then \(r_d - r_f = +2\%\).
+          <br>• The Forward rate is higher than Spot (e.g. 1.10 Spot becomes ~1.122 Forward in 1Y).
+          <br>• The <strong>USD</strong> (higher yield currency) trades at a <strong>forward discount</strong> (buys less EUR in the future). The <strong>EUR</strong> trades at a <strong>forward premium</strong>.
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>4. Commodity — Full Cost of Carry with Convenience Yield</summary>
+    <div class="details-body">
+      <div class="formula-box">
+        \[ F_0 = S_0 \cdot e^{(r + \lambda - c)T} \]
+      </div>
+      <table>
+        <tr><th>Symbol</th><th>Name</th><th>Sign Impact</th></tr>
+        <tr><td><code>r</code></td><td>Risk-free rate</td><td class="up">↑ F₀ (financing cost)</td></tr>
+        <tr><td><code>λ</code></td><td>Storage costs</td><td class="up">↑ F₀ (cost to hold)</td></tr>
+        <tr><td><code>c</code></td><td>Convenience yield</td><td class="dn">↓ F₀ (benefit of holding spot)</td></tr>
+      </table>
+      <div class="alert key">
+        <span class="ico">🔑</span>
+        <span>The <strong>convenience yield</strong> captures the non-monetary benefit of holding the physical commodity (e.g., ability to keep a refinery running). High convenience yield → Backwardation.</span>
+      </div>
+    </div>
+  </details>
+
+  <div class="section-h2">Arbitrage Enforcement — Cash and Carry</div>
+  <div class="card blue">
+    <p style="margin-bottom:.8rem">The formula is enforced by two arbitrage strategies:</p>
+    <div class="grid2">
+      <div>
+        <div class="formula-label" style="color:var(--red)">If F₀ &gt; S₀·e^(rT) — Cash and Carry</div>
+        <ol style="margin:.5rem 0 0 1.2rem;font-size:.88rem;color:var(--muted)">
+          <li>Borrow S₀ at r</li>
+          <li>Buy spot asset</li>
+          <li>Enter short forward at F₀</li>
+          <li>At T: deliver asset, receive F₀, repay loan → risk-free profit</li>
+        </ol>
+      </div>
+      <div>
+        <div class="formula-label" style="color:var(--green)">If F₀ &lt; S₀·e^(rT) — Reverse Cash and Carry</div>
+        <ol style="margin:.5rem 0 0 1.2rem;font-size:.88rem;color:var(--muted)">
+          <li>Short sell spot asset, receive S₀</li>
+          <li>Invest S₀ at r</li>
+          <li>Enter long forward at F₀</li>
+          <li>At T: receive S₀e^(rT), pay F₀ for asset to close short → risk-free profit</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-h2">Numerical Example</div>
+  <div class="card">
+    <div class="formula-label">Given</div>
+    <p><span class="katex-inline">\(S_0 = 100\)</span>, <span class="katex-inline">\(r = 5\%\)</span>, dividend yield <span class="katex-inline">\(q = 2\%\)</span>, <span class="katex-inline">\(T = 0.5\)</span> years (6-month equity index forward)</p>
+    <div class="formula-box">
+      \[ F_0 = 100 \cdot e^{(0.05 - 0.02) \times 0.5} = 100 \cdot e^{0.015} \approx \mathbf{101.51} \]
+    </div>
+    <p style="color:var(--muted);font-size:.87rem;margin-bottom:.8rem">The fair forward price is <strong>101.51</strong>. If the market price deviates from this, an arbitrage opportunity exists.</p>
+
+    <!-- Collapsible details for Arbitrage mechanics -->
+    <details style="margin-top:.8rem; border:1px solid var(--border); border-radius:6px; background:#0d1117">
+      <summary style="padding:.6rem 1rem; cursor:pointer; font-weight:600; font-size:.85rem; color:var(--accent)">
+        🔍 Case A: Market Price is 103 (Overpriced) — Cash-and-Carry Arbitrage
+      </summary>
+      <div style="padding:1rem; border-top:1px solid var(--border); font-size:.85rem; line-height:1.5; color:var(--muted)">
+        <p><strong>Opportunity:</strong> Actual Forward (\(103\)) &gt; Fair Forward (\(101.51\)). The forward is <em>overpriced</em>.</p>
+        <p style="margin-top:.5rem"><strong>Arbitrage Strategy (Cash-and-Carry):</strong></p>
+        <ol style="margin-left:1.2rem; margin-top:.3rem">
+          <li><strong>At \(t=0\):</strong> Borrow \(100\) at \(r=5\%\), buy the index at \(S_0=100\), and short the forward contract at \(F_{\text{mkt}} = 103\).</li>
+          <li><strong>During \(T\):</strong> Collect dividends at \(q=2\%\).</li>
+          <li><strong>At maturity \(T=0.5\):</strong> Sell the index via the forward contract for \(+103.00\). Repay the loan: \(-100 \cdot e^{0.05 \times 0.5} \approx -102.53\). Receive accumulated dividends: \(+100 \cdot (e^{0.02 \times 0.5}-1) \approx +1.01\).</li>
+          <li><strong>Risk-free Net Profit:</strong> \(103.00 - 102.53 + 1.01 = \mathbf{1.48}\) today.</li>
+        </ol>
+      </div>
+    </details>
+
+    <details style="margin-top:.5rem; border:1px solid var(--border); border-radius:6px; background:#0d1117">
+      <summary style="padding:.6rem 1rem; cursor:pointer; font-weight:600; font-size:.85rem; color:var(--accent)">
+        🔍 Case B: Market Price is 99 (Underpriced) — Reverse Cash-and-Carry Arbitrage
+      </summary>
+      <div style="padding:1rem; border-top:1px solid var(--border); font-size:.85rem; line-height:1.5; color:var(--muted)">
+        <p><strong>Opportunity:</strong> Actual Forward (\(99\)) &lt; Fair Forward (\(101.51\)). The forward is <em>underpriced</em> (this is what happens if it trades at 99).</p>
+        <p style="margin-top:.5rem"><strong>Arbitrage Strategy (Reverse Cash-and-Carry):</strong></p>
+        <ol style="margin-left:1.2rem; margin-top:.3rem">
+          <li><strong>At \(t=0\):</strong> Short-sell the index at \(S_0=100\), invest the \(100\) proceeds at \(r=5\%\), and enter a long forward contract at \(F_{\text{mkt}} = 99\).</li>
+          <li><strong>During \(T\):</strong> You must pay the dividend yield of \(q=2\%\) to the lender of the index.</li>
+          <li><strong>At maturity \(T=0.5\):</strong> Receive the matured investment: \(+100 \cdot e^{0.05 \times 0.5} \approx +102.53\). Buy the index via the long forward for \(-99.00\) to close the short. Pay the accumulated dividends: \(-100 \cdot (e^{0.02 \times 0.5}-1) \approx -1.01\).</li>
+          <li><strong>Risk-free Net Profit:</strong> \(102.53 - 99.00 - 1.01 = \mathbf{2.52}\) today.</li>
+        </ol>
+      </div>
+    </details>
+  </div>
+
+  <div class="section-h2">Spot-Forward Parity — Intuition</div>
+  <div class="card">
+    <p>Spot-Forward Parity says two portfolios must have the same value today:</p>
+    <div class="grid2" style="margin-top:.8rem">
+      <div class="kpi-chip">
+        <div class="label">Portfolio A</div>
+        <div class="value" style="font-size:.9rem">Long forward + PV(F₀) in cash</div>
+        <div class="sub">Buy bond that pays F₀ at T; enter long forward</div>
+      </div>
+      <div class="kpi-chip">
+        <div class="label">Portfolio B</div>
+        <div class="value" style="font-size:.9rem">Hold spot asset</div>
+        <div class="sub">Both deliver one unit of asset at T</div>
+      </div>
+    </div>
+    <div class="formula-box" style="margin-top:1rem">
+      \[ S_0 = F_0 \cdot e^{-rT} + \text{PV(income)} \implies F_0 = (S_0 - I) \cdot e^{rT} \]
+    </div>
+    <div class="alert tip">
+      <span class="ico">💡</span>
+      <span>
+        <strong>Forward price = expectation under \(\mathbb{Q}\), not \(\mathbb{P}\).</strong> Under the risk-neutral measure, the expected return on every asset is the risk-free rate. So \(F_0 = \mathbb{E}^{\mathbb{Q}}[S_T]\). Under the real-world measure, the expected future spot price differs due to the risk premium: \(F_0 \neq \mathbb{E}^{\mathbb{P}}[S_T]\).
+        <div style="margin-top:.4rem; border-top:1px dashed rgba(56,189,248,.2); padding-top:.4rem; font-size:.8rem; color:#94a3b8">
+          <strong>Quick Interview Reminder:</strong>
+          <br>• <strong>\(\mathbb{P}\) (Physical / Real-World Measure):</strong> Actual real-world probabilities. Investors are risk-averse and demand a risk premium, meaning risky assets have an expected return \(\mu > r\).
+          <br>• <strong>\(\mathbb{Q}\) (Risk-Neutral Measure):</strong> A mathematical pricing tool. We assume investors are risk-neutral (no risk premium is demanded), meaning all assets earn exactly the risk-free rate \(r\).
+        </div>
+      </span>
+    </div>
+  </div>
+
+</div><!-- end tab-pricing -->
+
+<!-- ═══════════════════════════ TAB 3: PAYOFFS ═══════════════════════════ -->
+<div id="tab-payoffs" class="tab-content">
+
+  <div class="section-h">Payoffs at Maturity</div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="formula-label">Long Forward — Payoff</div>
+      <div class="formula-box">
+        \[ \Pi_{\text{long}} = S_T - F_0 \]
+      </div>
+      <p style="font-size:.87rem;color:var(--muted)">Unlimited upside. The long wins every dollar above F₀ and loses every dollar below. There is <strong>no floor</strong> (unlike a call option — no premium paid here).</p>
+    </div>
+    <div class="card red">
+      <div class="formula-label">Short Forward — Payoff</div>
+      <div class="formula-box">
+        \[ \Pi_{\text{short}} = F_0 - S_T \]
+      </div>
+      <p style="font-size:.87rem;color:var(--muted)">The short profits when the spot falls. Losses are theoretically unlimited (\(S_T\) can rise without bound). Risk is symmetric around F₀.</p>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE PAYOFF DIAGRAM -->
+  <div class="section-h2">Interactive Payoff Diagram</div>
+  <div class="chart-wrapper">
+    <div class="chart-controls" style="gap:1rem">
+      <div style="display:flex; align-items:center; gap:.4rem">
+        <label>F₀ =</label>
+        <input type="range" id="fwd-slider" min="60" max="140" value="100" oninput="drawPayoff()">
+        <span class="val" id="fwd-val">100</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:.4rem">
+        <label>Show:</label>
+        <select id="payoff-select" onchange="drawPayoff()">
+          <option value="both">Long + Short</option>
+          <option value="long">Long only</option>
+          <option value="short">Short only</option>
+        </select>
+      </div>
+    </div>
+    <canvas id="payoffCanvas"></canvas>
+  </div>
+
+  <div class="alert tip">
+    <span class="ico">💡</span>
+    <span><strong>Forward vs Option:</strong> A long forward has the same payoff slope as a long call above F₀ and a short put below F₀. A long forward = long call + short put (at same strike F₀) — this is called <strong>put-call parity via synthetic forward</strong>.</span>
+  </div>
+
+  <div class="section-h">Value of a Forward Contract During Its Life</div>
+  <div class="card">
+    <p>At inception, V₀ = 0. But as time passes and the spot price moves, the forward develops <strong>mark-to-market value</strong>:</p>
+    <div class="formula-box">
+      \[ V_t^{\text{long}} = S_t - F_0 \cdot e^{-r(T-t)} = (F_t - F_0) \cdot e^{-r(T-t)} \]
+    </div>
+    <p style="margin:.8rem 0;font-size:.88rem;color:var(--muted)">Where <span class="katex-inline">\(F_t = S_t \cdot e^{r(T-t)}\)</span> is the current forward price for delivery at T. The PV factor discounts the gain/loss back to today.</p>
+    <div class="alert warn">
+      <span class="ico">⚠️</span>
+      <span><strong>Interview classic:</strong> You entered a 1-year forward to buy gold at $1,900. Six months later, gold spot = $2,000 and r = 4%. What is the MTM value?<br>
+      <span class="katex-inline">\(F_t = 2000 \cdot e^{0.04 \times 0.5} = 2040.4\)</span><br>
+      <span class="katex-inline">\(V_t = (2040.4 - 1900) \cdot e^{-0.04 \times 0.5} \approx \mathbf{\$137.6}\)</span></span>
+    </div>
+  </div>
+
+  <div class="section-h2">Synthetic Positions</div>
+  <div class="card blue">
+    <table>
+      <thead><tr><th>Synthetic</th><th>Components</th><th>Use Case</th></tr></thead>
+      <tbody>
+        <tr><td>Long Forward</td><td>Long Call (K=F₀) + Short Put (K=F₀)</td><td>Replicate forward without OTC deal</td></tr>
+        <tr><td>Long Stock</td><td>Long Forward + Long Zero-coupon bond paying F₀</td><td>Decompose equity into forward + financing</td></tr>
+        <tr><td>Short Stock</td><td>Short Forward + Invest PV(F₀)</td><td>Synthetic short without borrowing stock</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- end tab-payoffs -->
+
+<!-- ═══════════════════════════ TAB 4: FUTURES MECHANICS ═════════════════ -->
+<div id="tab-futures" class="tab-content">
+
+  <div class="section-h">Lifecycle of a Futures Position</div>
+  <div class="timeline">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <h4>Day 0 — Inception</h4>
+      <p>Trader posts <strong>Initial Margin (IM)</strong> to the clearing broker. Agrees on standardised contract size, delivery date, and underlying. Account balance = IM.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <h4>Daily — Mark-to-Market Settlement</h4>
+      <p>Exchange calculates daily settlement price. Gains are credited, losses debited from margin account. <strong>Daily PnL = ΔPrice × Multiplier × #Contracts</strong>.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--red)"></div>
+      <h4>Margin Call Day</h4>
+      <p>If account balance falls <strong>below Maintenance Margin (MM)</strong>, broker issues a margin call. Trader must deposit <strong>Variation Margin = IM − Current Balance</strong> to restore to IM.</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--accent2)"></div>
+      <h4>Rollover</h4>
+      <p>Before expiry, position is "rolled" — close the near contract, reopen in the next contract. Generates <strong>roll yield</strong> (positive in backwardation, negative in contango).</p>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot" style="background:var(--green)"></div>
+      <h4>Expiry — Close or Delivery</h4>
+      <p>~95% of futures are closed before expiry. Remaining result in physical delivery (commodities) or cash settlement (equity index).</p>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE MARGIN WALKTHROUGH -->
+  <div class="section-h2">Interactive Margin Walkthrough</div>
+  <div class="card">
+    <div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
+      <div>
+        <label>Index Level</label>
+        <input type="number" id="mg-spot" value="5000" style="width:80px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:.25rem .4rem;border-radius:5px;font-family:var(--mono)">
+      </div>
+      <div>
+        <label>Multiplier (€/pt)</label>
+        <input type="number" id="mg-mult" value="10" style="width:60px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:.25rem .4rem;border-radius:5px;font-family:var(--mono)">
+      </div>
+      <div>
+        <label>Initial Margin (€)</label>
+        <input type="number" id="mg-im" value="2700" style="width:80px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:.25rem .4rem;border-radius:5px;font-family:var(--mono)">
+      </div>
+      <div>
+        <label>Maint. Margin (€)</label>
+        <input type="number" id="mg-mm" value="2000" style="width:80px;background:var(--card);border:1px solid var(--border);color:var(--text);padding:.25rem .4rem;border-radius:5px;font-family:var(--mono)">
+      </div>
+      <button onclick="calcMargin()" style="background:var(--accent);color:#000;border:none;padding:.3rem .8rem;border-radius:5px;font-family:var(--mono);font-size:.78rem;font-weight:700;cursor:pointer">COMPUTE</button>
+    </div>
+    <div id="mg-setup" style="font-size:.85rem;color:var(--muted);margin:.6rem 0"></div>
+    <table id="margin-table" class="margin-table" style="display:none">
+      <thead>
+        <tr><th>Day</th><th>Settlement Price</th><th>ΔPrice</th><th>Daily PnL (€)</th><th>Balance (€)</th><th>Action</th></tr>
+      </thead>
+      <tbody id="margin-tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="section-h2">Static Numerical Example — Position Lifecycle</div>
+  <div class="card">
+    <p style="margin-bottom:.8rem; font-size:.87rem">Let's trace a 1-contract long position on a Stock Index Future (Multiplier = <strong>€10/point</strong>, Initial Margin (IM) = <strong>€3,000</strong>, Maintenance Margin (MM) = <strong>€2,200</strong>):</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>Settle Price</th>
+          <th>Daily Price Change</th>
+          <th>Daily PnL</th>
+          <th>Account Balance</th>
+          <th>Margin Call / Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0</td>
+          <td>5,000</td>
+          <td>—</td>
+          <td>—</td>
+          <td>€3,000</td>
+          <td>Position opened. Funded to <strong>IM = €3,000</strong>.</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>4,950</td>
+          <td>-50 pts</td>
+          <td>-50 &times; €10 = -€500</td>
+          <td>€2,500</td>
+          <td>No action (Balance €2,500 &gt; MM of €2,200).</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>4,900</td>
+          <td>-50 pts</td>
+          <td>-50 &times; €10 = -€500</td>
+          <td>€2,000</td>
+          <td><strong>⚠️ Margin Call Triggered</strong> (Balance €2,000 &lt; MM €2,200).<br>Deposit <strong>Variation Margin = €1,000</strong> to restore to <strong>IM (€3,000)</strong>.</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>4,980</td>
+          <td>+80 pts</td>
+          <td>+80 &times; €10 = +€800</td>
+          <td>€3,800</td>
+          <td>No action. €800 excess margin above IM can be withdrawn.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-h2">Key Interview Points — Margin</div>
+  <div class="grid2">
+    <div class="alert warn">
+      <span class="ico">⚡</span>
+      <span><strong>The Restoration Rule:</strong> After a margin call, you restore to <strong>Initial Margin</strong>, NOT to Maintenance Margin (VM = IM − Balance).
+        <div style="margin-top:.4rem; font-size:.82rem; line-height:1.4; opacity:.9">
+          <strong>Why?</strong> The exchange wants to force a <strong>buffer (cushion)</strong>. If you only restored to MM, you would be sitting right on the edge of the trigger threshold. A tiny market fluctuation the next day would trigger another margin call, causing administrative burdens and execution friction.
+        </div>
+      </span>
+    </div>
+    <div class="alert trap">
+      <span class="ico">🚩</span>
+      <span><strong>Interview trap:</strong> If balance = 2,100 and MM = 2,000, there is <em>no margin call</em> even though you lost money. Only trigger when Balance &lt; MM.</span>
+    </div>
+    <div class="alert tip">
+      <span class="ico">💡</span>
+      <span><strong>Short positions:</strong> PnL is inverted. A price increase is a loss for the short. Same margin mechanics apply.</span>
+    </div>
+    <div class="alert key">
+      <span class="ico">🏦</span>
+      <span><strong>Liquidation:</strong> If the trader cannot post variation margin, the broker liquidates the position at market price to prevent a negative balance.</span>
+    </div>
+  </div>
+
+  <div class="section-h2">Leverage Calculation</div>
+  <div class="card">
+    <div class="formula-box">
+      \[ \text{Leverage} = \frac{\text{Nominal Value}}{\text{Initial Margin}} = \frac{S_0 \times \text{Multiplier} \times N}{\text{IM}} \]
+    </div>
+    <p style="font-size:.87rem;color:var(--muted)">Example: Index at 5,000, multiplier €10/pt, IM = €2,700 → Nominal = €50,000 → <strong>Leverage = 18.5×</strong>. A 1% adverse move costs €500 — 18.5% of your margin.</p>
+    <div class="alert warn">
+      <span class="ico">⚠️</span>
+      <span><strong>Cash drag (institutional context):</strong> Funds running large futures books must hold a <em>liquidity buffer</em> in cash to meet daily MTM without forced selling of portfolio assets. This "drag" reduces the effective return on the portfolio.</span>
+    </div>
+  </div>
+
+</div><!-- end tab-futures -->
+
+<!-- ═══════════════════════════ TAB 5: CURVE ═════════════════════════════ -->
+<div id="tab-curve" class="tab-content">
+
+  <div class="section-h">Forward Curve — Contango vs Backwardation</div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="formula-label" style="color:var(--red)">Contango — F &gt; S</div>
+      <p>The forward curve is <strong>upward-sloping</strong>. Futures price exceeds spot. The market is pricing in financing and storage costs exceeding any convenience yield.</p>
+      <p style="margin-top:.6rem;font-size:.85rem;color:var(--muted)"><strong>Examples:</strong> Gold (always), crude oil in normal supply environment.</p>
+    </div>
+    <div class="card green">
+      <div class="formula-label" style="color:var(--green)">Backwardation — F &lt; S</div>
+      <p>The forward curve is <strong>downward-sloping</strong>. Spot exceeds futures. High convenience yield (physical scarcity) or strong expectations of future price declines.</p>
+      <p style="margin-top:.6rem;font-size:.85rem;color:var(--muted)"><strong>Examples:</strong> Oil during supply shock, agricultural commodities at harvest.</p>
+    </div>
+  </div>
+
+  <!-- FORWARD CURVE CHART -->
+  <div class="section-h2">Forward Curve Visualiser</div>
+  <div class="chart-wrapper">
+    <div class="chart-controls" style="gap:1rem">
+      <div style="display:flex; align-items:center; gap:.4rem">
+        <label>Spot S₀ =</label>
+        <input type="range" id="curve-spot" min="60" max="140" value="100" oninput="drawCurve()">
+        <span class="val" id="curve-spot-val">100</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:.4rem">
+        <label>r =</label>
+        <input type="range" id="curve-r" min="0" max="10" value="4" oninput="drawCurve()">
+        <span class="val" id="curve-r-val">4%</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:.4rem">
+        <label>Convenience yield c =</label>
+        <input type="range" id="curve-c" min="0" max="12" value="2" oninput="drawCurve()">
+        <span class="val" id="curve-c-val">2%</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:.4rem">
+        <label>Storage λ =</label>
+        <input type="range" id="curve-l" min="0" max="8" value="1" oninput="drawCurve()">
+        <span class="val" id="curve-l-val">1%</span>
+      </div>
+    </div>
+    <canvas id="curveCanvas"></canvas>
+  </div>
+
+  <div class="section-h2">Cost of Carry Decomposition</div>
+  <div class="card">
+    <div class="formula-box">
+      \[ F_0(T) = S_0 \cdot e^{(r + \lambda - c)T} \]
+    </div>
+    <table>
+      <thead><tr><th>Force</th><th>Symbol</th><th>Direction</th><th>Intuition</th></tr></thead>
+      <tbody>
+        <tr><td>Risk-free rate</td><td><code>r</code></td><td class="up">↑ F (Contango)</td><td>Financing cost of holding spot</td></tr>
+        <tr><td>Storage costs</td><td><code>λ</code></td><td class="up">↑ F (Contango)</td><td>Warehousing, insurance, spoilage</td></tr>
+        <tr><td>Convenience yield</td><td><code>c</code></td><td class="dn">↓ F (Backwardation)</td><td>Premium for having physical now</td></tr>
+        <tr><td>Dividend / coupon</td><td><code>q / I</code></td><td class="dn">↓ F (lower forward)</td><td>Income foregone by the long</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-h2">Roll Yield</div>
+  <div class="card blue">
+    <p>As expiry approaches, the futures price <strong>converges to the spot</strong> (<span class="katex-inline">\(F \to S_T\)</span>). A long position that holds through time earns (or loses) a <strong>roll yield</strong> from this convergence.</p>
+    <div class="grid2" style="margin-top:1rem">
+      <div>
+        <div class="formula-label" style="color:var(--red)">Contango → Negative Roll</div>
+        <p style="font-size:.87rem;color:var(--muted)">Roll a long: sell cheap expiring contract, buy more expensive next contract. You constantly pay up. <strong>ETF investors in VIX/crude oil feel this acutely.</strong></p>
+      </div>
+      <div>
+        <div class="formula-label" style="color:var(--green)">Backwardation → Positive Roll</div>
+        <p style="font-size:.87rem;color:var(--muted)">Roll a long: sell expensive expiring contract, buy cheaper next contract. You lock in a structural gain. Commodity trend funds exploit this.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-h2">Interview "Aha!" Moments</div>
+  <div class="grid2">
+    <div class="card">
+      <div class="formula-label">Why is Gold always in Contango?</div>
+      <p style="font-size:.88rem;color:var(--muted)">Gold has storage costs, financing costs, and <strong>almost zero convenience yield</strong> — you can't "use" gold to keep a factory running. So <span class="katex-inline">\(r + \lambda > c\)</span> always, and F &gt; S.</p>
+    </div>
+    <div class="card">
+      <div class="formula-label">Why does Oil flip into Backwardation?</div>
+      <p style="font-size:.88rem;color:var(--muted)">Supply shocks. Refineries need physical crude <em>now</em>. The convenience yield spikes, flipping the curve into backwardation. OPEC cuts → backwardation signal.</p>
+    </div>
+    <div class="card">
+      <div class="formula-label">Keynes' "Normal" Backwardation</div>
+      <p style="font-size:.88rem;color:var(--muted)">Producers (naturally short) offer speculators a discount F₀ &lt; E[\(S_T\)] as an <em>insurance premium</em>. Speculators are compensated for taking on price risk. This creates a structural positive roll yield for long-only commodity investors.</p>
+    </div>
+    <div class="card">
+      <div class="formula-label">VIX ETF Roll Drag</div>
+      <p style="font-size:.88rem;color:var(--muted)">VIX futures are almost permanently in contango (volatility mean-reverts, so near-term vol &lt; long-term vol). This explains why products like VXX persistently lose value over time: they bleed ~5-10% per month in roll costs.</p>
+    </div>
+  </div>
+
+</div><!-- end tab-curve -->
+
+<!-- ═══════════════════════════ TAB 6: BASIS ═════════════════════════════ -->
+<div id="tab-basis" class="tab-content">
+
+  <div class="section-h">Basis Risk</div>
+  <div class="card">
+    <div class="formula-box">
+      \[ \text{Basis} = S - F \]
+    </div>
+    <p style="margin:.8rem 0;font-size:.88rem"><strong>Basis risk</strong> is the risk that the hedge instrument and the hedged asset don't move in perfect lockstep. Even if you hedge perfectly in notional, residual basis risk means P&amp;L is not fully offset.</p>
+    <div class="grid2" style="margin-top:1rem">
+      <div class="kpi-chip">
+        <div class="label">Contango → Negative Basis</div>
+        <div class="value" style="color:var(--red)">Basis &lt; 0</div>
+        <div class="sub">F &gt; S, market expects rising prices or high carry costs</div>
+      </div>
+      <div class="kpi-chip">
+        <div class="label">Backwardation → Positive Basis</div>
+        <div class="value" style="color:var(--green)">Basis &gt; 0</div>
+        <div class="sub">S &gt; F, physical scarcity or declining price expectation</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-h">Sources of Basis Risk</div>
+  <div class="card blue">
+    <table>
+      <thead><tr><th>Source</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>Grade / quality mismatch</td><td>Hedging Brent crude with WTI futures</td></tr>
+        <tr><td>Location mismatch</td><td>Hedging crude in Houston with Cushing-delivered futures</td></tr>
+        <tr><td>Timing mismatch</td><td>Hedging a June exposure with a March futures contract</td></tr>
+        <tr><td>Imperfect correlation</td><td>Hedging a corporate bond portfolio with Treasury futures</td></tr>
+        <tr><td>Cross-hedging</td><td>Hedging jet fuel with crude oil futures (different commodity)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-h">Minimum Variance Hedge Ratio</div>
+  <div class="card">
+    <p style="margin-bottom:.8rem">To minimise the variance of the hedged portfolio, you don't always hedge 1:1. The <strong>optimal hedge ratio</strong> scales for the relationship between the spot asset and the futures instrument:</p>
+    <div class="formula-box">
+      \[ h^* = \rho_{SF} \cdot \frac{\sigma_S}{\sigma_F} \]
+    </div>
+    <table>
+      <thead><tr><th>Symbol</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><span class="katex-inline">\(h^*\)</span></td><td>Optimal hedge ratio (units of futures per unit of spot exposure)</td></tr>
+        <tr><td><span class="katex-inline">\(\rho_{SF}\)</span></td><td>Correlation between changes in spot price and futures price</td></tr>
+        <tr><td><span class="katex-inline">\(\sigma_S\)</span></td><td>Std deviation of changes in spot price</td></tr>
+        <tr><td><span class="katex-inline">\(\sigma_F\)</span></td><td>Std deviation of changes in futures price</td></tr>
+      </tbody>
+    </table>
+    <div class="formula-box multi" style="margin-top:1rem">
+      <div class="formula-label">Number of Contracts</div>
+      \[ N^* = h^* \times \frac{V_S}{V_F} \]
+      <p style="margin-top:.5rem;font-size:.8rem;color:#94a3b8">Where \(V_S\) is the dollar value of the spot position and \(V_F\) is the dollar value of one futures contract (= Futures Price × Multiplier).</p>
+    </div>
+    <div class="alert tip">
+      <span class="ico">💡</span>
+      <span>Note that <span class="katex-inline">\(h^*\)</span> is estimated via OLS regression of <span class="katex-inline">\(\Delta S\)</span> on <span class="katex-inline">\(\Delta F\)</span>. The slope coefficient IS the hedge ratio, and <span class="katex-inline">\(R^2\)</span> tells you what fraction of spot variance is hedged. The residual variance is the irreducible basis risk.</span>
+    </div>
+  </div>
+
+  <div class="section-h2">Worked Example — Jet Fuel Cross-Hedge</div>
+  <div class="card">
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:.8rem">An airline needs to hedge 2,000,000 gallons of jet fuel. It will use crude oil futures (contract size: 42,000 gallons = 1,000 barrels). Estimated: <span class="katex-inline">\(\rho = 0.92\)</span>, <span class="katex-inline">\(\sigma_{jet} = 0.032\)</span>, <span class="katex-inline">\(\sigma_{crude} = 0.028\)</span>.</p>
+    <div class="formula-box multi">
+      \[ h^* = 0.92 \times \frac{0.032}{0.028} = 1.051 \]
+      \[ N^* = 1.051 \times \frac{2{,}000{,}000}{42{,}000} \approx \mathbf{50 \text{ contracts}} \]
+    </div>
+    <div class="alert key">
+      <span class="ico">🔑</span>
+      <span>The airline needs 50 short crude oil futures contracts — slightly more than the 1:1 naive hedge of 47.6, because jet fuel is more volatile than crude. The 8% basis risk (1 − ρ² = 0.153 ≈ 15% of variance unhedged) reflects the crude/jet spread risk.</span>
+    </div>
+  </div>
+
+  <div class="section-h2">Hedging an Equity Portfolio with Index Futures</div>
+  <div class="card">
+    <div class="formula-box">
+      \[ N^* = \frac{\beta_P \cdot V_P}{V_F} \]
+    </div>
+
+    <table style="margin-bottom:1rem">
+      <thead><tr><th>Symbol</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><span class="katex-inline">\(N^*\)</span></td><td>Number of futures contracts required</td></tr>
+        <tr><td><span class="katex-inline">\(\beta_P\)</span></td><td>Current beta of the portfolio (measure of systematic risk)</td></tr>
+        <tr><td><span class="katex-inline">\(\beta^*\)</span></td><td>Target beta of the portfolio (e.g., \(0\) to fully hedge)</td></tr>
+        <tr><td><span class="katex-inline">\(V_P\)</span></td><td>Total market value of the equity portfolio</td></tr>
+        <tr><td><span class="katex-inline">\(V_F\)</span></td><td>Notional value of one index futures contract (\(= \text{Futures Price} \times \text{Multiplier}\))</td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:.87rem;color:var(--muted)">To <em>eliminate</em> all systematic risk, short \(N^*\) index futures (target \(\beta^* = 0\)). To change the portfolio beta from \(\beta_P\) to a target \(\beta^*\):</p>
+    <div class="formula-box" style="margin-top:.8rem">
+      \[ N^* = \frac{(\beta^* - \beta_P) \cdot V_P}{V_F} \]
+    </div>
+    <p style="font-size:.87rem;color:var(--muted);margin-top:.8rem">A negative \(N^*\) indicates shorting futures (reducing beta), while a positive \(N^*\) indicates going long futures (increasing beta). This allows portfolio managers to make rapid tactical overlays without incurring the transaction costs of trading the underlying stocks.</p>
+  </div>
+
+</div><!-- end tab-basis -->
+
+<!-- ═══════════════════════════ TAB 7: CONVENTIONS ═══════════════════════ -->
+<div id="tab-conventions" class="tab-content">
+
+  <div class="section-h">Futures Ticker Conventions</div>
+  <div class="card">
+    <div class="formula-label">Anatomy: [Symbol][Month][Year]</div>
+    <p style="margin:.6rem 0">Example: <code>ES Z 5</code> = E-mini S&amp;P 500, December, 2025</p>
+    <div class="formula-box" style="font-size:1.4rem;letter-spacing:.15em;font-family:var(--mono)">
+      <span style="color:var(--accent2)">ES</span>&nbsp;&nbsp;<span style="color:var(--accent)">Z</span>&nbsp;&nbsp;<span style="color:var(--green)">5</span>
+    </div>
+    <div class="grid3" style="margin-top:1rem">
+      <div class="kpi-chip"><div class="label">Symbol</div><div class="value" style="color:var(--accent2)">ES</div><div class="sub">E-mini S&P 500 (Contract Size: $50 &times; Index)</div></div>
+      <div class="kpi-chip"><div class="label">Month Code</div><div class="value" style="color:var(--accent)">Z = Dec</div><div class="sub">Quarterly liquidity king</div></div>
+      <div class="kpi-chip"><div class="label">Year</div><div class="value" style="color:var(--green)">5 = 2025</div><div class="sub">Last digit of year</div></div>
+    </div>
+  </div>
+
+  <div class="section-h2">Key S&T Contract Specifications</div>
+  <div class="card">
+    <p style="margin-bottom:.8rem; font-size:.87rem">In S&T interviews, you are expected to know the standard contract multipliers and tick values of the most liquid products:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Contract Symbol</th>
+          <th>Contract Size (Multiplier)</th>
+          <th>Min Tick Size &amp; Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Equity Index</strong></td>
+          <td><code>ES</code> (E-mini S&amp;P 500)</td>
+          <td>$50 &times; S&amp;P 500 index level</td>
+          <td>0.25 index points = $12.50</td>
+        </tr>
+        <tr>
+          <td><strong>Equity Index</strong></td>
+          <td><code>NQ</code> (E-mini Nasdaq 100)</td>
+          <td>$20 &times; Nasdaq 100 index level</td>
+          <td>0.25 index points = $5.00</td>
+        </tr>
+        <tr>
+          <td><strong>Energy</strong></td>
+          <td><code>CL</code> (WTI Crude Oil)</td>
+          <td>1,000 barrels</td>
+          <td>$0.01 / barrel = $10.00</td>
+        </tr>
+        <tr>
+          <td><strong>Metals</strong></td>
+          <td><code>GC</code> (Gold)</td>
+          <td>100 troy ounces</td>
+          <td>$0.10 / troy ounce = $10.00</td>
+        </tr>
+        <tr>
+          <td><strong>FX</strong></td>
+          <td><code>6E</code> (Euro FX)</td>
+          <td>€125,000</td>
+          <td>$0.00005 / EUR = $6.25</td>
+        </tr>
+        <tr>
+          <td><strong>Treasuries</strong></td>
+          <td><code>ZB</code> (30-Year US Bond)</td>
+          <td>$100,000 face value</td>
+          <td>1/32 of a point = $31.25</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section-h2">Month Codes — Full Reference</div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Code</th><th>Month</th><th>Quarterly?</th></tr></thead>
+      <tbody>
+        <tr><td style="font-family:var(--mono);color:var(--accent)">F</td><td>January</td><td></td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--accent)">G</td><td>February</td><td></td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--accent);font-size:1rem;font-weight:700">H</td><td><strong>March</strong></td><td>⭐ Quarterly</td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--accent)">J</td><td>April</td><td></td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--accent)">K</td><td>May</td><td></td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--accent);font-size:1rem;font-weight:700">M</td><td><strong>June</strong></td><td>⭐ Quarterly</td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--accent)">N</td><td>July</td><td></td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--accent)">Q</td><td>August</td><td></td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--accent);font-size:1rem;font-weight:700">U</td><td><strong>September</strong></td><td>⭐ Quarterly</td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--accent)">V</td><td>October</td><td></td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--accent)">X</td><td>November</td><td></td></tr>
+        <tr><td style="font-family:var(--mono);color:var(--accent);font-size:1rem;font-weight:700">Z</td><td><strong>December</strong></td><td>⭐ Quarterly</td></tr>
+      </tbody>
+    </table>
+    <div class="alert tip"><span class="ico">💡</span><span>Mnemonic for quarterly codes: <strong>H – M – U – Z</strong>. Some traders say <em>"Hey Man, U Zippy?"</em></span></div>
+  </div>
+
+  <div class="section-h2">Bloomberg Generic Tickers &amp; Roll Dynamics</div>
+  <div class="card blue">
+    <table>
+      <thead><tr><th>Ticker</th><th>Meaning</th><th>Use</th></tr></thead>
+      <tbody>
+        <tr><td><code>CL 1</code></td><td>WTI Crude — Front Month (nearest expiry)</td><td>Highest volume, most liquid</td></tr>
+        <tr><td><code>CL 2</code></td><td>WTI Crude — 2nd contract</td><td>Roll analysis</td></tr>
+        <tr><td><code>ES 1</code></td><td>E-mini S&P — Front Month</td><td>Equity futures trading</td></tr>
+        <tr><td><code>GC 1</code></td><td>Gold — Front Month</td><td>Safe-haven positioning</td></tr>
+      </tbody>
+    </table>
+    <div class="alert key">
+      <span class="ico">🔑</span>
+      <span><strong>Generic tickers</strong> provide a continuous price series by stitching together successive contracts. This avoids artificial "jumps" in the price chart at each expiry — essential for backtesting and charting.</span>
+    </div>
+  </div>
+
+  <div class="section-h2">Key Futures Contracts — Quick Reference</div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Contract</th><th>Exchange</th><th>Multiplier</th><th>Typical Margin</th></tr></thead>
+      <tbody>
+        <tr><td>E-mini S&P 500 (ES)</td><td>CME</td><td>$50/point</td><td>~$12,000 IM</td></tr>
+        <tr><td>Micro E-mini S&P (MES)</td><td>CME</td><td>$5/point</td><td>~$1,200 IM</td></tr>
+        <tr><td>Eurostoxx 50 (FESX)</td><td>Eurex</td><td>€10/point</td><td>~€2,500 IM</td></tr>
+        <tr><td>WTI Crude (CL)</td><td>NYMEX</td><td>1,000 barrels</td><td>~$6,000 IM</td></tr>
+        <tr><td>Gold (GC)</td><td>COMEX</td><td>100 troy oz</td><td>~$8,000 IM</td></tr>
+        <tr><td>10Y T-Note (ZN)</td><td>CBOT</td><td>$100,000 face</td><td>~$2,500 IM</td></tr>
+        <tr><td>EUR/USD (6E)</td><td>CME</td><td>€125,000</td><td>~$2,700 IM</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:.78rem;color:var(--muted);margin-top:.6rem">* Margin figures are approximate and change frequently with volatility. Always verify with your broker.</p>
+  </div>
+
+</div><!-- end tab-conventions -->
+
+<!-- FOOTER -->
+<div class="footer">
+  <span>Forwards &amp; Futures — S&amp;T Interview Guide · Quantitative Finance · 2025-2026</span>
+  <span>Powered by KaTeX · No-arbitrage pricing · All errors are basis risk.</span>
+</div>
+
+</div><!-- /wrapper -->
+
+<!-- ═══════════════════ SCRIPTS ═══════════════════════════════════════════ -->
+<script>
+/* ── TAB SWITCHING ────────────────────────────────────────────────────── */
+function switchTab(id){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  setTimeout(()=>{
+    if(id==='payoffs') drawPayoff();
+    if(id==='curve') drawCurve();
+  }, 30);
+}
+
+/* ── PAYOFF DIAGRAM ───────────────────────────────────────────────────── */
+function drawPayoff(){
+  const canvas = document.getElementById('payoffCanvas');
+  if(!canvas) return;
+  const dpr = window.devicePixelRatio||1;
+  const W = canvas.parentElement.clientWidth - 32;
+  const H = 260;
+  canvas.width = W*dpr; canvas.height = H*dpr;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  const ctx = canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+
+  const F = parseFloat(document.getElementById('fwd-slider').value);
+  document.getElementById('fwd-val').textContent = F;
+  const mode = document.getElementById('payoff-select').value;
+
+  const pad = {l:55,r:20,t:20,b:40};
+  const cw = W-pad.l-pad.r, ch = H-pad.t-pad.b;
+  const Smin=F-60, Smax=F+60, Pmin=-60, Pmax=60;
+
+  function toX(s){return pad.l+(s-Smin)/(Smax-Smin)*cw}
+  function toY(p){return pad.t+(1-(p-Pmin)/(Pmax-Pmin))*ch}
+
+  // background
+  ctx.fillStyle='#0d1117'; ctx.fillRect(0,0,W,H);
+
+  // F₀ vertical
+  ctx.setLineDash([5,4]);
+  ctx.strokeStyle='#94a3b8'; ctx.lineWidth=1;
+  ctx.beginPath(); ctx.moveTo(toX(F),pad.t); ctx.lineTo(toX(F),pad.t+ch); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Axes
+  ctx.strokeStyle='#252c40'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ch); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t+ch); ctx.lineTo(pad.l+cw,pad.t+ch); ctx.stroke();
+
+  // Grid & labels
+  ctx.fillStyle='#94a3b8'; ctx.font='11px JetBrains Mono,monospace';
+  ctx.textAlign='right';
+  [-40,-20,0,20,40].forEach(p=>{
+    const y=toY(p);
+    ctx.fillStyle='#94a3b8';
+    ctx.fillText(p, pad.l-6, y+4);
+    if(p!==0){
+      ctx.strokeStyle='#1a1e2b'; ctx.lineWidth=1;
+      ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+    }
+  });
+
+  // Zero line (highlighted X-axis at payoff = 0)
+  ctx.strokeStyle='#64748b'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(pad.l,toY(0)); ctx.lineTo(pad.l+cw,toY(0)); ctx.stroke();
+  ctx.textAlign='center';
+  [F-40,F-20,F,F+20,F+40].forEach(s=>{
+    const x=toX(s);
+    ctx.fillStyle='#94a3b8';
+    ctx.fillText(s.toFixed(0), x, pad.t+ch+16);
+  });
+
+  // F₀ label
+  ctx.fillStyle='#f0b429'; ctx.textAlign='center';
+  ctx.fillText('F₀='+F, toX(F), pad.t-6);
+
+  // LONG payoff
+  if(mode==='long'||mode==='both'){
+    ctx.strokeStyle='#38bdf8'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    ctx.moveTo(toX(Smin), toY(Smin-F));
+    ctx.lineTo(toX(Smax), toY(Smax-F));
+    ctx.stroke();
+    ctx.fillStyle='#38bdf8'; ctx.textAlign='left';
+    ctx.fillText('Long', toX(F+25), toY(25)-8);
+  }
+  // SHORT payoff
+  if(mode==='short'||mode==='both'){
+    ctx.strokeStyle='#f87171'; ctx.lineWidth=2.5;
+    ctx.beginPath();
+    ctx.moveTo(toX(Smin), toY(F-Smin));
+    ctx.lineTo(toX(Smax), toY(F-Smax));
+    ctx.stroke();
+    ctx.fillStyle='#f87171'; ctx.textAlign='right';
+    ctx.fillText('Short', toX(F-25), toY(25)-8);
+  }
+
+  // Axis labels
+  ctx.fillStyle='#94a3b8'; ctx.font='11px JetBrains Mono,monospace';
+  ctx.textAlign='center';
+  ctx.fillText('S_T (Spot at Maturity)', pad.l+cw/2, H-6);
+  ctx.save(); ctx.translate(14, pad.t+ch/2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('Payoff', 0, 0); ctx.restore();
+}
+
+/* ── FORWARD CURVE ────────────────────────────────────────────────────── */
+function drawCurve(){
+  const canvas = document.getElementById('curveCanvas');
+  if(!canvas) return;
+  const dpr = window.devicePixelRatio||1;
+  const W = canvas.parentElement.clientWidth - 32;
+  const H = 260;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+
+  const S0=parseFloat(document.getElementById('curve-spot').value);
+  const r=parseFloat(document.getElementById('curve-r').value)/100;
+  const c=parseFloat(document.getElementById('curve-c').value)/100;
+  const lam=parseFloat(document.getElementById('curve-l').value)/100;
+
+  document.getElementById('curve-spot-val').textContent=S0;
+  document.getElementById('curve-r-val').textContent=(r*100).toFixed(0)+'%';
+  document.getElementById('curve-c-val').textContent=(c*100).toFixed(0)+'%';
+  document.getElementById('curve-l-val').textContent=(lam*100).toFixed(0)+'%';
+
+  const Ts=[0,0.25,0.5,0.75,1,1.5,2,2.5,3];
+  const Fs=Ts.map(T=>S0*Math.exp((r+lam-c)*T));
+
+  const pad={l:60,r:20,t:20,b:40};
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+  const Fmin=Math.min(...Fs,S0)*0.97, Fmax=Math.max(...Fs,S0)*1.03;
+
+  function toX(t){return pad.l+t/3*cw}
+  function toY(f){return pad.t+(1-(f-Fmin)/(Fmax-Fmin))*ch}
+
+  ctx.fillStyle='#0d1117'; ctx.fillRect(0,0,W,H);
+
+  // horizontal grid
+  ctx.fillStyle='#94a3b8'; ctx.font='11px JetBrains Mono,monospace';
+  ctx.strokeStyle='#1a1e2b';
+  const steps=5;
+  for(let i=0;i<=steps;i++){
+    const f=Fmin+(Fmax-Fmin)*i/steps;
+    const y=toY(f);
+    ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(pad.l+cw,y); ctx.stroke();
+    ctx.textAlign='right'; ctx.fillText(f.toFixed(1),pad.l-6,y+4);
+  }
+
+  // Spot line
+  ctx.strokeStyle='#94a3b8'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(pad.l,toY(S0)); ctx.lineTo(pad.l+cw,toY(S0)); ctx.stroke();
+  ctx.setLineDash([]); ctx.fillStyle='#94a3b8'; ctx.textAlign='left';
+  ctx.fillText('Spot S₀='+S0.toFixed(0),pad.l+4,toY(S0)-5);
+
+  // Forward curve
+  const netCarry=r+lam-c;
+  const isContango=netCarry>0.001;
+  const isBtw=netCarry<-0.001;
+  ctx.strokeStyle=isContango?'#f87171':isBtw?'#34d399':'#f0b429';
+  ctx.lineWidth=2.5;
+  ctx.beginPath();
+  Ts.forEach((t,i)=>{
+    if(i===0) ctx.moveTo(toX(t),toY(Fs[i]));
+    else ctx.lineTo(toX(t),toY(Fs[i]));
+  });
+  ctx.stroke();
+
+  // Dots
+  Ts.forEach((t,i)=>{
+    ctx.fillStyle=isContango?'#f87171':isBtw?'#34d399':'#f0b429';
+    ctx.beginPath(); ctx.arc(toX(t),toY(Fs[i]),4,0,Math.PI*2); ctx.fill();
+  });
+
+  // X axis labels
+  ctx.textAlign='center'; ctx.fillStyle='#94a3b8';
+  Ts.forEach(t=>ctx.fillText(t+'Y',toX(t),pad.t+ch+16));
+
+  // Regime label
+  const label=isContango?'CONTANGO':isBtw?'BACKWARDATION':'FLAT';
+  const col=isContango?'#f87171':isBtw?'#34d399':'#f0b429';
+  ctx.fillStyle=col; ctx.font='bold 13px JetBrains Mono,monospace';
+  ctx.textAlign='right';
+  ctx.fillText(label,pad.l+cw,pad.t+14);
+
+  // Axes
+  ctx.strokeStyle='#252c40'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ch); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t+ch); ctx.lineTo(pad.l+cw,pad.t+ch); ctx.stroke();
+
+  ctx.fillStyle='#94a3b8'; ctx.font='11px JetBrains Mono,monospace';
+  ctx.textAlign='center'; ctx.fillText('Maturity',pad.l+cw/2,H-4);
+}
+
+/* ── MARGIN CALCULATOR ────────────────────────────────────────────────── */
+function calcMargin(){
+  const S0=parseFloat(document.getElementById('mg-spot').value)||5000;
+  const mult=parseFloat(document.getElementById('mg-mult').value)||10;
+  const IM=parseFloat(document.getElementById('mg-im').value)||2700;
+  const MM=parseFloat(document.getElementById('mg-mm').value)||2000;
+
+  const nominal=S0*mult;
+  const leverage=(nominal/IM).toFixed(1);
+
+  document.getElementById('mg-setup').innerHTML=
+    `<strong>Nominal:</strong> €${nominal.toLocaleString()} &nbsp;|&nbsp; <strong>Leverage:</strong> ${leverage}× &nbsp;|&nbsp; IM restore rule: VM = IM − Balance`;
+
+  // Simulate 7 days with scripted price path
+  const prices=[S0, S0-30, S0-80, S0+20, S0-50, S0+40, S0+10];
+  const table=document.getElementById('margin-table');
+  const tbody=document.getElementById('margin-tbody');
+  tbody.innerHTML='';
+  table.style.display='table';
+
+  let balance=IM;
+  let prevP=S0;
+  prices.forEach((p,i)=>{
+    const delta=i===0?0:p-prevP;
+    const pnl=delta*mult;
+    if(i>0) balance+=pnl;
+    const mc=balance<MM && i>0;
+    let action='—';
+    let vm=0;
+    if(mc){
+      vm=IM-balance;
+      action=`⚠️ MARGIN CALL — Deposit €${vm.toFixed(0)}`;
+      balance=IM;
+    }
+    const tr=document.createElement('tr');
+    if(mc) tr.className='margin-call-row';
+    tr.innerHTML=`
+      <td>${i}</td>
+      <td>${p.toFixed(0)}</td>
+      <td style="color:${delta>=0?'#34d399':'#f87171'}">${i===0?'—':(delta>=0?'+':'')+delta.toFixed(0)}</td>
+      <td style="color:${pnl>=0?'#34d399':'#f87171'}">${i===0?'—':(pnl>=0?'+':'')+pnl.toFixed(0)}</td>
+      <td style="color:${balance<=MM+100?'#f87171':'#e2e8f0'}">${balance.toFixed(0)}</td>
+      <td>${action}</td>
+    `;
+    tbody.appendChild(tr);
+    prevP=p;
+  });
+}
+
+/* ── INIT ─────────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded',()=>{
+  renderMathInElement(document.body,{
+    delimiters:[
+      {left:'$$',right:'$$',display:true},
+      {left:'\\[',right:'\\]',display:true},
+      {left:'\\(',right:'\\)',display:false}
+    ],
+    throwOnError:false
+  });
+
+
+
+  // Draw charts after tiny delay
+  setTimeout(()=>{
+    drawPayoff();
+    drawCurve();
+    calcMargin();
+  },200);
+});
+</script>
+</body>
+</html>

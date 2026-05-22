@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Quantitative Finance | Options Mastery</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #05080a;
+                --surface: #0a0f14;
+                --card: rgba(14, 21, 25, 0.6);
+                --card-hover: rgba(20, 30, 38, 0.8);
+                --border: rgba(255, 255, 255, 0.08);
+                --border-hover: rgba(74, 222, 128, 0.5);
+                --accent: #4ade80;
+                --accent-glow: rgba(74, 222, 128, 0.2);
+                --accent2: #60a5fa;
+                --accent3: #f59e0b;
+                --text: #e2e8f0;
+                --muted: #94a3b8;
+            }
+
+            * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            body {
+                background-color: var(--bg);
+                color: var(--text);
+                font-family: "Inter", sans-serif;
+                line-height: 1.6;
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                overflow-x: hidden;
+            }
+
+            /* Animated Background */
+            .bg-grid {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100vw;
+                height: 100vh;
+                background-image:
+                    linear-gradient(
+                        to right,
+                        rgba(255, 255, 255, 0.03) 1px,
+                        transparent 1px
+                    ),
+                    linear-gradient(
+                        to bottom,
+                        rgba(255, 255, 255, 0.03) 1px,
+                        transparent 1px
+                    );
+                background-size: 40px 40px;
+                pointer-events: none;
+                z-index: -1;
+                mask-image: radial-gradient(
+                    circle at center,
+                    black,
+                    transparent 80%
+                );
+                -webkit-mask-image: radial-gradient(
+                    circle at center,
+                    black,
+                    transparent 80%
+                );
+            }
+
+            .glow-orb {
+                position: fixed;
+                top: -10%;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 600px;
+                height: 600px;
+                background: radial-gradient(
+                    circle,
+                    var(--accent-glow) 0%,
+                    transparent 70%
+                );
+                pointer-events: none;
+                z-index: -1;
+                filter: blur(60px);
+            }
+
+            header {
+                padding: 6rem 2rem 4rem;
+                text-align: center;
+                position: relative;
+            }
+
+            .badge {
+                display: inline-block;
+                padding: 0.4rem 1rem;
+                background: rgba(74, 222, 128, 0.1);
+                border: 1px solid var(--accent);
+                color: var(--accent);
+                border-radius: 999px;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.8rem;
+                font-weight: 700;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                margin-bottom: 2rem;
+                animation: pulse 3s infinite;
+            }
+
+            @keyframes pulse {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.4);
+                }
+                70% {
+                    box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+                }
+                100% {
+                    box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+                }
+            }
+
+            h1 {
+                font-size: 4.5rem;
+                font-weight: 800;
+                letter-spacing: -0.04em;
+                line-height: 1.1;
+                margin-bottom: 1.5rem;
+                background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+
+            p.subtitle {
+                font-size: 1.25rem;
+                color: var(--muted);
+                max-width: 700px;
+                margin: 0 auto;
+                font-weight: 300;
+            }
+
+            main {
+                flex: 1;
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 2rem;
+                width: 100%;
+            }
+
+            .grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+                gap: 2rem;
+            }
+
+            .card {
+                background: var(--card);
+                border: 1px solid var(--border);
+                border-radius: 16px;
+                padding: 2.5rem 2rem;
+                text-decoration: none;
+                color: var(--text);
+                transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+                backdrop-filter: blur(12px);
+                position: relative;
+                overflow: hidden;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .card::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 3px;
+                background: linear-gradient(90deg, var(--accent), transparent);
+                opacity: 0;
+                transition: opacity 0.4s ease;
+            }
+
+            .card:hover {
+                transform: translateY(-8px);
+                background: var(--card-hover);
+                border-color: var(--border-hover);
+                box-shadow:
+                    0 20px 40px rgba(0, 0, 0, 0.4),
+                    0 0 20px var(--accent-glow);
+            }
+
+            .card:hover::before {
+                opacity: 1;
+            }
+
+            .card-num {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 3rem;
+                font-weight: 800;
+                color: rgba(255, 255, 255, 0.05);
+                position: absolute;
+                top: 1rem;
+                right: 1.5rem;
+                transition: color 0.4s ease;
+            }
+
+            .card:hover .card-num {
+                color: rgba(74, 222, 128, 0.15);
+            }
+
+            .card h2 {
+                font-size: 1.5rem;
+                font-weight: 600;
+                margin-bottom: 1rem;
+                position: relative;
+                z-index: 1;
+            }
+
+            .card p {
+                color: var(--muted);
+                font-size: 0.95rem;
+                flex: 1;
+                position: relative;
+                z-index: 1;
+            }
+
+            .card-footer {
+                margin-top: 2rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.8rem;
+                color: var(--accent);
+                opacity: 0;
+                transform: translateX(-10px);
+                transition: all 0.4s ease;
+            }
+
+            .card:hover .card-footer {
+                opacity: 1;
+                transform: translateX(0);
+            }
+
+            .arrow {
+                transition: transform 0.3s ease;
+            }
+
+            .card:hover .arrow {
+                transform: translateX(5px);
+            }
+
+            footer {
+                text-align: center;
+                padding: 4rem 2rem;
+                border-top: 1px solid var(--border);
+                margin-top: 4rem;
+                color: var(--muted);
+                font-family: "JetBrains Mono", monospace;
+                font-size: 0.85rem;
+            }
+
+            /* Staggered Animation for Cards */
+            .fade-up {
+                opacity: 0;
+                transform: translateY(30px);
+                animation: fadeUp 0.8s forwards cubic-bezier(0.16, 1, 0.3, 1);
+            }
+
+            @keyframes fadeUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="bg-grid"></div>
+        <div class="glow-orb"></div>
+
+        <header>
+            <div class="badge fade-up" style="animation-delay: 0.1s">
+                Advanced Quantitative Finance
+            </div>
+            <h1 class="fade-up" style="animation-delay: 0.2s">
+                Options Mastery
+            </h1>
+            <p class="subtitle fade-up" style="animation-delay: 0.3s">
+                A comprehensive, mathematical, and intuitive guide to
+                derivatives pricing, hedging mechanics, and the Greeks.
+            </p>
+        </header>
+
+        <main>
+            <div class="grid">
+                <a
+                    href="01_Forwards_Futures.html"
+                    class="card fade-up"
+                    style="animation-delay: 0.4s"
+                >
+                    <div class="card-num">01</div>
+                    <h2>Forwards & Futures</h2>
+                    <p>
+                        No-arbitrage pricing, spot-forward parity, contango vs
+                        backwardation, and the mechanics of futures margins.
+                    </p>
+                    <div class="card-footer">
+                        <span>EXPLORE MODULE</span>
+                        <span class="arrow">→</span>
+                    </div>
+                </a>
+
+                <a
+                    href="02_Option_Fundamentals.html"
+                    class="card fade-up"
+                    style="animation-delay: 0.45s"
+                >
+                    <div class="card-num">02</div>
+                    <h2>Option Fundamentals</h2>
+                    <p>
+                        Payoff structures, Black-Scholes intuition, intrinsic vs
+                        time value, and put-call parity.
+                    </p>
+                    <div class="card-footer">
+                        <span>EXPLORE MODULE</span>
+                        <span class="arrow">→</span>
+                    </div>
+                </a>
+
+                <a
+                    href="03_All_About_Volatility.html"
+                    class="card fade-up"
+                    style="animation-delay: 0.5s"
+                >
+                    <div class="card-num">03</div>
+                    <h2>All About Volatility</h2>
+                    <p>
+                        Realized vs implied volatility, the volatility surface,
+                        skew, curvature, and the volatility risk premium.
+                    </p>
+                    <div class="card-footer">
+                        <span>EXPLORE MODULE</span>
+                        <span class="arrow">→</span>
+                    </div>
+                </a>
+
+                <a
+                    href="04_Greeks_Part1_Intro.html"
+                    class="card fade-up"
+                    style="animation-delay: 0.55s"
+                >
+                    <div class="card-num">04</div>
+                    <h2>Greeks Part I: Intro</h2>
+                    <p>
+                        Introduction to the Greeks taxonomy, Taylor series approximation,
+                        and the dynamics of static vs dynamic hedging.
+                    </p>
+                    <div class="card-footer">
+                        <span>EXPLORE MODULE</span>
+                        <span class="arrow">→</span>
+                    </div>
+                </a>
+
+                <a
+                    href="04_Greeks_Part2_Delta.html"
+                    class="card fade-up"
+                    style="animation-delay: 0.6s"
+                >
+                    <div class="card-num">05</div>
+                    <h2>Greeks Part II: Delta</h2>
+                    <p>
+                        Delta exposure, Black-Scholes Delta sensitivities, Delta vs.
+                        Probability of expiring ITM, and Delta Hedging P&L.
+                    </p>
+                    <div class="card-footer">
+                        <span>EXPLORE MODULE</span>
+                        <span class="arrow">→</span>
+                    </div>
+                </a>
+
+                <a
+                    href="04_Greeks_Part3_Gamma.html"
+                    class="card fade-up"
+                    style="animation-delay: 0.65s"
+                >
+                    <div class="card-num">06</div>
+                    <h2>Greeks Part III: Gamma</h2>
+                    <p>
+                        Convexity, Gamma scalping mechanics, Black-Scholes Gamma, pin
+                        risk, and Dollar Gamma risk management.
+                    </p>
+                    <div class="card-footer">
+                        <span>EXPLORE MODULE</span>
+                        <span class="arrow">→</span>
+                    </div>
+                </a>
+
+                <a
+                    href="04_Greeks_Part4_Theta.html"
+                    class="card fade-up"
+                    style="animation-delay: 0.7s"
+                >
+                    <div class="card-num">07</div>
+                    <h2>Greeks Part IV: Theta</h2>
+                    <p>
+                        Time decay, Theta behavior relative to moneyness, volatility,
+                        and time to maturity, and the Theta-Gamma trade-off.
+                    </p>
+                    <div class="card-footer">
+                        <span>EXPLORE MODULE</span>
+                        <span class="arrow">→</span>
+                    </div>
+                </a>
+
+                <a
+                    href="04_Greeks_Part5_Vega.html"
+                    class="card fade-up"
+                    style="animation-delay: 0.75s"
+                >
+                    <div class="card-num">08</div>
+                    <h2>Greeks Part V: Vega</h2>
+                    <p>
+                        Implied volatility exposure, Vega risk dimensions across strikes
+                        and maturities, Vega matrices, and Volga/Vanna convexities.
+                    </p>
+                    <div class="card-footer">
+                        <span>EXPLORE MODULE</span>
+                        <span class="arrow">→</span>
+                    </div>
+                </a>
+
+                <a
+                    href="04_Greeks_Part6_Rho.html"
+                    class="card fade-up"
+                    style="animation-delay: 0.8s"
+                >
+                    <div class="card-num">09</div>
+                    <h2>Greeks Part VI: Rho</h2>
+                    <p>
+                        Interest rate sensitivity, strike discounting and funding
+                        financing cost channels, and LEAPS rate risk.
+                    </p>
+                    <div class="card-footer">
+                        <span>EXPLORE MODULE</span>
+                        <span class="arrow">→</span>
+                    </div>
+                </a>
+
+                <a
+                    href="04_Greeks_Part7_2ndOrders.html"
+                    class="card fade-up"
+                    style="animation-delay: 0.85s"
+                >
+                    <div class="card-num">10</div>
+                    <h2>Greeks Part VII: 2nd Orders</h2>
+                    <p>
+                        Advanced higher-order risks: Volga, Vanna, Charm, the Delta
+                        Drift family, and the complete Master Greeks Table.
+                    </p>
+                    <div class="card-footer">
+                        <span>EXPLORE MODULE</span>
+                        <span class="arrow">→</span>
+                    </div>
+                </a>
+            </div>
+        </main>
+
+        <footer class="fade-up" style="animation-delay: 1.1s">
+            <p>
+                © 2025-2026 Quantitative Finance Notes. Built for S&T and
+                Options Traders.
+            </p>
+        </footer>
+    </body>
+</html>

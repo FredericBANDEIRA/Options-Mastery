@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Greeks — Part III: Gamma | S&amp;T Prep</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" rel="stylesheet"/>
+<script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#05080a;
+  --surface:#090e12;
+  --card:#0e1519;
+  --border:#182028;
+  --accent:#fbbf24;    /* amber — Gamma colour */
+  --accent2:#f59e0b;   /* deeper amber */
+  --accent3:#4ade80;   /* lime (continuity with part 1) */
+  --accent4:#60a5fa;   /* blue */
+  --red:#f87171;
+  --green:#4ade80;
+  --pink:#f472b6;
+  --teal:#2dd4bf;
+  --text:#e2e8f0;
+  --muted:#5a7060;
+  --mono:'Fira Code','Cascadia Code',monospace;
+  --sans:'IBM Plex Sans','Segoe UI',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.74;min-height:100vh}
+
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9990;
+  background-image:radial-gradient(rgba(251,191,36,.06) 1px,transparent 1px);
+  background-size:32px 32px;
+}
+
+.topbar{background:var(--surface);border-bottom:2px solid var(--accent);padding:.6rem 2rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:200;backdrop-filter:blur(14px)}
+.tag{font-family:var(--mono);font-size:.67rem;letter-spacing:.13em;background:var(--accent);color:#000;padding:.2rem .55rem;border-radius:3px;font-weight:800}
+.crumb{font-family:var(--mono);font-size:.74rem;color:var(--muted)} .crumb a{color:inherit;text-decoration:none;transition:color .2s} .crumb a:hover{color:var(--text)}
+.crumb span{color:var(--accent)}
+.topbar-right{margin-left:auto;display:flex;gap:.6rem;align-items:center}
+.badge{font-family:var(--mono);font-size:.67rem;border:1px solid var(--border);padding:.18rem .55rem;border-radius:4px;color:var(--muted)}
+.gamma-spin{font-family:var(--mono);font-size:1.1rem;color:var(--accent);animation:spin 6s linear infinite;display:inline-block}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+.wrapper{max-width:1150px;margin:0 auto;padding:2.5rem 1.5rem 6rem}
+
+.hero{padding:2.8rem 0 2.2rem;border-bottom:1px solid var(--border);margin-bottom:2.5rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;right:-20px;top:0;font-family:var(--mono);font-size:12rem;font-weight:900;color:transparent;-webkit-text-stroke:1px rgba(251,191,36,.07);line-height:1;user-select:none;pointer-events:none}
+.hero .sub{font-size:1rem;color:var(--muted);margin-bottom:.3rem;font-family:var(--mono);letter-spacing:.08em}
+.hero h1{font-size:3rem;font-weight:800;letter-spacing:-.04em;line-height:1.05;background:linear-gradient(120deg,var(--accent) 0%,#fde68a 50%,var(--accent3) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.4rem;position:relative}
+.hero p{color:var(--muted);font-size:.92rem;max-width:650px;margin-top:.5rem;position:relative}
+.meta{display:flex;gap:.65rem;margin-top:1.1rem;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:.67rem;font-weight:600;border:1px solid var(--border);padding:.2rem .65rem;border-radius:99px;color:var(--muted);letter-spacing:.06em}
+.pill.a{border-color:var(--accent);color:var(--accent)}
+.pill.g{border-color:var(--accent3);color:var(--accent3)}
+.pill.b{border-color:var(--accent4);color:var(--accent4)}
+
+.nav-tabs{display:flex;gap:.3rem;flex-wrap:wrap;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+.nav-tab{font-family:var(--mono);font-size:.67rem;font-weight:700;letter-spacing:.07em;padding:.5rem .85rem;border-radius:6px 6px 0 0;cursor:pointer;border:1px solid transparent;border-bottom:none;color:var(--muted);background:transparent;transition:all .18s;position:relative;top:1px;text-transform:uppercase}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{background:var(--card);border-color:var(--border);color:var(--accent);border-bottom:2px solid var(--card)}
+.tab-content{display:none}.tab-content.active{display:block}
+
+.sh{font-size:1.18rem;font-weight:700;color:var(--accent);margin:2.5rem 0 1rem;display:flex;align-items:center;gap:.7rem}
+.sh::before{content:'Γ';font-family:var(--mono);font-size:.85rem;opacity:.6}
+.sh2{font-size:.93rem;font-weight:700;color:var(--teal);margin:1.8rem 0 .8rem;padding-left:1rem;border-left:3px solid var(--teal)}
+.sh3{font-size:.87rem;font-weight:700;color:var(--accent3);margin:1.3rem 0 .6rem;padding-left:.9rem;border-left:2px solid var(--accent3)}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.35rem 1.55rem;margin-bottom:1.2rem;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+.card.t::before{background:linear-gradient(90deg,var(--teal),transparent)}
+.card.g::before{background:linear-gradient(90deg,var(--accent3),transparent)}
+.card.b::before{background:linear-gradient(90deg,var(--accent4),transparent)}
+.card.r::before{background:linear-gradient(90deg,var(--red),transparent)}
+.card.p::before{background:linear-gradient(90deg,var(--pink),transparent)}
+
+.fx{background:#030608;border:1px solid var(--accent);border-radius:8px;padding:1rem 1.5rem;margin:1rem 0;text-align:center;font-size:1.1rem;overflow-x:auto}
+.fx.t{border-color:var(--teal);background:#030a09}
+.fx.g{border-color:var(--accent3);background:#040a04}
+.fx.b{border-color:var(--accent4);background:#040810}
+.fx.r{border-color:var(--red)}
+.fx.multi{text-align:left;font-size:.96rem}
+.flabel{font-family:var(--mono);font-size:.64rem;color:var(--accent);letter-spacing:.13em;text-transform:uppercase;margin-bottom:.5rem}
+.flabel.t{color:var(--teal)}.flabel.g{color:var(--accent3)}.flabel.b{color:var(--accent4)}.flabel.r{color:var(--red)}.flabel.p{color:var(--pink)}
+
+.alert{border-radius:8px;padding:.88rem 1.2rem;margin:.85rem 0;display:flex;gap:.8rem;align-items:flex-start;font-size:.87rem}
+.alert .ico{font-size:1.05rem;flex-shrink:0;margin-top:.05rem}
+.alert.tip{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.25);color:#fde68a}
+.alert.warn{background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.25);color:#fca5a5}
+.alert.key{background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.25);color:#99f6e4}
+.alert.pro{background:rgba(96,165,250,.06);border:1px solid rgba(96,165,250,.25);color:#93c5fd}
+.alert.desk{background:rgba(244,114,182,.06);border:1px solid rgba(244,114,182,.25);color:#f9a8d4}
+.alert.green{background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.25);color:#86efac}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:1rem 0}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin:1rem 0}
+@media(max-width:740px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+
+.kpi{background:#030608;border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem;transition:border-color .2s}
+.kpi:hover{border-color:var(--accent)}
+.kpi .lbl{font-family:var(--mono);font-size:.63rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.kpi .val{font-family:var(--mono);font-size:1rem;font-weight:700}
+.kpi .sub{font-size:.76rem;color:var(--muted);margin-top:.2rem}
+
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.87rem}
+th{background:#030608;color:var(--accent);font-family:var(--mono);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;padding:.7rem 1rem;border-bottom:2px solid var(--accent);text-align:left}
+th.t{color:var(--teal);border-bottom-color:var(--teal)}
+th.g{color:var(--accent3);border-bottom-color:var(--accent3)}
+td{padding:.65rem 1rem;border-bottom:1px solid var(--border);vertical-align:top;font-size:.86rem}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(251,191,36,.02)}
+.up{color:var(--green);font-weight:600}.dn{color:var(--red);font-weight:600}
+
+.chart-wrap{background:#030608;border:1px solid var(--border);border-radius:10px;padding:1rem;margin:1rem 0}
+.chart-controls{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:.8rem;align-items:center}
+.chart-controls label{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.chart-controls input[type=range]{accent-color:var(--accent);width:100px}
+.chart-controls select,.chart-controls input[type=number]{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.74rem;padding:.25rem .5rem;border-radius:5px}
+.cval{font-family:var(--mono);font-size:.77rem;color:var(--accent);font-weight:700;min-width:2.8rem}
+.cval.t{color:var(--teal)}.cval.g{color:var(--accent3)}.cval.b{color:var(--accent4)}
+canvas{display:block;width:100%;border-radius:6px}
+
+/* convexity diagram */
+.convex-split{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+@media(max-width:640px){.convex-split{grid-template-columns:1fr}}
+.convex-card{background:#030608;border-radius:10px;padding:1.2rem;border:1px solid var(--border)}
+.convex-card h4{font-family:var(--mono);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;margin-bottom:.7rem}
+.action-row{display:flex;align-items:center;gap:.8rem;margin:.5rem 0;font-size:.86rem}
+.action-arrow{font-size:1.2rem;width:1.5rem;text-align:center}
+.action-text{flex:1;color:var(--muted)}
+.action-badge{font-family:var(--mono);font-size:.72rem;font-weight:700;padding:.2rem .55rem;border-radius:4px}
+.buy-badge{background:rgba(74,222,128,.12);color:var(--green);border:1px solid rgba(74,222,128,.3)}
+.sell-badge{background:rgba(248,113,113,.12);color:var(--red);border:1px solid rgba(248,113,113,.3)}
+
+/* path dependency simulator */
+.path-toggle{display:flex;gap:.5rem;margin-bottom:.8rem}
+.path-btn{font-family:var(--mono);font-size:.72rem;padding:.3rem .7rem;border-radius:5px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .2s}
+.path-btn.active{background:var(--accent);color:#000;border-color:var(--accent);font-weight:700}
+
+/* gamma meter */
+.gamma-meter{display:flex;flex-direction:column;align-items:center;padding:1.2rem;background:#030608;border-radius:10px;border:1px solid var(--border);margin:1rem 0}
+.gamma-meter-val{font-family:var(--mono);font-size:3rem;font-weight:900;color:var(--accent);line-height:1}
+.gamma-bar{width:100%;max-width:300px;height:14px;background:var(--border);border-radius:7px;margin:.8rem 0;overflow:hidden}
+.gamma-bar-fill{height:100%;border-radius:7px;background:linear-gradient(90deg,var(--accent3),var(--accent),var(--red));transition:width .4s}
+
+details{background:var(--card);border:1px solid var(--border);border-radius:8px;margin:.7rem 0;overflow:hidden}
+details[open]{border-color:var(--accent)}
+summary{padding:.85rem 1.3rem;cursor:pointer;font-weight:600;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;list-style:none;color:var(--text)}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'＋';font-family:var(--mono);color:var(--accent)}
+details[open] summary::after{content:'－'}
+.dbody{padding:.3rem 1.3rem 1.3rem;font-size:.89rem;color:var(--muted)}
+
+code{font-family:var(--mono);font-size:.82em;color:var(--teal);background:rgba(45,212,191,.1);padding:.1em .4em;border-radius:4px}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--border);font-family:var(--mono);font-size:.7rem;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+</style>
+</head>
+<body>
+<div class="topbar">
+<div class="tag">S&amp;T PREP</div>
+<div class="crumb"><a href="index.html">Derivatives</a> &nbsp;/&nbsp; <span>04 — The Greeks · Part III: Gamma</span></div>
+<div class="topbar-right">
+<div class="badge">Γ = ∂²V/∂S²</div>
+<div class="gamma-spin">Γ</div>
+</div>
+</div>
+<div class="wrapper">
+<div class="hero">
+<div class="hero-bg">Γ</div>
+<div class="sub">THE GREEKS — PART 3 OF 7</div>
+<h1>Gamma</h1>
+<p>Convexity, scalping, pin risk, path dependency and Dollar Gamma. The most important second-order Greek — and the one interviewers probe hardest.</p>
+<div class="meta"><span class="pill y">Gamma — Convexity</span><span class="pill">Option Greeks</span><span class="pill c">Part 3 / 7</span></div>
+</div>
+<div class="nav-tabs">
+<div class="nav-tab active" onclick="switchTab('intro',this)">Introduction</div>
+<div class="nav-tab" onclick="switchTab('hedging',this)">Gamma &amp; Hedging</div>
+<div class="nav-tab" onclick="switchTab('bs',this)">Gamma under BS</div>
+<div class="nav-tab" onclick="switchTab('moneyness',this)">vs Moneyness</div>
+<div class="nav-tab" onclick="switchTab('timevol',this)">vs Time &amp; Vol</div>
+<div class="nav-tab" onclick="switchTab('negamma',this)">Neg. Gamma / Pin Risk</div>
+<div class="nav-tab" onclick="switchTab('pnl',this)">Gamma P&amp;L</div>
+<div class="nav-tab" onclick="switchTab('dollar',this)">Dollar Gamma</div>
+</div>
+<!-- ═══════════════════ TAB 1: INTRODUCTION ═══════════════════════════ -->
+<div class="tab-content active" id="tab-intro">
+<div class="sh">Gamma — The Acceleration of Delta</div>
+<div class="card">
+<p>If Delta is the <strong>velocity</strong> of an option's price relative to the underlying, Gamma is the <strong>acceleration</strong>. It tells you how fast your hedge ratio is changing as the market moves.</p>
+<div class="fx" style="font-size:1.2rem">
+      \[ \Gamma = \frac{\partial^2 V}{\partial S^2} = \frac{\partial \Delta}{\partial S} \]
+    </div>
+<div class="grid3" style="margin-top:1rem">
+<div class="kpi"><div class="lbl">What it measures</div><div class="val" style="color:var(--accent)">Delta's drift</div><div class="sub">How much Δ changes for a $1 move in S</div></div>
+<div class="kpi"><div class="lbl">Hedger's concern</div><div class="val" style="color:var(--teal)">Re-hedge frequency</div><div class="sub">High Γ → must rebalance more often to stay Δ-neutral</div></div>
+<div class="kpi"><div class="lbl">Sign for long options</div><div class="val" style="color:var(--green)">Always positive</div><div class="sub">Long call or long put → Γ &gt; 0. Short option → Γ &lt; 0.</div></div>
+</div>
+</div>
+<div class="sh2">The Convexity Benefit — "God Mode"</div>
+<div class="chart-wrap">
+<canvas height="260" id="convexCanvas"></canvas>
+<p style="font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-top:.5rem;text-align:center">The option value (curve) always sits above the linear delta-hedge (straight line) — this gap IS the Gamma P&amp;L</p>
+</div>
+<div class="grid2">
+<div class="card g">
+<div class="flabel g">Long Gamma — Positive Convexity</div>
+<p style="font-size:.87rem;color:var(--muted)">The option <strong>outperforms</strong> the linear hedge in both directions. Market goes up → Delta increases, you get longer. Market goes down → Delta decreases, you get shorter. You win more on the upside and lose less on the downside.</p>
+</div>
+<div class="card r">
+<div class="flabel r">Short Gamma — Negative Convexity</div>
+<p style="font-size:.87rem;color:var(--muted)">The <strong>mirror image</strong>. You underperform in both directions. You lose more when the market moves against you than you gain when it moves with you. Classic "picking up pennies in front of a steamroller."</p>
+</div>
+</div>
+<div class="sh2">Three Interview Pressure-Test Questions</div>
+<details open="">
+<summary>"Where is Gamma highest?"</summary>
+<div class="dbody">
+<p><strong>Answer:</strong> ATM and close to expiration. As the option approaches expiry, the Delta of an ATM option must jump from 0 to 1 (or 0 to −1) almost instantly. That vertical "kink" in the Delta profile is where Gamma explodes — mathematically, σ√T → 0, so the bell curve N'(d₁) narrows to a spike.</p>
+<div class="fx t" style="margin-top:.8rem">\[\Gamma_{\text{ATM}} = \frac{N'(0)}{S\sigma\sqrt{T}} = \frac{1}{S\sigma\sqrt{T}\sqrt{2\pi}} \xrightarrow{T\to 0} \infty\]</div>
+</div>
+</details>
+<details>
+<summary>"You're Delta-neutral and long Gamma. Vol explodes. Good or bad?"</summary>
+<div class="dbody">
+<p><strong>Answer:</strong> Generally <strong>very good</strong>. High volatility means large moves in the underlying. Each move generates Gamma P&amp;L = ½Γ(dS)². This P&amp;L scales with the <em>square</em> of the move, so a 2% daily move earns 4× more than a 1% move. As long as the accumulated Gamma P&amp;L exceeds the Theta you're paying, you profit. The key question is whether the realised vol exceeds the implied vol you paid for.</p>
+</div>
+</details>
+<details>
+<summary>"Can Gamma be negative?" — The classic trap</summary>
+<div class="dbody">
+<p><strong>Answer:</strong> For a <em>single</em> option position — only if you are <strong>short</strong> it. Selling a call or put gives you negative Gamma (concavity). The option value now sits <em>below</em> the linear hedge, meaning you lose more on big moves than you gain on small moves. For a portfolio, Gamma can be positive or negative depending on the net long/short position.</p>
+<div class="alert warn" style="margin-top:.8rem"><span class="ico">🚩</span><span><strong>Classic trap:</strong> "Gamma is always positive" → only for <em>long</em> positions. Short the option = short Gamma = negative convexity.</span></div>
+</div>
+</details>
+<details>
+<summary>"Is Gamma a measure of value?"</summary>
+<div class="dbody">
+<p><strong>Answer: No.</strong> Gamma measures the <em>curvature</em> of the payoff — not whether the option is cheap or expensive. You never get Gamma for free: you pay for it via <strong>Theta</strong>. An option with high Gamma is expensive to hold because the daily time decay is proportionally large. High Gamma is only valuable if the stock moves enough to offset the Theta rent you're paying.</p>
+</div>
+</details>
+</div><!-- /intro -->
+<!-- ═══════════════════ TAB 2: GAMMA & HEDGING ════════════════════════ -->
+<div class="tab-content" id="tab-hedging">
+<div class="sh">Gamma &amp; Delta Hedging — Two Very Different Worlds</div>
+<div class="convex-split">
+<div class="convex-card" style="border-top:3px solid var(--green)">
+<h4 style="color:var(--green)">📈 LONG GAMMA — The Scalper's Paradise</h4>
+<div class="action-row">
+<div class="action-arrow">↑</div>
+<div class="action-text">S goes <strong style="color:var(--text)">up</strong> → Delta becomes more positive</div>
+<div class="action-badge sell-badge">SELL stock</div>
+</div>
+<div class="action-row">
+<div class="action-arrow">↓</div>
+<div class="action-text">S goes <strong style="color:var(--text)">down</strong> → Delta becomes less positive</div>
+<div class="action-badge buy-badge">BUY stock</div>
+</div>
+<div style="margin-top:.9rem;font-size:.84rem;color:var(--muted)">
+<strong style="color:var(--green)">Result:</strong> Systematic "buy low, sell high." You're a liquidity <strong style="color:var(--green)">provider</strong> — can sit on the bid/offer and let the market come to you.
+      </div>
+</div>
+<div class="convex-card" style="border-top:3px solid var(--red)">
+<h4 style="color:var(--red)">📉 SHORT GAMMA — The Negative Feedback Loop</h4>
+<div class="action-row">
+<div class="action-arrow">↑</div>
+<div class="action-text">S goes <strong style="color:var(--text)">up</strong> → Delta becomes short, must rebalance</div>
+<div class="action-badge buy-badge">BUY high</div>
+</div>
+<div class="action-row">
+<div class="action-arrow">↓</div>
+<div class="action-text">S goes <strong style="color:var(--text)">down</strong> → Delta becomes long, must rebalance</div>
+<div class="action-badge sell-badge">SELL low</div>
+</div>
+<div style="margin-top:.9rem;font-size:.84rem;color:var(--muted)">
+<strong style="color:var(--red)">Result:</strong> Systematic "buy high, sell low." You're a liquidity <strong style="color:var(--red)">taker</strong> — forced to cross the bid/offer spread on every rebalance.
+      </div>
+</div>
+</div>
+<!-- Interactive Gamma Scalping Simulator -->
+<div class="sh2">Gamma Scalping Simulator</div>
+<div class="chart-wrap">
+<div class="chart-controls">
+<label>Position:</label>
+<select id="gs-pos" onchange="runScalping()">
+<option value="long">Long Gamma</option>
+<option value="short">Short Gamma</option>
+</select>
+<label style="margin-left:.8rem">Vol (%) =</label>
+<input id="gs-vol" max="60" min="5" oninput="runScalping()" type="range" value="20"/>
+<span class="cval" id="gs-vol-v">20%</span>
+<label style="margin-left:.8rem">Bid-Ask (bps) =</label>
+<input id="gs-spread" max="30" min="0" oninput="runScalping()" type="range" value="5"/>
+<span class="cval t" id="gs-spread-v">5</span>
+<button onclick="runScalping(true)" style="background:var(--accent);color:#000;border:none;padding:.3rem .8rem;border-radius:5px;font-family:var(--mono);font-size:.73rem;font-weight:800;cursor:pointer;margin-left:.3rem">↺ NEW PATH</button>
+</div>
+<canvas height="260" id="scalpCanvas"></canvas>
+<div id="scalp-stats" style="display:flex;gap:1rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
+</div>
+<div class="sh2">Bid vs Ask — The Execution Advantage</div>
+<div class="card">
+<table>
+<thead><tr><th>Factor</th><th class="g">Long Gamma</th><th style="color:var(--red);border-bottom-color:var(--red)">Short Gamma</th></tr></thead>
+<tbody>
+<tr>
+<td>Market role</td>
+<td class="up">Liquidity provider</td>
+<td class="dn">Liquidity taker</td>
+</tr>
+<tr>
+<td>Execution on rebalance</td>
+<td class="up">Sit on bid/offer — patient</td>
+<td class="dn">Cross the spread — urgent</td>
+</tr>
+<tr>
+<td>Transaction cost per hedge</td>
+<td class="up">Earn the spread</td>
+<td class="dn">Pay the spread</td>
+</tr>
+<tr>
+<td>Stress level in high vol</td>
+<td class="up">Beneficial — more scalping opportunities</td>
+<td class="dn">Painful — forced to chase constantly</td>
+</tr>
+<tr>
+<td>Hedge urgency</td>
+<td class="up">Low — can wait for good prices</td>
+<td class="dn">High — delta explodes if not hedged fast</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sh2">Gamma Hedging vs Delta Hedging</div>
+<div class="grid2">
+<div class="card">
+<div class="flabel">Delta Hedging</div>
+<p style="font-size:.87rem;color:var(--muted)">Uses the <strong>underlying stock</strong> (or futures). Eliminates first-order directional risk. Simple linear instrument.</p>
+<div class="fx t" style="margin-top:.7rem;font-size:.9rem">\[\text{Hedge: sell/buy } \Delta \text{ units of } S\]</div>
+</div>
+<div class="card y">
+<div class="flabel" style="color:var(--accent3)">Gamma Hedging</div>
+<p style="font-size:.87rem;color:var(--muted)">Requires <strong>other options</strong>. Cannot hedge Gamma with linear instruments — only convex instruments (options) can offset Gamma. Lower Gamma = less frequent Delta rebalancing needed.</p>
+<div class="fx g" style="margin-top:.7rem;font-size:.9rem">\[\Gamma_{\text{book}} + \Gamma_{\text{hedge option}} = 0\]</div>
+</div>
+</div>
+<div class="alert desk">
+<span class="ico">🏦</span>
+<span><strong>0DTE Gamma Squeeze — Desk Interview Classic:</strong><br/>
+    You're a market maker and everyone is buying 0DTE calls from you. You're <strong>short gamma</strong>. As the market rallies, your delta becomes increasingly negative. To stay hedged, you must buy the underlying at higher and higher prices. Your buying accelerates the rally → more negative delta → more buying. This feedback loop is a <strong>gamma squeeze</strong>. Understanding this mechanism is why 0DTE options have dramatically increased intraday volatility in the S&amp;P since 2022.</span>
+</div>
+</div><!-- /hedging -->
+<!-- ═══════════════════ TAB 3: GAMMA UNDER BS ═════════════════════════ -->
+<div class="tab-content" id="tab-bs">
+<div class="sh">Gamma under Black-Scholes</div>
+<div class="card">
+<div class="flabel">The Formula</div>
+<div class="fx" style="font-size:1.2rem">
+      \[ \Gamma = \frac{N'(d_1)}{S\,\sigma\sqrt{T}} \quad\text{where}\quad N'(x) = \frac{e^{-x^2/2}}{\sqrt{2\pi}} \]
+    </div>
+<div class="alert tip">
+<span class="ico">💡</span>
+<span><strong>Key insight:</strong> Gamma is essentially the normal PDF N'(d₁) evaluated at the option's d₁, scaled by the inverse of S, σ, and √T. The bell shape of N'(x) explains everything about Gamma's behaviour — it peaks where d₁ = 0 (ATM) and decays to zero in the tails (deep ITM/OTM).</span>
+</div>
+</div>
+<div class="sh2">Why Call Gamma = Put Gamma</div>
+<div class="card t">
+<p style="margin-bottom:.8rem">This follows directly from put-call parity:</p>
+<div class="fx t multi" style="font-size:.96rem">
+      \[ C - P = S_0 e^{-qT} - K e^{-rT} \quad\Rightarrow\quad \frac{\partial^2 C}{\partial S^2} - \frac{\partial^2 P}{\partial S^2} = 0 \quad\Rightarrow\quad \Gamma_C = \Gamma_P \]
+    </div>
+<p style="font-size:.87rem;color:var(--muted);margin-top:.7rem">A synthetic forward (long call + short put) has a <em>linear</em> payoff — its Delta is constant and its Gamma is zero. Therefore the Gammas of the call and put must be equal and opposite, which means they are identical.</p>
+</div>
+<div class="sh2">Three Drivers of Gamma Magnitude</div>
+<details open="">
+<summary>1. Moneyness (S/K) — Gamma peaks at ATM</summary>
+<div class="dbody">
+<p>Gamma is highest when d₁ ≈ 0, which occurs when S ≈ K (at-the-money). N'(0) = 1/√(2π) ≈ 0.3989 — the maximum of the normal PDF. As S moves away from K in either direction, d₁ grows in magnitude, N'(d₁) falls toward zero, and Gamma collapses.</p>
+</div>
+</details>
+<details>
+<summary>2. Time to Expiry (T) — Shorter T → higher ATM Gamma</summary>
+<div class="dbody">
+<p>T appears in the denominator via √T. As T → 0, Gamma → ∞ for ATM options. For deep ITM/OTM, the reverse is true: the outcome is certain, so Gamma actually collapses. This divergence explains why 0DTE options have gamma profiles that look like vertical spikes at the strike.</p>
+<div class="fx t" style="font-size:.9rem">\[\Gamma_{\text{ATM}} = \frac{1}{S\sigma\sqrt{T}\sqrt{2\pi}} \propto \frac{1}{\sqrt{T}}\]</div>
+</div>
+</details>
+<details>
+<summary>3. Volatility (σ) — Higher vol lowers ATM Gamma, raises wing Gamma</summary>
+<div class="dbody">
+<p>Higher σ appears in two places: the denominator (directly lowering Gamma) and inside d₁ (widening the distribution). The net effect: higher vol <strong>lowers</strong> Gamma at the ATM strike (the bell curve flattens) but <strong>raises</strong> Gamma far from the strike (the tails get fatter). In high-vol regimes, wing options become "alive" with Gamma that wouldn't exist in a low-vol world.</p>
+</div>
+</details>
+<!-- Interactive BS Gamma Calculator -->
+<div class="sh2">Interactive Gamma Calculator</div>
+<div class="chart-wrap">
+<div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
+<div><label>S₀</label><br/><input id="bg-s" oninput="calcBSGamma()" style="width:70px" type="number" value="100"/></div>
+<div><label>K</label><br/><input id="bg-k" oninput="calcBSGamma()" style="width:70px" type="number" value="100"/></div>
+<div><label>σ (%)</label><br/><input id="bg-sig" oninput="calcBSGamma()" style="width:60px" type="number" value="20"/></div>
+<div><label>r (%)</label><br/><input id="bg-r" oninput="calcBSGamma()" style="width:55px" type="number" value="4"/></div>
+<div><label>T (years)</label><br/><input id="bg-t" oninput="calcBSGamma()" step="0.25" style="width:70px" type="number" value="1"/></div>
+</div>
+<div id="bg-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:.8rem 0"></div>
+<div class="gamma-meter">
+<div style="font-family:var(--mono);font-size:.68rem;color:var(--muted);letter-spacing:.12em;margin-bottom:.3rem">GAMMA MAGNITUDE (relative)</div>
+<div class="gamma-meter-val" id="gamma-gauge-num">0.0000</div>
+<div class="gamma-bar"><div class="gamma-bar-fill" id="gamma-gauge-fill" style="width:0%"></div></div>
+<div style="font-family:var(--mono);font-size:.68rem;color:var(--muted)">Low ←————————————→ High (peaks ATM near expiry)</div>
+</div>
+<canvas height="240" id="bsgammaCanvas" style="margin-top:.5rem"></canvas>
+</div>
+<div class="sh2">Summary Table</div>
+<div class="card">
+<table>
+<thead><tr><th>Metric</th><th>Call Option</th><th>Put Option</th></tr></thead>
+<tbody>
+<tr><td>Delta range</td><td>0 to +1</td><td>−1 to 0</td></tr>
+<tr><td>Gamma (long)</td><td class="up">Positive</td><td class="up">Positive</td></tr>
+<tr><td>Gamma magnitude</td><td>Same as put</td><td>Same as call</td></tr>
+<tr><td>Peak Gamma location</td><td>ATM (d₁ ≈ 0)</td><td>ATM (d₁ ≈ 0)</td></tr>
+<tr><td>Gamma at expiry (ATM)</td><td class="dn">→ ∞</td><td class="dn">→ ∞</td></tr>
+</tbody>
+</table>
+</div>
+</div><!-- /bs -->
+<!-- ═══════════════════ TAB 4: GAMMA vs MONEYNESS ════════════════════ -->
+<div class="tab-content" id="tab-moneyness">
+<div class="sh">Gamma vs Moneyness — The Bell Curve</div>
+<div class="card">
+<p>Gamma as a function of spot price follows a <strong>bell-shaped curve</strong> centred near the strike. The shape is directly controlled by the standard normal PDF N'(d₁).</p>
+</div>
+<div class="chart-wrap">
+<div class="chart-controls">
+<label>K =</label>
+<input id="gm-k" max="120" min="80" oninput="drawGammaMoneyness()" type="range" value="100"/>
+<span class="cval" id="gm-k-v">100</span>
+<label style="margin-left:.8rem">σ (%) =</label>
+<input id="gm-sig" max="60" min="5" oninput="drawGammaMoneyness()" type="range" value="20"/>
+<span class="cval t" id="gm-sig-v">20%</span>
+<label style="margin-left:.8rem">T (years) =</label>
+<input id="gm-t" max="3" min="0.02" oninput="drawGammaMoneyness()" step="0.02" type="range" value="1"/>
+<span class="cval g" id="gm-t-v">1.0</span>
+<label style="margin-left:.8rem">r (%) =</label>
+<input id="gm-r" max="10" min="0" oninput="drawGammaMoneyness()" type="range" value="4"/>
+<span class="cval" id="gm-r-v">4%</span>
+</div>
+<canvas height="270" id="gammaMoneynessCanvas"></canvas>
+<div id="gm-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
+</div>
+<div class="grid3" style="margin-top:1rem">
+<div class="card g">
+<div class="flabel g">ATM — Peak Gamma</div>
+<p style="font-size:.87rem;color:var(--muted)">Maximum uncertainty. The option is "on the fence" between expiring ITM or OTM. Delta must change rapidly → maximum Gamma. This is the zone of maximum hedging activity.</p>
+</div>
+<div class="card">
+<div class="flabel">Deep OTM — Gamma → 0</div>
+<p style="font-size:.87rem;color:var(--muted)">Almost certain to expire worthless. A small spot move barely changes the probability of exercise. Delta stays near 0, barely moves → Gamma negligible. The option is "dead."</p>
+</div>
+<div class="card t">
+<div class="flabel t">Deep ITM — Gamma → 0</div>
+<p style="font-size:.87rem;color:var(--muted)">Almost certain to be exercised. Delta is "locked" near 1 (or −1) and no longer changes with spot. The option behaves like the stock itself → no convexity left → Gamma ≈ 0.</p>
+</div>
+</div>
+<div class="sh2">Asymmetry — The Lognormal Drift</div>
+<div class="card">
+<p style="margin-bottom:.8rem">The Gamma bell curve is <em>not</em> perfectly centred on the spot price K. Because BS assumes a lognormal distribution, the peak shifts slightly toward the <strong>At-The-Money Forward (ATMF)</strong>:</p>
+<div class="fx t">\[\text{ATMF} = S_0 \cdot e^{(r-q)T} \neq K \text{ unless } r = q\]</div>
+<p style="font-size:.87rem;color:var(--muted);margin-top:.8rem">This drift becomes more pronounced at longer maturities and higher rates. In high-rate environments (like 2023), the ATMF can be significantly above spot, and practitioners always use ATMF — not spot — as the reference for ATM Gamma.</p>
+<div class="alert pro">
+<span class="ico">💡</span>
+<span><strong>ATM vs OTM — interview pro tip:</strong> ATM options have the highest <em>absolute</em> Gamma. OTM options often have higher <em>Gamma per dollar spent</em> (leverage). For pure vol plays, this matters: OTM options are cheaper but require the stock to travel further to generate Gamma P&amp;L. ATM options are expensive but start generating Gamma P&amp;L immediately from any move.</span>
+</div>
+</div>
+</div><!-- /moneyness -->
+<!-- ═══════════════════ TAB 5: GAMMA vs TIME & VOL ════════════════════ -->
+<div class="tab-content" id="tab-timevol">
+<div class="sh">Gamma vs Time — The ATM Spike</div>
+<div class="chart-wrap">
+<div class="chart-controls">
+<label>K =</label>
+<input id="gt-k" max="120" min="80" oninput="drawGammaTime()" type="range" value="100"/>
+<span class="cval" id="gt-k-v">100</span>
+<label style="margin-left:.8rem">σ (%) =</label>
+<input id="gt-sig" max="50" min="5" oninput="drawGammaTime()" type="range" value="20"/>
+<span class="cval t" id="gt-sig-v">20%</span>
+</div>
+<canvas height="280" id="gammaTimeCanvas"></canvas>
+</div>
+<div class="grid2" style="margin-top:1rem">
+<div class="card r">
+<div class="flabel r">Short-Dated — The ATM Spike</div>
+<p style="font-size:.87rem;color:var(--muted)">As T → 0, ATM Gamma → ∞. The bell curve narrows to a spike. Delta must instantly transition from 0 to 1 — causing maximum hedging volatility. This is why 0DTE and weekly options are the most dangerous to be short.</p>
+</div>
+<div class="card t">
+<div class="flabel t">Long-Dated — The Flat Plateau</div>
+<p style="font-size:.87rem;color:var(--muted)">3-year options have a broad, low Gamma hump. The Delta S-curve is gradual. Hedging is stable and infrequent. Deep ITM/OTM have non-negligible Gamma because there's still significant uncertainty about the terminal outcome.</p>
+</div>
+</div>
+<div class="sh">Gamma vs Implied Volatility — Dampener &amp; Expander</div>
+<div class="chart-wrap">
+<div class="chart-controls">
+<label>K =</label>
+<input id="gv-k" max="120" min="80" oninput="drawGammaVol()" type="range" value="100"/>
+<span class="cval" id="gv-k-v">100</span>
+<label style="margin-left:.8rem">T (years) =</label>
+<input id="gv-t" max="2" min="0.1" oninput="drawGammaVol()" step="0.05" type="range" value="0.5"/>
+<span class="cval t" id="gv-t-v">0.5</span>
+</div>
+<canvas height="280" id="gammaVolCanvas"></canvas>
+</div>
+<div class="grid2" style="margin-top:1rem">
+<div class="card">
+<div class="flabel">Low Vol — Narrow, Tall Spike</div>
+<p style="font-size:.87rem;color:var(--muted)">At 10% vol, the Gamma curve is a sharp, concentrated peak at ATM. Wing options have near-zero Gamma (no time value → no convexity). Hedging is highly localised around the strike.</p>
+</div>
+<div class="card g">
+<div class="flabel g">High Vol — Wide, Flat Hump</div>
+<p style="font-size:.87rem;color:var(--muted)">At 80% vol, the Gamma curve is low and broadly spread. ATM Gamma is dampened (Delta changes slowly). Wing options retain significant Gamma — they're still "alive" because large moves could bring them ITM.</p>
+</div>
+</div>
+<div class="sh2">Quick-Fire Summary Table</div>
+<div class="card">
+<table>
+<thead><tr><th>Variable</th><th>Change</th><th>Impact on ATM Gamma</th><th>Why?</th></tr></thead>
+<tbody>
+<tr>
+<td><strong>Time to Maturity</strong></td>
+<td><span style="color:var(--red)">↓ Decreases</span></td>
+<td class="dn">↑↑ Explodes</td>
+<td>Delta "kink" at strike becomes a vertical jump</td>
+</tr>
+<tr>
+<td><strong>Implied Volatility</strong></td>
+<td><span style="color:var(--green)">↑ Increases</span></td>
+<td class="up">↓ Decreases</td>
+<td>Distribution flattens → Delta changes more slowly near strike</td>
+</tr>
+<tr>
+<td><strong>Distance from Strike</strong></td>
+<td><span style="color:var(--green)">↑ Increases</span></td>
+<td class="up">↓ Decreases → 0</td>
+<td>Outcome more certain → Delta locked near 0 or 1</td>
+</tr>
+<tr>
+<td><strong>Wings (vol ↑)</strong></td>
+<td><span style="color:var(--green)">↑ Higher vol</span></td>
+<td class="dn">↑ Increases (wings only)</td>
+<td>OTM options retain time value → Gamma stays alive further from K</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div><!-- /timevol -->
+<!-- ═══════════════════ TAB 6: NEGATIVE GAMMA / PIN RISK ══════════════ -->
+<div class="tab-content" id="tab-negamma">
+<div class="sh">Negative Gamma Near Maturity — The Most Dangerous Trade</div>
+<div class="card r">
+<p>Being <strong>short Gamma near expiry</strong> is widely considered the most high-pressure scenario in options trading. The combination of exploding Gamma, unstable Delta, and costly rebalancing creates a perfect storm.</p>
+<div class="grid3" style="margin-top:1rem">
+<div class="kpi"><div class="lbl">Gamma magnitude</div><div class="val" style="color:var(--red)">→ ∞ at ATM</div><div class="sub">The bell curve collapses to a spike at the strike</div></div>
+<div class="kpi"><div class="lbl">Delta instability</div><div class="val" style="color:var(--red)">0 → 1 instantly</div><div class="sub">A $0.01 move forces a full hedge flip</div></div>
+<div class="kpi"><div class="lbl">Hedge cost</div><div class="val" style="color:var(--red)">Explodes</div><div class="sub">Each rebalance becomes larger and more expensive</div></div>
+</div>
+</div>
+<!-- PIN RISK VISUALISER -->
+<div class="sh2">Pin Risk Visualiser</div>
+<div class="chart-wrap">
+<div class="chart-controls">
+<label>K =</label>
+<input id="pr-k" max="110" min="90" oninput="drawPinRisk()" type="range" value="100"/>
+<span class="cval" id="pr-k-v">100</span>
+<label style="margin-left:.8rem">σ (%) =</label>
+<input id="pr-sig" max="40" min="5" oninput="drawPinRisk()" type="range" value="20"/>
+<span class="cval t" id="pr-sig-v">20%</span>
+<label style="margin-left:.8rem">Days to expiry =</label>
+<input id="pr-days" max="30" min="1" oninput="drawPinRisk()" type="range" value="5"/>
+<span class="cval g" id="pr-days-v">5</span>
+</div>
+<canvas height="280" id="pinRiskCanvas"></canvas>
+<div id="pr-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
+</div>
+<div class="sh2">The Trader's Dilemma</div>
+<div class="grid2">
+<div class="card">
+<div class="flabel">The Three Problems</div>
+<ul style="margin:.5rem 0 0 1.2rem;font-size:.86rem;color:var(--muted)">
+<li style="margin:.35rem 0"><strong style="color:var(--text)">Speed requirement:</strong> Delta changes violently with every tick. You must rebalance faster than ever.</li>
+<li style="margin:.35rem 0"><strong style="color:var(--text)">Slippage trap:</strong> Frequent rebalancing at wider spreads can cost more than the entire Theta earned.</li>
+<li style="margin:.35rem 0"><strong style="color:var(--text)">Uncertainty:</strong> You don't know if you'll be assigned or not — and you might not find out until after close.</li>
+</ul>
+</div>
+<div class="card y">
+<div class="flabel" style="color:var(--accent3)">Two Clean Exits</div>
+<ol style="margin:.5rem 0 0 1.2rem;font-size:.86rem;color:var(--muted)">
+<li style="margin:.35rem 0"><strong style="color:var(--text)">Fully hedge at once:</strong> Accept the Delta immediately. Stop the constant rebalancing bleed.</li>
+<li style="margin:.35rem 0"><strong style="color:var(--text)">Fully unwind:</strong> Buy back the option. Remove the Gamma risk entirely. Cleanest solution — often the right one despite the cost.</li>
+</ol>
+</div>
+</div>
+<div class="alert warn">
+<span class="ico">📍</span>
+<span><strong>Pin Risk in full detail:</strong> The stock closes at exactly K = $100.00 on expiry. You're short 100 calls. You don't know if you'll be assigned. Options settle after market close.<br/><br/>
+    Scenario A — stock closes at $99.99: You hedge for 0 assignment, stock gaps to $100.50 on Monday open. You're long 10,000 shares with no offset.<br/>
+    Scenario B — stock closes at $100.01: You hedge for full assignment, stock gaps to $99.50 on Monday open. You're short 10,000 shares delta-hedged against nothing.<br/><br/>
+    This is why many desks <strong>always unwind short options in the final hour of their expiry</strong>, accepting the spread cost as cheap insurance.</span>
+</div>
+</div><!-- /negamma -->
+<!-- ═══════════════════ TAB 7: GAMMA P&L ═════════════════════════════ -->
+<div class="tab-content" id="tab-pnl">
+<div class="sh">Gamma P&amp;L — The Core Formula</div>
+<div class="card">
+<div class="flabel">Taylor Expansion — Average Delta Logic</div>
+<div class="fx" style="font-size:1.1rem">
+      \[ p_1 = p_0 + \underbrace{\Delta_0\, dS}_{\text{hedged out}} + \underbrace{\frac{1}{2}\,\Gamma_0\,(dS)^2}_{\textbf{Gamma P\&amp;L}} \]
+    </div>
+<div class="alert tip">
+<span class="ico">⚡</span>
+<span><strong>The magic of (dS)²:</strong> The price change is <em>squared</em>. For a long Gamma position (Γ &gt; 0), this term is <strong>always positive</strong> regardless of whether the stock goes up or down. You make money on every move. You only lose if the stock doesn't move enough to offset Theta.</span>
+</div>
+</div>
+<div class="sh2">Average Delta — The Derivation</div>
+<div class="card t">
+<p style="margin-bottom:.8rem">Delta is not constant during a move. It drifts from Δ₀ to Δ₁ = Δ₀ + Γ·dS. The option price change uses the <strong>average delta</strong> over the move:</p>
+<div class="fx t multi">
+      \[ \Delta_1 = \Delta_0 + \Gamma_0\,dS \qquad \Delta_{\text{avg}} = \Delta_0 + \frac{\Gamma_0\,dS}{2} \]
+      \[ p_1 = p_0 + \Delta_{\text{avg}}\cdot dS = p_0 + \Delta_0\,dS + \frac{\Gamma_0\,(dS)^2}{2} \]
+    </div>
+<div class="grid2" style="margin-top:1rem">
+<div class="kpi"><div class="lbl">Long option P&amp;L</div><div class="val" style="font-size:.88rem">\(\Delta_0 dS + \frac{\Gamma_0(dS)^2}{2}\)</div></div>
+<div class="kpi"><div class="lbl">Short hedge P&amp;L</div><div class="val" style="font-size:.88rem">\(-\Delta_0 dS\)</div></div>
+</div>
+<div style="margin-top:.8rem;padding:.8rem;background:rgba(45,212,191,.05);border-radius:6px;border:1px solid rgba(45,212,191,.2);font-family:var(--mono);font-size:.85rem;color:var(--teal)">
+      Net: Δ₀·dS + ½Γ₀(dS)² − Δ₀·dS = <strong>½Γ₀(dS)²</strong>
+</div>
+</div>
+<div class="sh2">Gamma vs Theta — The Core Trade-off</div>
+<div class="grid2">
+<div class="card g">
+<div class="flabel g">Gamma Income</div>
+<p style="font-size:.87rem;color:var(--muted)">Earned by continuously rebalancing Delta. Every time the underlying moves, you "scalp" the convexity. The larger the move, the more P&amp;L (scales with dS²).</p>
+<div class="fx g" style="font-size:.88rem;margin-top:.7rem">\[\text{Gamma P\&amp;L} = \frac{1}{2}\Gamma S^2 \sigma_R^2\,dt\]</div>
+</div>
+<div class="card r">
+<div class="flabel r">Theta Cost ("Rent")</div>
+<p style="font-size:.87rem;color:var(--muted)">The daily "rent" for holding the option. Negative for all long option positions. Paid every day regardless of whether the stock moves. Certain cost vs uncertain gain.</p>
+<div class="fx r" style="font-size:.88rem;margin-top:.7rem">\[\text{Break-even: } \frac{1}{2}\Gamma S^2 \sigma_R^2 = |\Theta|\,dt\]</div>
+</div>
+</div>
+<!-- Interactive Gamma P&L Calculator -->
+<div class="sh2">Gamma P&amp;L Calculator</div>
+<div class="chart-wrap">
+<div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
+<div><label>S₀</label><br/><input id="gp-s" oninput="calcGammaPnl()" style="width:70px" type="number" value="100"/></div>
+<div><label>K</label><br/><input id="gp-k" oninput="calcGammaPnl()" style="width:70px" type="number" value="100"/></div>
+<div><label>σ (%)</label><br/><input id="gp-sig" oninput="calcGammaPnl()" style="width:60px" type="number" value="20"/></div>
+<div><label>r (%)</label><br/><input id="gp-r" oninput="calcGammaPnl()" style="width:55px" type="number" value="4"/></div>
+<div><label>T (years)</label><br/><input id="gp-t" oninput="calcGammaPnl()" step="0.1" style="width:70px" type="number" value="0.5"/></div>
+<div><label>Move dS (%)</label><br/><input id="gp-ds" oninput="calcGammaPnl()" step="0.5" style="width:65px" type="number" value="2"/></div>
+</div>
+<div id="gp-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.8rem;margin:.8rem 0"></div>
+<canvas height="240" id="gammaPnlCanvas" style="margin-top:.5rem"></canvas>
+</div>
+<div class="sh2">Path Dependency — Why "Where" and "When" Matter</div>
+<div class="chart-wrap">
+<div style="display:flex;gap:.6rem;margin-bottom:.8rem;flex-wrap:wrap">
+<div class="path-btn active" id="path-btn-1" onclick="drawPathDep('zigzag')">Zigzag (high scalping)</div>
+<div class="path-btn" id="path-btn-2" onclick="drawPathDep('jump')">One big jump</div>
+<div class="path-btn" id="path-btn-3" onclick="drawPathDep('pinned')">Pinned at strike</div>
+<div class="path-btn" id="path-btn-4" onclick="drawPathDep('faraway')">Far from strike</div>
+</div>
+<canvas height="280" id="pathDepCanvas"></canvas>
+<div id="path-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
+</div>
+<div class="alert key">
+<span class="ico">🔑</span>
+<span><strong>The Gamma Rent analogy (perfect interview answer):</strong><br/>
+    Being long Gamma is like paying rent (Theta) to occupy a house at the Strike. If the storm (Volatility) hits while you're in the house, you collect insurance (Gamma P&amp;L). If the storm hits while the stock is miles away from your strike, you paid rent for nothing. Volatility capture is about <em>efficiency</em> — not just the total realised vol number.</span>
+</div>
+<div class="sh2">The Paradox — RV &gt; IV but Still Lose Money</div>
+<div class="card y">
+<p style="margin-bottom:.8rem">It is possible to buy an option at IV = 15% and have the stock realise 20% — yet still <strong>lose money</strong>.</p>
+<div style="background:#030608;border-radius:8px;padding:1rem;border:1px solid var(--border);font-size:.87rem;margin-bottom:.8rem">
+<strong style="color:var(--accent3)">Example:</strong> Buy 1-month call at 15% IV. Stock is dead flat for 29 days (bleeding Theta every day). On Day 30, the stock gaps 10% in one hour. Total monthly RV = 20% &gt; 15%. But you likely <strong>lost money</strong> because the Gamma P&amp;L on that final day (when the option was nearly expired) couldn't offset 29 days of Theta bleed.
+    </div>
+<div class="alert warn"><span class="ico">⚠️</span><span>Lesson: Gamma P&amp;L = ½ × Γ × (dS)² × (local Gamma at the time). If vol occurs when you're deep OTM or near expiry, Gamma is low and you earn little. <strong>Timing and location of vol matter as much as total RV.</strong></span></div>
+</div>
+</div><!-- /pnl -->
+<!-- ═══════════════════ TAB 8: DOLLAR GAMMA ══════════════════════════ -->
+<div class="tab-content" id="tab-dollar">
+<div class="sh">Dollar Gamma — Risk Management Grade</div>
+<div class="card">
+<p>Standard Gamma (Γ) is hard to use in risk management across different underlyings. A stock at $10 and a stock at $1,000 have very different Gammas even if their risk profiles are similar. <strong>Dollar Gamma</strong> normalises this.</p>
+</div>
+<div class="sh2">The Problem with Standard Gamma</div>
+<div class="grid3">
+<div class="card r">
+<div class="flabel r">Problem 1: Unit Dependency</div>
+<p style="font-size:.86rem;color:var(--muted)">Gamma is measured in "delta change per $1 move." A $1 move on a $10 stock is 10%. The same $1 move on a $1,000 stock is 0.1%. Raw Gamma is not comparable across different price levels.</p>
+</div>
+<div class="card r">
+<div class="flabel r">Problem 2: Inverse Price Relationship</div>
+<p style="font-size:.86rem;color:var(--muted)">The BS formula has S in the denominator: Γ = N'(d₁)/(Sσ√T). Higher stock price → lower Gamma, mechanically. This makes it impossible to compare convexity across a multi-asset book without normalisation.</p>
+</div>
+<div class="card r">
+<div class="flabel r">Problem 3: Not Additive</div>
+<p style="font-size:.86rem;color:var(--muted)">Summing raw Gammas across a portfolio is meaningless if the positions have different S levels. Dollar Gamma provides an additive risk measure across the entire book.</p>
+</div>
+</div>
+<div class="sh2">Dollar Delta &amp; Dollar Gamma — The Solution</div>
+<div class="grid2">
+<div class="card t">
+<div class="flabel t">Dollar Delta (Δ$)</div>
+<div class="fx t">\[\$\Delta = \Delta \times S\]</div>
+<p style="font-size:.87rem;color:var(--muted)">Cash equivalent directional exposure. "I have $50,000 of long Delta" is more meaningful than "I have Δ = 0.5 on a $100k notional." It directly tells you how much equivalent stock you're holding.</p>
+</div>
+<div class="card">
+<div class="flabel">Dollar Gamma ($Γ)</div>
+<div class="fx">\[\$\Gamma = \frac{\Gamma \times S^2}{100}\]</div>
+<p style="font-size:.87rem;color:var(--muted)">Change in <em>Dollar Delta</em> for a <strong>1% move</strong> in the underlying. If you have $100k Dollar Gamma and the stock moves 1%, your Dollar Delta changes by $100k. Immediately intuitive for risk managers.</p>
+</div>
+</div>
+<div class="sh2">The Interview-Ready P&amp;L Formula</div>
+<div class="card">
+<p style="margin-bottom:.8rem">Substituting the Dollar Gamma definition into the standard Gamma P&amp;L formula:</p>
+<div class="fx" style="font-size:1.15rem; background:#030608">
+      \[ \text{Gamma P\&amp;L} = 50 \times \$\Gamma \times R^2 \]
+    </div>
+<p style="margin:.8rem 0;font-size:.88rem;color:var(--muted)">where <strong>R</strong> is the percentage return (e.g., R = 0.03 for a 3% move). No need to know S or Γ separately — just Dollar Gamma and the % move.</p>
+<div class="alert tip">
+<span class="ico">⚡</span>
+<span><strong>Example:</strong> Long $100,000 Dollar Gamma. Market moves 3% (R = 0.03):<br/>
+      P&amp;L = 50 × $100,000 × 0.03² = 50 × 100,000 × 0.0009 = <strong>$4,500</strong><br/>
+      Market moves 6% (R = 0.06): P&amp;L = 50 × 100,000 × 0.0036 = <strong>$18,000</strong><br/>
+      Doubling the move quadruples the P&amp;L — the square law in action.</span>
+</div>
+</div>
+<!-- Interactive Dollar Gamma Calculator -->
+<div class="sh2">Dollar Gamma Calculator &amp; P&amp;L Sensitivity</div>
+<div class="chart-wrap">
+<div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
+<div><label>S₀</label><br/><input id="dg-s" oninput="calcDollarGamma()" style="width:70px" type="number" value="100"/></div>
+<div><label>K</label><br/><input id="dg-k" oninput="calcDollarGamma()" style="width:70px" type="number" value="100"/></div>
+<div><label>σ (%)</label><br/><input id="dg-sig" oninput="calcDollarGamma()" style="width:60px" type="number" value="20"/></div>
+<div><label>r (%)</label><br/><input id="dg-r" oninput="calcDollarGamma()" style="width:55px" type="number" value="4"/></div>
+<div><label>T (years)</label><br/><input id="dg-t" oninput="calcDollarGamma()" step="0.1" style="width:70px" type="number" value="0.5"/></div>
+<div><label>Contracts (# of options)</label><br/><input id="dg-n" oninput="calcDollarGamma()" style="width:70px" type="number" value="100"/></div>
+</div>
+<div id="dg-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.8rem;margin:.8rem 0"></div>
+<canvas height="240" id="dollarGammaCanvas" style="margin-top:.5rem"></canvas>
+</div>
+<div class="sh2">Summary Reference Table</div>
+<div class="card">
+<table>
+<thead><tr><th>Metric</th><th>Definition</th><th>Formula</th><th>Unit / Use</th></tr></thead>
+<tbody>
+<tr>
+<td><strong>Standard Gamma Γ</strong></td>
+<td>Δ change per $1 move in S</td>
+<td>\(N'(d_1)/(S\sigma\sqrt{T})\)</td>
+<td>Δ/$ — hard to compare across stocks</td>
+</tr>
+<tr>
+<td><strong>Dollar Delta $Δ</strong></td>
+<td>Cash-equivalent directional exposure</td>
+<td>\(\Delta \times S\)</td>
+<td>$ — additive across portfolio</td>
+</tr>
+<tr>
+<td><strong>Dollar Gamma $Γ</strong></td>
+<td>Change in $Δ for a 1% move in S</td>
+<td>\(\Gamma S^2 / 100\)</td>
+<td>$ per 1% move — fully comparable</td>
+</tr>
+<tr>
+<td><strong>Gamma P&amp;L (% move)</strong></td>
+<td>P&amp;L for a % return R</td>
+<td>\(50 \times \$\Gamma \times R^2\)</td>
+<td>$ — no S or Γ needed separately</td>
+</tr>
+</tbody>
+</table>
+<div class="alert key" style="margin-top:.8rem">
+<span class="ico">🔑</span>
+<span><strong>The 2% Rule:</strong> A 2% move generates 4× the Gamma P&amp;L of a 1% move (2² = 4). A 3% move generates 9×. This quadratic scaling is why tail events are so profitable for long-Gamma books and so painful for short-Gamma books. In the March 2020 crash, desks with long-gamma positions made extraordinary profits from the daily 8-12% S&amp;P swings.</span>
+</div>
+</div>
+</div><!-- /dollar -->
+<div class="footer">
+<span>The Greeks Pt.3 — Gamma · S&amp;T Interview Guide · Quantitative Finance · 2025-2026</span>
+<span>Γ = N'(d₁) / (Sσ√T) · Dollar Gamma · Pin Risk · Module 04</span>
+</div>
+</div><!-- /wrapper -->
+<script>
+/* ─── TAB SWITCHING ─────────────────────────────────────────────────── */
+function switchTab(id,el){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  setTimeout(()=>{
+    const fns={intro:()=>{drawConvex();},hedging:()=>{runScalping();},
+      bs:()=>{calcBSGamma();},moneyness:()=>{drawGammaMoneyness();},
+      timevol:()=>{drawGammaTime();drawGammaVol();},
+      negamma:()=>{drawPinRisk();},pnl:()=>{calcGammaPnl();drawPathDep('zigzag');},
+      dollar:()=>{calcDollarGamma();}};
+    if(fns[id]) fns[id]();
+  },40);
+}
+
+/* ─── MATH ──────────────────────────────────────────────────────────── */
+function erf(x){const t=1/(1+.3275911*Math.abs(x));const p=t*(.254829592+t*(-.284496736+t*(1.421413741+t*(-1.453152027+t*1.061405429))));const s=1-p*Math.exp(-x*x);return x>=0?s:-s}
+function normcdf(x){return 0.5*(1+erf(x/Math.SQRT2))}
+function normpdf(x){return Math.exp(-.5*x*x)/Math.sqrt(2*Math.PI)}
+function bsD1(S,K,r,sig,T){return(Math.log(S/K)+(r+.5*sig*sig)*T)/(sig*Math.sqrt(T))}
+function bsGamma(S,K,r,sig,T){if(T<=0||sig<=0) return 0;const d=bsD1(S,K,r,sig,T);return normpdf(d)/(S*sig*Math.sqrt(T))}
+function bsCall(S,K,r,sig,T){if(T<=0||sig<=0) return Math.max(S-K,0);const d1=bsD1(S,K,r,sig,T),d2=d1-sig*Math.sqrt(T);return S*normcdf(d1)-K*Math.exp(-r*T)*normcdf(d2)}
+function bsDelta(S,K,r,sig,T){if(T<=0) return S>K?1:0;return normcdf(bsD1(S,K,r,sig,T))}
+function bsTheta(S,K,r,sig,T){if(T<=0) return 0;const d1=bsD1(S,K,r,sig,T),d2=d1-sig*Math.sqrt(T);return(-S*normpdf(d1)*sig/(2*Math.sqrt(T))-r*K*Math.exp(-r*T)*normcdf(d2))/365}
+
+/* ─── CANVAS SETUP ──────────────────────────────────────────────────── */
+function setupCanvas(id,H){
+  const c=document.getElementById(id);if(!c)return null;
+  const dpr=window.devicePixelRatio||1,W=c.parentElement.clientWidth-32;
+  c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';
+  const ctx=c.getContext('2d');ctx.scale(dpr,dpr);
+  return{ctx,W,H};
+}
+function drawAxes(ctx,pad,W,H,xMin,xMax,yMin,yMax,xLbl,yLbl,txX,txY,xFmt,yFmt){
+  ctx.fillStyle='#030608';ctx.fillRect(0,0,W,H);
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+  const toX=x=>pad.l+(x-xMin)/(xMax-xMin)*cw;
+  const toY=y=>pad.t+(1-(y-yMin)/(yMax-yMin))*ch;
+  ctx.strokeStyle='#0d1a10';ctx.lineWidth=1;
+  (txY||[]).forEach(y=>{const py=toY(y);ctx.beginPath();ctx.moveTo(pad.l,py);ctx.lineTo(pad.l+cw,py);ctx.stroke()});
+  (txX||[]).forEach(x=>{const px=toX(x);ctx.beginPath();ctx.moveTo(px,pad.t);ctx.lineTo(px,pad.t+ch);ctx.stroke()});
+  if(yMin<0&&yMax>0){ctx.strokeStyle='#1a3020';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(pad.l,toY(0));ctx.lineTo(pad.l+cw,toY(0));ctx.stroke();ctx.setLineDash([])}
+  ctx.strokeStyle='#1a3020';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ch);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t+ch);ctx.lineTo(pad.l+cw,pad.t+ch);ctx.stroke();
+  ctx.fillStyle='#5a7060';ctx.font='11px Fira Code,monospace';
+  ctx.textAlign='right';(txY||[]).forEach(y=>ctx.fillText(yFmt?yFmt(y):y.toFixed(1),pad.l-5,toY(y)+4));
+  ctx.textAlign='center';(txX||[]).forEach(x=>ctx.fillText(xFmt?xFmt(x):x.toFixed(0),toX(x),pad.t+ch+16));
+  if(xLbl){ctx.fillText(xLbl,pad.l+cw/2,H-4)}
+  if(yLbl){ctx.save();ctx.translate(12,pad.t+ch/2);ctx.rotate(-Math.PI/2);ctx.fillText(yLbl,0,0);ctx.restore()}
+  return{toX,toY,cw,ch};
+}
+
+/* ─── CONVEXITY DIAGRAM ─────────────────────────────────────────────── */
+function drawConvex(){
+  const r=setupCanvas('convexCanvas',260);if(!r)return;
+  const{ctx,W,H}=r;
+  const K=100,sig=.2,T=.5,rf=.04;
+  const Ss=Array.from({length:200},(_,i)=>85+i*30/200);
+  const S0=100;
+  const C0=bsCall(S0,K,rf,sig,T),D0=bsDelta(S0,K,rf,sig,T);
+  const optionVals=Ss.map(S=>bsCall(S,K,rf,sig,T));
+  const linearVals=Ss.map(S=>Math.max(0,C0+D0*(S-S0)));
+  const payoffAtExpiry=Ss.map(S=>Math.max(S-K,0));
+  const yMax=Math.max(...optionVals)*1.1,yMin=-1;
+  const pad={l:55,r:15,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,85,115,yMin,yMax,'Underlying S','P&L',
+    [90,95,100,105,110],[0,2,4,6,8].filter(v=>v<=yMax));
+  // fill convexity gap
+  ctx.fillStyle='rgba(251,191,36,.08)';
+  ctx.beginPath();Ss.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(optionVals[i])):ctx.lineTo(toX(S),toY(optionVals[i])));
+  Ss.slice().reverse().forEach((S,i,a)=>ctx.lineTo(toX(S),toY(linearVals[a.length-1-i])));
+  ctx.closePath();ctx.fill();
+  // payoff at expiry
+  ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
+  ctx.beginPath();Ss.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(payoffAtExpiry[i])):ctx.lineTo(toX(S),toY(payoffAtExpiry[i])));ctx.stroke();ctx.setLineDash([]);
+  // linear hedge
+  ctx.strokeStyle='#5a7060';ctx.lineWidth=2;
+  ctx.beginPath();Ss.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(linearVals[i])):ctx.lineTo(toX(S),toY(linearVals[i])));ctx.stroke();
+  // option value
+  ctx.strokeStyle='#fbbf24';ctx.lineWidth=2.5;
+  ctx.beginPath();Ss.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(optionVals[i])):ctx.lineTo(toX(S),toY(optionVals[i])));ctx.stroke();
+  // double arrow showing gap
+  const s1=toX(108),ov=toY(optionVals[Ss.findIndex(s=>s>=108)||180]),lv=toY(linearVals[Ss.findIndex(s=>s>=108)||180]);
+  ctx.strokeStyle='#fbbf24';ctx.lineWidth=1.5;ctx.setLineDash([2,2]);
+  ctx.beginPath();ctx.moveTo(s1,ov);ctx.lineTo(s1,lv);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#fbbf24';ctx.font='bold 10px Fira Code,monospace';ctx.textAlign='left';
+  ctx.fillText('Γ P&L',s1+4,(ov+lv)/2);
+  // legend
+  ctx.textAlign='left';ctx.font='11px Fira Code,monospace';
+  ctx.fillStyle='#fbbf24';ctx.fillText('Option Value',pad.l+8,pad.t+14);
+  ctx.fillStyle='#5a7060';ctx.fillText('Delta-hedge (linear)',pad.l+8,pad.t+26);
+  ctx.fillStyle='rgba(255,255,255,.35)';ctx.fillText('Payoff at expiry',pad.l+8,pad.t+38);
+  // strike
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#fbbf24';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+}
+
+/* ─── GAMMA SCALPING SIMULATOR ─────────────────────────────────────── */
+let scalpPrices=[];
+function runScalping(newPath=false){
+  const pos=document.getElementById('gs-pos').value;
+  const vol=parseFloat(document.getElementById('gs-vol').value)/100;
+  const spread=parseFloat(document.getElementById('gs-spread').value)/10000;
+  document.getElementById('gs-vol-v').textContent=(vol*100).toFixed(0)+'%';
+  document.getElementById('gs-spread-v').textContent=document.getElementById('gs-spread').value;
+  const S0=100,K=100,r=0.04,T=30/252,N=30;
+  if(newPath||scalpPrices.length!==N+1){
+    scalpPrices=[S0];
+    for(let i=0;i<N;i++){
+      const z=(Math.random()*2-1+Math.random()*2-1)*0.7071;
+      scalpPrices.push(Math.max(50,scalpPrices[scalpPrices.length-1]*Math.exp((r-.5*vol*vol)/252+vol*Math.sqrt(1/252)*z)));
+    }
+  }
+  const sign=pos==='long'?1:-1;
+  let delta=bsDelta(S0,K,r,vol,T);
+  let cumPnL=[0],spreadCost=0,gammaPnL=0;
+  for(let i=1;i<=N;i++){
+    const tRem=Math.max(.001,(N-i)/252),S=scalpPrices[i],Sp=scalpPrices[i-1];
+    const gma=bsGamma(Sp,K,r,vol,tRem+1/252);
+    const gPnL=.5*gma*(S-Sp)*(S-Sp)*sign;
+    const newDelta=bsDelta(S,K,r,vol,tRem);
+    const trade=Math.abs(newDelta-delta)*S;
+    spreadCost+=trade*spread;
+    gammaPnL+=gPnL;
+    cumPnL.push(cumPnL[cumPnL.length-1]+gPnL-trade*spread);
+    delta=newDelta;
+  }
+  const rk=setupCanvas('scalpCanvas',260);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const yMin=Math.min(...cumPnL,-.1)*1.1,yMax=Math.max(...cumPnL,.1)*1.1;
+  const pad={l:55,r:15,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,0,N,yMin,yMax,'Day','Cumulative P&L',
+    [0,5,10,15,20,25,30],[yMin,0,yMax].map(v=>parseFloat(v.toFixed(3))));
+  // price path secondary
+  const sMin=Math.min(...scalpPrices),sMax=Math.max(...scalpPrices);
+  const norm=S=>(S-sMin)/(sMax-sMin)*(yMax-yMin)*.3+yMin+(yMax-yMin)*.05;
+  ctx.strokeStyle='rgba(96,165,250,.3)';ctx.lineWidth=1;
+  ctx.beginPath();scalpPrices.forEach((S,i)=>i===0?ctx.moveTo(toX(i),toY(norm(S))):ctx.lineTo(toX(i),toY(norm(S))));ctx.stroke();
+  // fill
+  for(let i=1;i<cumPnL.length;i++){
+    ctx.fillStyle=cumPnL[i]>=0?'rgba(74,222,128,.12)':'rgba(248,113,113,.1)';
+    ctx.fillRect(toX(i-1),Math.min(toY(cumPnL[i]),toY(0)),toX(i)-toX(i-1),Math.abs(toY(cumPnL[i])-toY(0)));
+  }
+  const col=pos==='long'?(cumPnL[N]>=0?'#4ade80':'#f87171'):(cumPnL[N]>=0?'#4ade80':'#f87171');
+  ctx.strokeStyle=col;ctx.lineWidth=2;
+  ctx.beginPath();cumPnL.forEach((p,i)=>i===0?ctx.moveTo(toX(0),toY(0)):ctx.lineTo(toX(i),toY(p)));ctx.stroke();
+  document.getElementById('scalp-stats').innerHTML=`
+    <span>Final P&L: <strong style="color:${cumPnL[N]>=0?'var(--green)':'var(--red)'}">${cumPnL[N]>0?'+':''}${cumPnL[N].toFixed(4)}</strong></span>
+    <span>Gross Gamma P&L: <strong style="color:var(--accent)">${(gammaPnL*sign).toFixed(4)}</strong></span>
+    <span>Spread costs: <strong style="color:var(--red)">-${spreadCost.toFixed(4)}</strong></span>
+    <span>Position: <strong style="color:${pos==='long'?'var(--green)':'var(--red)'}">${pos.toUpperCase()} GAMMA</strong></span>
+  `;
+}
+
+/* ─── BS GAMMA CALCULATOR ───────────────────────────────────────────── */
+function calcBSGamma(){
+  const S=parseFloat(document.getElementById('bg-s').value)||100;
+  const K=parseFloat(document.getElementById('bg-k').value)||100;
+  const sig=parseFloat(document.getElementById('bg-sig').value)/100||.2;
+  const r=parseFloat(document.getElementById('bg-r').value)/100||.04;
+  const T=parseFloat(document.getElementById('bg-t').value)||1;
+  const gma=bsGamma(S,K,r,sig,T);
+  const d1=bsD1(S,K,r,sig,T);
+  const th=bsTheta(S,K,r,sig,T);
+  const C=bsCall(S,K,r,sig,T);
+  const dollarGamma=gma*S*S/100;
+  document.getElementById('bg-results').innerHTML=`
+    <div class="kpi"><div class="lbl">Gamma Γ</div><div class="val" style="color:var(--accent)">${gma.toFixed(5)}</div><div class="sub">Δ change per $1 in S</div></div>
+    <div class="kpi"><div class="lbl">d₁</div><div class="val">${d1.toFixed(4)}</div><div class="sub">N'(d₁) = ${normpdf(d1).toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl">Dollar Gamma $Γ</div><div class="val" style="color:var(--teal)">${dollarGamma.toFixed(3)}</div><div class="sub">ΓS²/100</div></div>
+    <div class="kpi"><div class="lbl">Theta Θ (daily)</div><div class="val" style="color:var(--red)">${th.toFixed(4)}</div><div class="sub">Daily rent</div></div>
+    <div class="kpi"><div class="lbl">Γ/Θ ratio</div><div class="val" style="color:var(--accent3)">${(gma/Math.abs(th)).toFixed(3)}</div><div class="sub">Convexity per unit decay</div></div>
+    <div class="kpi"><div class="lbl">S·σ·√T</div><div class="val">${(S*sig*Math.sqrt(T)).toFixed(2)}</div><div class="sub">Denominator of Γ</div></div>
+  `;
+  const pct=Math.min(gma/0.05,1);
+  document.getElementById('gamma-gauge-num').textContent=gma.toFixed(5);
+  document.getElementById('gamma-gauge-fill').style.width=(pct*100).toFixed(1)+'%';
+  // chart Gamma vs S
+  const Srange=Array.from({length:200},(_,i)=>K*.5+i*K/200);
+  const gammas=Srange.map(s=>bsGamma(s,K,r,sig,T));
+  const rk=setupCanvas('bsgammaCanvas',240);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const yMax=Math.max(...gammas)*1.12;
+  const pad={l:60,r:15,t:15,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,K*.5,K*1.5,0,yMax,'Spot S','Gamma',
+    [K*.6,K*.8,K,K*1.2,K*1.4],[0,yMax*.25,yMax*.5,yMax*.75,yMax].map(v=>parseFloat(v.toFixed(4))),
+    null,v=>v.toFixed(4));
+  ctx.fillStyle='rgba(251,191,36,.08)';
+  ctx.beginPath();ctx.moveTo(toX(Srange[0]),toY(0));
+  Srange.forEach((s,i)=>ctx.lineTo(toX(s),toY(gammas[i])));
+  ctx.lineTo(toX(Srange[Srange.length-1]),toY(0));ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#fbbf24';ctx.lineWidth=2.5;
+  ctx.beginPath();Srange.forEach((s,i)=>i===0?ctx.moveTo(toX(s),toY(gammas[i])):ctx.lineTo(toX(s),toY(gammas[i])));ctx.stroke();
+  // current S dot
+  ctx.fillStyle='#4ade80';ctx.beginPath();ctx.arc(toX(S),toY(gma),5,0,Math.PI*2);ctx.fill();
+  // strike line
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#fbbf24';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K='+K,toX(K),pad.t-5);
+}
+
+/* ─── GAMMA vs MONEYNESS ────────────────────────────────────────────── */
+function drawGammaMoneyness(){
+  const K=parseFloat(document.getElementById('gm-k').value)||100;
+  const sig=parseFloat(document.getElementById('gm-sig').value)/100||.2;
+  const T=parseFloat(document.getElementById('gm-t').value)||1;
+  const r=parseFloat(document.getElementById('gm-r').value)/100||.04;
+  document.getElementById('gm-k-v').textContent=K;
+  document.getElementById('gm-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  document.getElementById('gm-t-v').textContent=T.toFixed(2);
+  document.getElementById('gm-r-v').textContent=(r*100).toFixed(0)+'%';
+  const Srange=Array.from({length:300},(_,i)=>50+i*100/300);
+  const gammas=Srange.map(S=>bsGamma(S,K,r,sig,T));
+  const yMax=Math.max(...gammas)*1.12;
+  const rk=setupCanvas('gammaMoneynessCanvas',270);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const pad={l:60,r:15,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,50,150,0,yMax,'Spot S','Gamma Γ',
+    [60,70,80,90,100,110,120,130,140],[0,yMax*.25,yMax*.5,yMax*.75,yMax].map(v=>parseFloat(v.toFixed(4))),
+    null,v=>v.toFixed(4));
+  ctx.fillStyle='rgba(251,191,36,.07)';
+  ctx.beginPath();ctx.moveTo(toX(Srange[0]),toY(0));
+  Srange.forEach((S,i)=>ctx.lineTo(toX(S),toY(gammas[i])));
+  ctx.lineTo(toX(Srange[Srange.length-1]),toY(0));ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#fbbf24';ctx.lineWidth=2.5;
+  ctx.beginPath();Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(gammas[i])):ctx.lineTo(toX(S),toY(gammas[i])));ctx.stroke();
+  // ATMF line
+  const ATMF=K*Math.exp(r*T);
+  ctx.strokeStyle='rgba(45,212,191,.5)';ctx.lineWidth=1;ctx.setLineDash([4,4]);
+  ctx.beginPath();ctx.moveTo(toX(ATMF),pad.t);ctx.lineTo(toX(ATMF),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#2dd4bf';ctx.font='10px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('ATMF='+ATMF.toFixed(1),toX(ATMF),pad.t-5);
+  // K line
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+  ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#fbbf24';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+  const gmaAtm=bsGamma(K,K,r,sig,T);
+  document.getElementById('gm-stats').innerHTML=`
+    <span>Γ(ATM) = <strong style="color:var(--accent)">${gmaAtm.toFixed(5)}</strong></span>
+    <span>Γ(ATMF) = <strong style="color:var(--teal)">${bsGamma(ATMF,K,r,sig,T).toFixed(5)}</strong></span>
+    <span>$Γ(ATM) = <strong style="color:var(--accent3)">${(gmaAtm*K*K/100).toFixed(3)}</strong></span>
+    <span>σ√T = <strong style="color:var(--muted)">${(sig*Math.sqrt(T)).toFixed(3)}</strong></span>
+  `;
+}
+
+/* ─── GAMMA vs TIME ──────────────────────────────────────────────────── */
+function drawGammaTime(){
+  const K=parseFloat(document.getElementById('gt-k').value)||100;
+  const sig=parseFloat(document.getElementById('gt-sig').value)/100||.2;
+  document.getElementById('gt-k-v').textContent=K;
+  document.getElementById('gt-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  const r=0.04;
+  const mats=[[1/252,'1D','#f87171'],[7/252,'1W','#fb923c'],[1/12,'1M','#fbbf24'],[3/12,'3M','#a3e635'],[0.5,'6M','#34d399'],[1,'1Y','#22d3ee'],[3,'3Y','#818cf8']];
+  const Srange=Array.from({length:300},(_,i)=>50+i*100/300);
+  const allG=mats.flatMap(([T])=>Srange.map(S=>bsGamma(S,K,r,sig,T)));
+  const yMax=Math.min(Math.max(...allG),.5)*1.1;
+  const rk=setupCanvas('gammaTimeCanvas',280);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const pad={l:60,r:85,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,50,150,0,yMax,'Spot S','Gamma',
+    [60,75,100,125,140],[0,yMax*.25,yMax*.5,yMax*.75,yMax].map(v=>parseFloat(v.toFixed(4))),
+    null,v=>v.toFixed(4));
+  mats.forEach(([T,label,col])=>{
+    const gammas=Srange.map(S=>Math.min(bsGamma(S,K,r,sig,T),yMax));
+    ctx.strokeStyle=col;ctx.lineWidth=T<.1?2.5:1.8;ctx.beginPath();
+    Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(gammas[i])):ctx.lineTo(toX(S),toY(gammas[i])));ctx.stroke();
+  });
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#fbbf24';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+  ctx.textAlign='left';ctx.font='10px Fira Code,monospace';
+  mats.forEach(([T,label,col],i)=>{ctx.fillStyle=col;ctx.fillRect(W-80,pad.t+i*16,14,2);ctx.fillStyle=col;ctx.fillText(label,W-62,pad.t+i*16+4)});
+}
+
+/* ─── GAMMA vs VOL ───────────────────────────────────────────────────── */
+function drawGammaVol(){
+  const K=parseFloat(document.getElementById('gv-k').value)||100;
+  const T=parseFloat(document.getElementById('gv-t').value)||.5;
+  document.getElementById('gv-k-v').textContent=K;
+  document.getElementById('gv-t-v').textContent=T.toFixed(2);
+  const r=0.04;
+  const vols=[[.10,'IV 10%','#f87171'],[.20,'IV 20%','#fb923c'],[.30,'IV 30%','#fbbf24'],[.50,'IV 50%','#34d399'],[.80,'IV 80%','#818cf8']];
+  const Srange=Array.from({length:300},(_,i)=>50+i*100/300);
+  const allG=vols.flatMap(([v])=>Srange.map(S=>bsGamma(S,K,r,v,T)));
+  const yMax=Math.min(Math.max(...allG),.15)*1.1;
+  const rv=setupCanvas('gammaVolCanvas',280);if(!rv)return;
+  const{ctx,W,H}=rv;
+  const pad={l:60,r:90,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,50,150,0,yMax,'Spot S','Gamma',
+    [60,75,100,125,140],[0,yMax*.25,yMax*.5,yMax*.75,yMax].map(v=>parseFloat(v.toFixed(4))),
+    null,v=>v.toFixed(4));
+  vols.forEach(([sig,label,col])=>{
+    const gammas=Srange.map(S=>Math.min(bsGamma(S,K,r,sig,T),yMax));
+    ctx.strokeStyle=col;ctx.lineWidth=sig===.10?2.5:1.8;ctx.beginPath();
+    Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(gammas[i])):ctx.lineTo(toX(S),toY(gammas[i])));ctx.stroke();
+  });
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#fbbf24';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+  ctx.textAlign='left';ctx.font='10px Fira Code,monospace';
+  vols.forEach(([v,label,col],i)=>{ctx.fillStyle=col;ctx.fillRect(W-85,pad.t+i*16,14,2);ctx.fillStyle=col;ctx.fillText(label,W-67,pad.t+i*16+4)});
+}
+
+/* ─── PIN RISK ───────────────────────────────────────────────────────── */
+function drawPinRisk(){
+  const K=parseFloat(document.getElementById('pr-k').value)||100;
+  const sig=parseFloat(document.getElementById('pr-sig').value)/100||.2;
+  const days=parseInt(document.getElementById('pr-days').value)||5;
+  document.getElementById('pr-k-v').textContent=K;
+  document.getElementById('pr-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  document.getElementById('pr-days-v').textContent=days;
+  const r=0.04,T=days/252;
+  const Srange=Array.from({length:300},(_,i)=>K*.8+i*K*.4/300);
+  const mats=[[T,'Now','#f87171'],[T*3,'3×T','#fb923c'],[T*10,'10×T','#fbbf24']];
+  const allG=mats.flatMap(([t])=>Srange.map(S=>bsGamma(S,K,r,sig,t)));
+  const yMax=Math.min(Math.max(...allG),.8)*1.1;
+  const rk=setupCanvas('pinRiskCanvas',280);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const pad={l:60,r:15,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,K*.8,K*1.2,0,yMax,'Spot S','Gamma',
+    [K*.85,K*.9,K*.95,K,K*1.05,K*1.1,K*1.15],[0,yMax*.5,yMax].map(v=>parseFloat(v.toFixed(4))),
+    null,v=>v.toFixed(4));
+  // danger zone around K
+  const dangerW=K*.03;
+  ctx.fillStyle='rgba(248,113,113,.06)';
+  ctx.fillRect(toX(K-dangerW),pad.t,toX(K+dangerW)-toX(K-dangerW),H-pad.t-35);
+  ctx.fillStyle='rgba(248,113,113,.15)';ctx.font='10px Fira Code,monospace';ctx.textAlign='center';
+  ctx.fillText('PIN ZONE',toX(K),pad.t+10);
+  mats.forEach(([t,label,col])=>{
+    const gammas=Srange.map(S=>Math.min(bsGamma(S,K,r,sig,t),yMax));
+    ctx.strokeStyle=col;ctx.lineWidth=t===T?2.5:1.5;ctx.beginPath();
+    Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(gammas[i])):ctx.lineTo(toX(S),toY(gammas[i])));ctx.stroke();
+  });
+  ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#fbbf24';ctx.textAlign='center';ctx.fillText('K='+K,toX(K),H-20);
+  const gAtm=bsGamma(K,K,r,sig,T);
+  document.getElementById('pr-stats').innerHTML=`
+    <span>ATM Gamma now (${days}d): <strong style="color:var(--red)">${gAtm.toFixed(5)}</strong></span>
+    <span>$Γ(ATM): <strong style="color:var(--accent)">${(gAtm*K*K/100).toFixed(3)}</strong></span>
+    <span>Daily Theta: <strong style="color:var(--red)">${bsTheta(K,K,r,sig,T).toFixed(4)}</strong></span>
+    <span>Γ×S (delta change per $1): <strong style="color:var(--teal)">${(gAtm*K).toFixed(4)}</strong></span>
+  `;
+}
+
+/* ─── GAMMA P&L CALCULATOR ──────────────────────────────────────────── */
+function calcGammaPnl(){
+  const S=parseFloat(document.getElementById('gp-s').value)||100;
+  const K=parseFloat(document.getElementById('gp-k').value)||100;
+  const sig=parseFloat(document.getElementById('gp-sig').value)/100||.2;
+  const r=parseFloat(document.getElementById('gp-r').value)/100||.04;
+  const T=parseFloat(document.getElementById('gp-t').value)||.5;
+  const dsPct=parseFloat(document.getElementById('gp-ds').value)/100||.02;
+  const gma=bsGamma(S,K,r,sig,T),dS=S*dsPct;
+  const gpnl=.5*gma*dS*dS,th=bsTheta(S,K,r,sig,T);
+  const breakeven=Math.sqrt(2*Math.abs(th)/(gma*S*S))*Math.sqrt(252)*100;
+  document.getElementById('gp-results').innerHTML=`
+    <div class="kpi"><div class="lbl">Gamma Γ</div><div class="val" style="color:var(--accent)">${gma.toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl">Gamma P&L (½Γ·dS²)</div><div class="val" style="color:var(--green)">${gpnl.toFixed(4)}</div><div class="sub">For a ${(dsPct*100).toFixed(1)}% move</div></div>
+    <div class="kpi"><div class="lbl">Daily Theta</div><div class="val" style="color:var(--red)">${th.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl">Break-even vol</div><div class="val" style="color:var(--teal)">${breakeven.toFixed(1)}%</div><div class="sub">RV needed to offset Θ daily</div></div>
+    <div class="kpi"><div class="lbl">2× move P&L</div><div class="val" style="color:var(--accent3)">${(.5*gma*(dS*2)*(dS*2)).toFixed(4)}</div><div class="sub">4× larger (square law)</div></div>
+    <div class="kpi"><div class="lbl">Dollar Gamma $Γ</div><div class="val" style="color:var(--pink)">${(gma*S*S/100).toFixed(3)}</div></div>
+  `;
+  // Gamma P&L vs move size
+  const moves=Array.from({length:200},(_,i)=>-10+i*20/200);
+  const pnls=moves.map(pct=>(.5*gma*(S*pct/100)*(S*pct/100)));
+  const yMax=Math.max(...pnls)*1.1;
+  const rk=setupCanvas('gammaPnlCanvas',240);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const pad={l:60,r:15,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,-10,10,0,yMax,'Move (%)', 'Gamma P&L',
+    [-8,-4,0,4,8],[0,yMax*.25,yMax*.5,yMax*.75,yMax].map(v=>parseFloat(v.toFixed(4))),
+    v=>v+'%',v=>v.toFixed(4));
+  ctx.fillStyle='rgba(251,191,36,.08)';
+  ctx.beginPath();ctx.moveTo(toX(-10),toY(0));
+  moves.forEach((m,i)=>ctx.lineTo(toX(m),toY(pnls[i])));
+  ctx.lineTo(toX(10),toY(0));ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#fbbf24';ctx.lineWidth=2.5;
+  ctx.beginPath();moves.forEach((m,i)=>i===0?ctx.moveTo(toX(m),toY(pnls[i])):ctx.lineTo(toX(m),toY(pnls[i])));ctx.stroke();
+  // theta line
+  ctx.strokeStyle='rgba(248,113,113,.6)';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);
+  ctx.beginPath();ctx.moveTo(toX(-10),toY(Math.abs(th)));ctx.lineTo(toX(10),toY(Math.abs(th)));ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#f87171';ctx.font='10px Fira Code,monospace';ctx.textAlign='left';ctx.fillText('|Θ|/day',pad.l+5,toY(Math.abs(th))-5);
+  // mark current move
+  ctx.fillStyle='#4ade80';ctx.beginPath();ctx.arc(toX(dsPct*100),toY(gpnl),5,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#4ade80';ctx.fillText('→ '+gpnl.toFixed(4),toX(dsPct*100)+8,toY(gpnl));
+}
+
+/* ─── PATH DEPENDENCY ───────────────────────────────────────────────── */
+function drawPathDep(mode){
+  ['path-btn-1','path-btn-2','path-btn-3','path-btn-4'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  const map={zigzag:'path-btn-1',jump:'path-btn-2',pinned:'path-btn-3',faraway:'path-btn-4'};
+  if(map[mode]) document.getElementById(map[mode]).classList.add('active');
+  const K=100,S0=100,sig=.2,r=.04,N=30;
+  const paths={
+    zigzag: Array.from({length:N+1},(_,i)=>S0+(i%2===0?0:5)*(i<15?1:-1)),
+    jump:   Array.from({length:N+1},(_,i)=>i<N?S0:S0+8),
+    pinned: Array.from({length:N+1},()=>K),
+    faraway:Array.from({length:N+1},(_,i)=>S0+20)
+  };
+  const prices=paths[mode];
+  let cumPnl=[0],cumTheta=0;
+  for(let i=1;i<=N;i++){
+    const tRem=Math.max(.001,(N-i)/252),Sp=prices[i-1],S=prices[i];
+    const gma=bsGamma(Sp,K,r,sig,tRem+1/252);
+    const th=bsTheta(Sp,K,r,sig,tRem+1/252);
+    cumPnl.push(cumPnl[cumPnl.length-1]+.5*gma*(S-Sp)*(S-Sp)+th);
+    cumTheta+=th;
+  }
+  const rk=setupCanvas('pathDepCanvas',280);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const yMin=Math.min(...cumPnl,-.05)*1.1,yMax=Math.max(...cumPnl,.05)*1.1;
+  const pad={l:55,r:15,t:30,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,0,N,yMin,yMax,'Day','Cumulative Net P&L',
+    [0,5,10,15,20,25,30],[yMin,0,yMax].map(v=>parseFloat(v.toFixed(3))));
+  // price path (secondary, top)
+  const sMin=Math.min(...prices),sMax=Math.max(...prices);
+  const norm=S=>{const h=H*.15,base=pad.t-5;return base+(sMax-S)/(sMax-sMin+.01)*h};
+  ctx.strokeStyle='rgba(96,165,250,.4)';ctx.lineWidth=1.5;
+  ctx.beginPath();prices.forEach((S,i)=>i===0?ctx.moveTo(toX(i),norm(S)):ctx.lineTo(toX(i),norm(S)));ctx.stroke();
+  ctx.fillStyle='rgba(96,165,250,.5)';ctx.font='9px Fira Code,monospace';ctx.textAlign='left';
+  ctx.fillText('Stock path (top)',pad.l+4,8);
+  // fill
+  for(let i=1;i<cumPnl.length;i++){
+    ctx.fillStyle=cumPnl[i]>=0?'rgba(74,222,128,.1)':'rgba(248,113,113,.1)';
+    ctx.fillRect(toX(i-1),Math.min(toY(cumPnl[i]),toY(0)),toX(i)-toX(i-1),Math.abs(toY(cumPnl[i])-toY(0)));
+  }
+  const finalPnl=cumPnl[N];
+  ctx.strokeStyle=finalPnl>=0?'#4ade80':'#f87171';ctx.lineWidth=2;
+  ctx.beginPath();cumPnl.forEach((p,i)=>i===0?ctx.moveTo(toX(0),toY(0)):ctx.lineTo(toX(i),toY(p)));ctx.stroke();
+  const labels={zigzag:'Zigzag: many re-hedges → max Gamma P&L',jump:'One big jump: single re-hedge → less P&L',pinned:'Pinned at K: no moves → zero Gamma, all Theta',faraway:'Far from K: low Gamma → vol harvested inefficiently'};
+  document.getElementById('path-stats').innerHTML=`
+    <span>Mode: <strong style="color:var(--accent)">${labels[mode]||mode}</strong></span>
+    <span>Net P&L: <strong style="color:${finalPnl>=0?'var(--green)':'var(--red)'}">${finalPnl>0?'+':''}${finalPnl.toFixed(4)}</strong></span>
+    <span>Theta bleed: <strong style="color:var(--red)">${cumTheta.toFixed(4)}</strong></span>
+  `;
+}
+
+/* ─── DOLLAR GAMMA CALCULATOR ───────────────────────────────────────── */
+function calcDollarGamma(){
+  const S=parseFloat(document.getElementById('dg-s').value)||100;
+  const K=parseFloat(document.getElementById('dg-k').value)||100;
+  const sig=parseFloat(document.getElementById('dg-sig').value)/100||.2;
+  const r=parseFloat(document.getElementById('dg-r').value)/100||.04;
+  const T=parseFloat(document.getElementById('dg-t').value)||.5;
+  const N=parseInt(document.getElementById('dg-n').value)||100;
+  const gma=bsGamma(S,K,r,sig,T);
+  const dollarGamma=gma*S*S/100;
+  const totalDG=dollarGamma*N;
+  const pnl1=50*totalDG*.01*.01,pnl2=50*totalDG*.02*.02,pnl3=50*totalDG*.03*.03,pnl5=50*totalDG*.05*.05;
+  document.getElementById('dg-results').innerHTML=`
+    <div class="kpi"><div class="lbl">Gamma Γ (1 option)</div><div class="val" style="color:var(--accent)">${gma.toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl">$Γ (1 option)</div><div class="val" style="color:var(--teal)">${dollarGamma.toFixed(3)}</div><div class="sub">ΓS²/100</div></div>
+    <div class="kpi"><div class="lbl">Total $Γ (${N} contracts)</div><div class="val" style="color:var(--accent)">${totalDG.toFixed(2)}</div></div>
+    <div class="kpi"><div class="lbl">P&L on 1% move</div><div class="val" style="color:var(--green)">${pnl1.toFixed(2)}</div><div class="sub">50 × $Γ × 0.01²</div></div>
+    <div class="kpi"><div class="lbl">P&L on 2% move</div><div class="val" style="color:var(--green)">${pnl2.toFixed(2)}</div><div class="sub">4× the 1% P&L</div></div>
+    <div class="kpi"><div class="lbl">P&L on 3% move</div><div class="val" style="color:var(--green)">${pnl3.toFixed(2)}</div></div>
+    <div class="kpi"><div class="lbl">P&L on 5% move</div><div class="val" style="color:var(--accent3)">${pnl5.toFixed(2)}</div><div class="sub">25× the 1% P&L</div></div>
+  `;
+  // P&L vs move % chart
+  const moves=Array.from({length:200},(_,i)=>-8+i*16/200);
+  const pnls=moves.map(pct=>50*totalDG*(pct/100)*(pct/100));
+  const yMax=Math.max(...pnls)*1.1;
+  const rk=setupCanvas('dollarGammaCanvas',240);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const pad={l:65,r:15,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,-8,8,0,yMax,'% Move R','P&L = 50·$Γ·R²',
+    [-6,-4,-2,0,2,4,6],[0,yMax*.25,yMax*.5,yMax*.75,yMax].map(v=>parseFloat(v.toFixed(0))),
+    v=>v+'%',v=>'$'+v.toFixed(0));
+  ctx.fillStyle='rgba(251,191,36,.08)';
+  ctx.beginPath();ctx.moveTo(toX(-8),toY(0));
+  moves.forEach((m,i)=>ctx.lineTo(toX(m),toY(pnls[i])));
+  ctx.lineTo(toX(8),toY(0));ctx.closePath();ctx.fill();
+  ctx.strokeStyle='#fbbf24';ctx.lineWidth=2.5;
+  ctx.beginPath();moves.forEach((m,i)=>i===0?ctx.moveTo(toX(m),toY(pnls[i])):ctx.lineTo(toX(m),toY(pnls[i])));ctx.stroke();
+  // mark key points
+  [{m:1,c:'#4ade80'},{m:2,c:'#fbbf24'},{m:3,c:'#f87171'}].forEach(({m,c})=>{
+    const p=50*totalDG*(m/100)*(m/100);
+    ctx.fillStyle=c;ctx.beginPath();ctx.arc(toX(m),toY(p),4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=c;ctx.font='10px Fira Code,monospace';ctx.textAlign='left';ctx.fillText('+'+m+'%: $'+p.toFixed(0),toX(m)+6,toY(p)-4);
+  });
+}
+
+/* ─── INIT ──────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded',()=>{
+  renderMathInElement(document.body,{
+    delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],
+    throwOnError:false
+  });
+  setTimeout(()=>{
+    drawConvex();runScalping(true);calcBSGamma();
+    drawGammaMoneyness();drawGammaTime();drawGammaVol();
+    drawPinRisk();calcGammaPnl();drawPathDep('zigzag');calcDollarGamma();
+  },300);
+});
+</script>
+</body>
+</html>

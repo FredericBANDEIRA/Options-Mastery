@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All About Volatility — S&T Interview Guide</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+
+<style>
+:root{
+  --bg:#080b12;
+  --surface:#0e1220;
+  --card:#131829;
+  --border:#1e2540;
+  --accent:#22d3ee;   /* cyan */
+  --accent2:#818cf8;  /* indigo */
+  --accent3:#f472b6;  /* pink */
+  --red:#f87171;
+  --green:#4ade80;
+  --yellow:#fbbf24;
+  --orange:#fb923c;
+  --text:#e2e8f0;
+  --muted:#64748b;
+  --mono:'Fira Code','JetBrains Mono',monospace;
+  --sans:'IBM Plex Sans','Segoe UI',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.72;min-height:100vh}
+
+/* grid overlay */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(34,211,238,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(34,211,238,.03) 1px,transparent 1px);
+  background-size:40px 40px;
+  pointer-events:none;z-index:9998;
+}
+
+/* ── TOPBAR ── */
+.topbar{
+  background:var(--surface);border-bottom:2px solid var(--accent);
+  padding:.6rem 2rem;display:flex;align-items:center;gap:1rem;
+  position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);
+}
+.topbar .tag{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;background:var(--accent);color:#000;padding:.2rem .55rem;border-radius:3px;font-weight:700}
+.topbar .crumb{font-family:var(--mono);font-size:.75rem;color:var(--muted)}
+.topbar .crumb a{color:inherit;text-decoration:none;transition:color .2s}
+.topbar .crumb a:hover{color:var(--accent)}
+.topbar .crumb span{color:var(--accent)}
+.topbar .badge{margin-left:auto;font-family:var(--mono);font-size:.68rem;border:1px solid var(--border);padding:.2rem .6rem;border-radius:4px;color:var(--muted)}
+
+/* ── LAYOUT ── */
+.wrapper{max-width:1140px;margin:0 auto;padding:2.5rem 1.5rem 6rem}
+
+/* ── HERO ── */
+.hero{padding:2.5rem 0 2rem;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+.hero h1{
+  font-size:3rem;font-weight:800;letter-spacing:-.04em;line-height:1.05;
+  background:linear-gradient(125deg,var(--accent) 0%,#a5f3fc 35%,var(--accent2) 70%,var(--accent3) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.5rem;
+}
+.hero p{color:var(--muted);font-size:.95rem;max-width:660px;margin-top:.5rem}
+.hero .meta{display:flex;gap:.7rem;margin-top:1.1rem;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:.67rem;font-weight:600;border:1px solid var(--border);padding:.22rem .7rem;border-radius:99px;color:var(--muted);letter-spacing:.07em}
+.pill.c{border-color:var(--accent);color:var(--accent)}
+.pill.i{border-color:var(--accent2);color:var(--accent2)}
+.pill.p{border-color:var(--accent3);color:var(--accent3)}
+
+/* ── TABS ── */
+.nav-tabs{display:flex;gap:.3rem;flex-wrap:wrap;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+.nav-tab{font-family:var(--mono);font-size:.68rem;font-weight:600;letter-spacing:.07em;padding:.5rem .9rem;border-radius:6px 6px 0 0;cursor:pointer;border:1px solid transparent;border-bottom:none;color:var(--muted);background:transparent;transition:all .2s;position:relative;top:1px;text-transform:uppercase}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{background:var(--card);border-color:var(--border);color:var(--accent);border-bottom:2px solid var(--card)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+
+/* ── SECTION HEADINGS ── */
+.sh{font-size:1.2rem;font-weight:700;color:var(--accent);margin:2.5rem 0 1rem;display:flex;align-items:center;gap:.7rem}
+.sh::before{content:'◈';font-size:.7rem}
+.sh2{font-size:.95rem;font-weight:700;color:var(--accent2);margin:1.8rem 0 .8rem;padding-left:1rem;border-left:3px solid var(--accent2)}
+.sh3{font-size:.88rem;font-weight:700;color:var(--accent3);margin:1.2rem 0 .6rem;padding-left:.8rem;border-left:2px solid var(--accent3)}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.4rem 1.6rem;margin-bottom:1.2rem;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent)}
+.card.i::before{background:linear-gradient(90deg,var(--accent2),transparent)}
+.card.p::before{background:linear-gradient(90deg,var(--accent3),transparent)}
+.card.g::before{background:linear-gradient(90deg,var(--green),transparent)}
+.card.r::before{background:linear-gradient(90deg,var(--red),transparent)}
+.card.y::before{background:linear-gradient(90deg,var(--yellow),transparent)}
+.card.o::before{background:linear-gradient(90deg,var(--orange),transparent)}
+
+/* ── FORMULA ── */
+.fx{background:#05070d;border:1px solid var(--accent);border-radius:8px;padding:1rem 1.5rem;margin:1rem 0;text-align:center;font-size:1.1rem;overflow-x:auto}
+.fx.i{border-color:var(--accent2)}
+.fx.p{border-color:var(--accent3)}
+.fx.g{border-color:var(--green)}
+.fx.y{border-color:var(--yellow)}
+.fx.multi{text-align:left;font-size:.96rem}
+.flabel{font-family:var(--mono);font-size:.65rem;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:.5rem}
+.flabel.i{color:var(--accent2)}.flabel.p{color:var(--accent3)}.flabel.g{color:var(--green)}.flabel.y{color:var(--yellow)}.flabel.o{color:var(--orange)}
+
+/* ── ALERTS ── */
+.alert{border-radius:8px;padding:.9rem 1.2rem;margin:.9rem 0;display:flex;gap:.8rem;align-items:flex-start;font-size:.88rem}
+.alert .ico{font-size:1.05rem;flex-shrink:0;margin-top:.05rem}
+.alert.tip{background:rgba(34,211,238,.07);border:1px solid rgba(34,211,238,.3);color:#a5f3fc}
+.alert.warn{background:rgba(251,191,36,.07);border:1px solid rgba(251,191,36,.3);color:#fde68a}
+.alert.key{background:rgba(74,222,128,.07);border:1px solid rgba(74,222,128,.3);color:#86efac}
+.alert.trap{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.3);color:#fca5a5}
+.alert.pro{background:rgba(129,140,248,.07);border:1px solid rgba(129,140,248,.3);color:#c7d2fe}
+
+/* ── GRID ── */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:1rem 0}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin:1rem 0}
+@media(max-width:760px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+
+/* ── KPI ── */
+.kpi{background:#05070d;border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem}
+.kpi .lbl{font-family:var(--mono);font-size:.63rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.kpi .val{font-family:var(--mono);font-size:1rem;font-weight:700}
+.kpi .sub{font-size:.76rem;color:var(--muted);margin-top:.2rem}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.87rem}
+th{background:#05070d;color:var(--accent);font-family:var(--mono);font-size:.67rem;letter-spacing:.09em;text-transform:uppercase;padding:.7rem 1rem;border-bottom:2px solid var(--accent);text-align:left}
+th.i{color:var(--accent2);border-bottom-color:var(--accent2)}
+th.p{color:var(--accent3);border-bottom-color:var(--accent3)}
+td{padding:.65rem 1rem;border-bottom:1px solid var(--border);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.012)}
+.up{color:var(--green);font-weight:600}.dn{color:var(--red);font-weight:600}
+
+/* ── CANVAS / CHARTS ── */
+.chart-wrap{background:#05070d;border:1px solid var(--border);border-radius:10px;padding:1rem;margin:1rem 0}
+.chart-controls{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:.8rem;align-items:center}
+.chart-controls label{font-family:var(--mono);font-size:.72rem;color:var(--muted)}
+.chart-controls input[type=range]{accent-color:var(--accent);width:100px}
+.chart-controls select,.chart-controls input[type=number],.btn-reset{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.75rem;padding:.25rem .5rem;border-radius:5px}
+.btn-reset{cursor:pointer;transition:all 0.2s;font-weight:600;color:var(--accent);border-color:var(--accent)}
+.btn-reset:hover{background:var(--accent);color:#000;box-shadow:0 0 8px rgba(34,211,238,0.3)}
+.cval{font-family:var(--mono);font-size:.78rem;color:var(--accent);font-weight:700;min-width:2.8rem}
+.cval.i{color:var(--accent2)}.cval.p{color:var(--accent3)}
+canvas{display:block;width:100%;border-radius:6px}
+
+/* ── COLLAPSIBLE ── */
+details{background:var(--card);border:1px solid var(--border);border-radius:8px;margin:.7rem 0;overflow:hidden}
+details[open]{border-color:var(--accent)}
+summary{padding:.85rem 1.3rem;cursor:pointer;font-weight:600;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;list-style:none;color:var(--text)}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'＋';font-family:var(--mono);color:var(--accent);font-size:1rem}
+details[open] summary::after{content:'－'}
+.dbody{padding:.3rem 1.3rem 1.3rem;font-size:.89rem;color:var(--muted)}
+
+/* ── SURFACE 3D ── */
+#surfaceCanvas{cursor:grab}
+#surfaceCanvas:active{cursor:grabbing}
+
+/* ── SPEED HIERARCHY ── */
+.speed-bar{display:flex;flex-direction:column;gap:.6rem;margin:1rem 0}
+.speed-item{display:flex;align-items:center;gap:1rem}
+.speed-label{font-family:var(--mono);font-size:.8rem;width:260px;flex-shrink:0}
+.speed-track{flex:1;background:var(--border);border-radius:4px;height:10px;overflow:hidden}
+.speed-fill{height:100%;border-radius:4px;transition:width .6s}
+.speed-tag{font-family:var(--mono);font-size:.68rem;color:var(--muted);white-space:nowrap}
+
+/* ── SMILE SHAPE ── */
+.smile-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+
+code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgba(129,140,248,.1);padding:.1em .4em;border-radius:4px}
+
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+.footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--border);font-family:var(--mono);font-size:.7rem;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="tag">S&T PREP</div>
+  <div class="crumb"><a href="index.html">Derivatives</a> &nbsp;/&nbsp; <span>03 — All About Volatility</span></div>
+  <div class="badge">Module 03 / Vol</div>
+</div>
+
+<div class="wrapper">
+
+<div class="hero">
+  <h1>All About Volatility</h1>
+  <p>Realized vs implied, the volatility surface, skew, curvature, arbitrage constraints, and the Breeden-Litzenberger connection. The vocabulary of every derivatives desk.</p>
+  <div class="meta">
+    <span class="pill c">Sales &amp; Trading</span>
+    
+    <span class="pill">Quantitative Finance</span>
+    
+    <span class="pill p">Interactive</span>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active"   onclick="switchTab('realized',this)">Realized Vol</div>
+  <div class="nav-tab"          onclick="switchTab('implied',this)">Implied Vol</div>
+  <div class="nav-tab"          onclick="switchTab('surface',this)">Vol Surface</div>
+  <div class="nav-tab"          onclick="switchTab('skew',this)">Skew</div>
+  <div class="nav-tab"          onclick="switchTab('curvature',this)">Curvature</div>
+  <div class="nav-tab"          onclick="switchTab('arbitrage',this)">Arb-Free Surface</div>
+  <div class="nav-tab"          onclick="switchTab('density',this)">Risk-Neutral Density</div>
+  <div class="nav-tab"          onclick="switchTab('why',this)">Why It Matters</div>
+</div>
+
+<!-- ═══════════════════════ TAB 1 — REALIZED VOL ═══════════════════════ -->
+<div id="tab-realized" class="tab-content active">
+
+  <div class="sh">Stock Price Evolution — The SDE</div>
+  <div class="card">
+    <p>The log-price of a stock follows a Brownian motion with drift. This is the continuous-time foundation of all derivatives pricing:</p>
+    <div class="fx" style="font-size:1.15rem">
+      \[ d\log(S_t) = \underbrace{\left(\mu - \frac{\sigma^2}{2}\right)dt}_{\text{Drift (signal)}} + \underbrace{\sigma\, dW_t}_{\text{Vol (noise)}} \]
+    </div>
+    <div class="grid2" style="margin-top:1rem">
+      <div class="card i" style="margin:0">
+        <div class="flabel i">Drift Term — The Signal</div>
+        <p style="font-size:.87rem;color:var(--muted)">Deterministic component. The stock's long-run expected growth rate, net of the <strong>volatility drag penalty</strong> (−σ²/2). This is where the asset "wants" to go on average.</p>
+        <div class="fx i" style="margin-top:.7rem;font-size:.95rem">\[\mu_g = \mu - \frac{\sigma^2}{2}\]</div>
+      </div>
+      <div class="card p" style="margin:0">
+        <div class="flabel p">Volatility Term — The Noise</div>
+        <p style="font-size:.87rem;color:var(--muted)">Stochastic component driven by Brownian motion <strong>\(dW_t\)</strong>. Represents random market shocks. Every infinitesimal price tick contains this noise scaled by \(\sigma\). It cannot be predicted — only measured and hedged.</p>
+      </div>
+    </div>
+    <div class="alert tip" style="margin-top:1rem">
+      <span class="ico">🎯</span>
+      <span><strong>Interview line:</strong> "The drift is the signal — the long-term trend. The volatility term is the noise — the uncertainty that prevents the asset from following a perfectly straight line. In options, we don't bet on the drift; we bet on the noise."</span>
+    </div>
+  </div>
+
+  <div class="sh">Realized Volatility — Definition &amp; Measurement</div>
+  <div class="card">
+    <div class="flabel">Annualizing from Daily Log-Returns</div>
+    <div class="fx">
+      \[ \sigma_{\text{realized}} = \sqrt{252} \cdot \text{std}\!\left(\ln\frac{S_t}{S_{t-1}}\right) \]
+    </div>
+    <div class="grid3" style="margin-top:1rem">
+      <div class="kpi">
+        <div class="lbl">Why 252?</div>
+        <div class="val" style="color:var(--accent)">Trading days/year</div>
+        <div class="sub">Calendar days = 365, but markets close on weekends and holidays. Standard convention: 252.</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">The √252 Rule</div>
+        <div class="val" style="color:var(--accent2)">≈ 16</div>
+        <div class="sub">16% annual vol ↔ 1% daily std dev. Quick mental math anchor for every trader.</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Why Log-Returns?</div>
+        <div class="val" style="color:var(--accent3)">Additive &amp; Symmetric</div>
+        <div class="sub">Log-returns sum across periods. Percentage returns don't. Essential for consistent time-series analysis.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh2">The √T Scaling Law — Interactive Converter</div>
+  <div class="chart-wrap">
+    <div class="chart-controls">
+      <label>Annual Vol σ (%)</label>
+      <input type="range" id="rv-sig" min="1" max="50" value="20" oninput="updateRV()">
+      <span class="cval" id="rv-sig-v">20%</span>
+      <label style="margin-left:1rem">Trading Days/Year</label>
+      <select id="rv-days" onchange="updateRV()">
+        <option value="252">252 (Equities)</option>
+        <option value="260">260 (FX)</option>
+        <option value="365">365 (Crypto)</option>
+      </select>
+    </div>
+    <div id="rv-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.8rem;margin:.8rem 0"></div>
+    <canvas id="rvCanvas" height="200"></canvas>
+  </div>
+
+  <div class="sh2">Realized vs Implied — The Core Distinction</div>
+  <div class="grid2">
+    <div class="card">
+      <div class="flabel">Realized Volatility (RV / HV)</div>
+      <p style="font-size:.87rem;color:var(--muted)"><strong>Backward-looking.</strong> Computed from historical price data. Objective, model-free. Tells you how much the asset actually moved. Used to assess whether you paid too much or too little for an option.</p>
+      <div style="margin-top:.8rem;font-family:var(--mono);font-size:.8rem;color:var(--green)">✓ Objective &nbsp;&nbsp; ✓ Historical &nbsp;&nbsp; ✗ Predictive</div>
+    </div>
+    <div class="card i">
+      <div class="flabel i">Implied Volatility (IV)</div>
+      <p style="font-size:.87rem;color:var(--muted)"><strong>Forward-looking.</strong> Backed out of market option prices via Black-Scholes inversion. Subjective, model-dependent. Tells you what the market <em>expects</em> volatility to be. The price of uncertainty.</p>
+      <div style="margin-top:.8rem;font-family:var(--mono);font-size:.8rem;color:var(--accent2)">✓ Forward-looking &nbsp;&nbsp; ✓ Market consensus &nbsp;&nbsp; ✗ Model-dependent</div>
+    </div>
+  </div>
+
+  <div class="sh2">The Volatility Risk Premium (VRP)</div>
+  <div class="card y">
+    <p style="margin-bottom:.8rem">Historically, implied volatility has almost always been <em>higher</em> than subsequent realized volatility. This gap is the <strong>Volatility Risk Premium</strong> — the "insurance premium" investors pay for protection.</p>
+    <div class="fx y">\[\text{VRP} = \mathbb{E}[\text{IV}] - \mathbb{E}[\text{RV}] > 0\]</div>
+    <div class="grid2" style="margin-top:1rem">
+      <div class="kpi">
+        <div class="lbl">VIX (S&P 500 IV)</div>
+        <div class="val" style="color:var(--yellow)">Historically ~20%</div>
+        <div class="sub">Average implied vol over long periods</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">S&P 500 RV</div>
+        <div class="val" style="color:var(--green)">Historically ~15%</div>
+        <div class="sub">Average realized vol — consistently lower than IV</div>
+      </div>
+    </div>
+    <div class="alert warn">
+      <span class="ico">💰</span>
+      <span><strong>The vol selling trade:</strong> Because IV &gt; RV on average, systematically selling options (collecting IV) and delta-hedging (paying RV in hedge costs) generates a positive carry. This is the basis of volatility selling strategies — but they suffer catastrophic losses during vol spikes (2008, Mar 2020, Aug 2024).</span>
+    </div>
+  </div>
+
+</div><!-- /realized -->
+
+<!-- ═══════════════════════ TAB 2 — IMPLIED VOL ═════════════════════════ -->
+<div id="tab-implied" class="tab-content">
+
+  <div class="sh">Implied Volatility — The Market's Forward-Looking Plug</div>
+  <div class="card">
+    <p>Implied Volatility is the value of σ that, when plugged into the Black-Scholes formula, makes the theoretical price equal to the <strong>observed market price</strong>. It is solved by numerical inversion — there is no closed-form solution.</p>
+    <div class="fx i" style="font-size:1.05rem">
+      \[ C_{\text{market}} = \text{BS}(S, K, r, T, \sigma_{\text{implied}}) \implies \sigma_{\text{IV}} = \text{BS}^{-1}(C_{\text{market}}) \]
+    </div>
+  </div>
+
+  <div class="sh2">The Rebonato Quote — Why BS if It's Wrong?</div>
+  <div class="card p">
+    <div style="font-size:1.1rem;color:var(--accent3);font-style:italic;border-left:3px solid var(--accent3);padding-left:1rem;margin:.5rem 0 1rem">
+      "Implied volatility is the wrong number you put in the wrong formula to get the right price."
+    </div>
+    <p style="font-size:.88rem;color:var(--muted)">— Riccardo Rebonato</p>
+    <div class="alert pro" style="margin-top:1rem">
+      <span class="ico">🧠</span>
+      <span><strong>Interview answer — "Why use BS if it's wrong?"</strong><br>"We use it as a <em>mapping tool</em> — a common language to translate option prices into a standardized volatility number. Like quoting bond yields instead of prices. Everyone knows BS is wrong, but it gives us a consistent coordinate system to locate where an option sits on the volatility surface, compare relative value across strikes and expiries, and communicate risk in a model-independent way."</span>
+    </div>
+  </div>
+
+  <div class="sh2">IV as the Language of Options</div>
+  <div class="card">
+    <p style="margin-bottom:1rem">In professional markets, vanilla options are quoted in <strong>implied vol (vols)</strong>, not in dollars. Here's why:</p>
+    <table>
+      <thead><tr><th>Dollar Price</th><th>Vol Quote</th></tr></thead>
+      <tbody>
+        <tr><td>Changes every second as S moves</td><td>Relatively stable as S moves (vol is a surface property)</td></tr>
+        <tr><td>Meaningless to compare across strikes</td><td>Directly comparable — "40-vol is expensive vs 20-vol"</td></tr>
+        <tr><td>Doesn't reveal relative value</td><td>Encodes the market's fear/greed across all scenarios</td></tr>
+        <tr><td>"The 100-call costs $8.50"</td><td>"The 100-call is at 25 vols" → instantly interpretable</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- IV Calculator -->
+  <div class="sh2">Implied Vol Calculator (Newton-Raphson Inversion)</div>
+  <div class="chart-wrap">
+    <div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
+      <div><label>S₀</label><br><input type="number" id="iv-s" value="100" style="width:70px" oninput="calcIV()"></div>
+      <div><label>K</label><br><input type="number" id="iv-k" value="100" style="width:70px" oninput="calcIV()"></div>
+      <div><label>Market Call Price C</label><br><input type="number" id="iv-c" value="8.5" step="0.1" style="width:80px" oninput="calcIV()"></div>
+      <div><label>r (%)</label><br><input type="number" id="iv-r" value="4" style="width:55px" oninput="calcIV()"></div>
+      <div><label>T (years)</label><br><input type="number" id="iv-t" value="0.5" step="0.1" style="width:70px" oninput="calcIV()"></div>
+    </div>
+    <div id="iv-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.8rem;margin-top:.8rem"></div>
+    <canvas id="ivSolverCanvas" height="220" style="margin-top:1rem"></canvas>
+  </div>
+
+  <div class="sh2">Market Data Speed Hierarchy</div>
+  <div class="card">
+    <p style="margin-bottom:1rem;font-size:.88rem">Not all market data moves at the same speed. Understanding this hierarchy is essential for risk management and option pricing:</p>
+    <div class="speed-bar">
+      <div class="speed-item">
+        <div class="speed-label">📡 <strong>Spot Levels</strong></div>
+        <div class="speed-track"><div class="speed-fill" style="width:95%;background:var(--accent)"></div></div>
+        <div class="speed-tag">Fastest — tick-by-tick</div>
+      </div>
+      <div class="speed-item">
+        <div class="speed-label">📊 <strong>ATM Volatility</strong></div>
+        <div class="speed-track"><div class="speed-fill" style="width:68%;background:var(--accent2)"></div></div>
+        <div class="speed-tag">Fast — minutes/hours</div>
+      </div>
+      <div class="speed-item">
+        <div class="speed-label">📐 <strong>Volatility Skew</strong></div>
+        <div class="speed-track"><div class="speed-fill" style="width:42%;background:var(--accent3)"></div></div>
+        <div class="speed-tag">Slower — hours/days</div>
+      </div>
+      <div class="speed-item">
+        <div class="speed-label">💸 <strong>Dividend Forecasts</strong></div>
+        <div class="speed-track"><div class="speed-fill" style="width:15%;background:var(--yellow)"></div></div>
+        <div class="speed-tag">Slowest — days/weeks</div>
+      </div>
+    </div>
+    <div class="alert key">
+      <span class="ico">🔑</span>
+      <span>This hierarchy matters for <strong>risk management and delta hedging</strong>. When spot moves, the delta of your options changes immediately. But the vol surface (and hence vega exposure) reprices more slowly. This creates a window where your hedge ratios are stale — one of the practical challenges of running a real options book.</span>
+    </div>
+  </div>
+
+</div><!-- /implied -->
+
+<!-- ═══════════════════════ TAB 3 — VOL SURFACE ═════════════════════════ -->
+<div id="tab-surface" class="tab-content">
+
+  <div class="sh">The Implied Volatility Surface</div>
+  <div class="card">
+    <p>The vol surface is a <strong>3D map</strong> plotting implied volatility as a function of two dimensions: strike (moneyness) and time to maturity. It is the options market's correction to Black-Scholes, which wrongly assumes constant vol for all strikes and expiries.</p>
+    <div class="grid3" style="margin-top:1rem">
+      <div class="kpi">
+        <div class="lbl">Dimension 1</div>
+        <div class="val" style="color:var(--accent);font-size:.9rem">Strike / Moneyness</div>
+        <div class="sub">Cross-section at fixed T → Smile or Skew</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Dimension 2</div>
+        <div class="val" style="color:var(--accent2);font-size:.9rem">Time to Maturity</div>
+        <div class="sub">Cross-section at fixed K → Term Structure</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Output</div>
+        <div class="val" style="color:var(--accent3);font-size:.9rem">Implied Vol σ(K,T)</div>
+        <div class="sub">The "cost of insurance" at each point in (K,T) space</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE 3D SURFACE -->
+  <div class="sh2">Interactive Vol Surface</div>
+  <div class="chart-wrap">
+    <div class="chart-controls">
+      <label>Market Type:</label>
+      <select id="surf-type" onchange="drawSurface()">
+        <option value="equity">Equity (Skew)</option>
+        <option value="fx">FX (Smile)</option>
+        <option value="stress">Stress / Crisis</option>
+      </select>
+      <label style="margin-left:1rem">ATM Vol (%):</label>
+      <input type="range" id="surf-atm" min="10" max="60" value="20" oninput="drawSurface()">
+      <span class="cval" id="surf-atm-v">20%</span>
+      <label style="margin-left:1rem">Rotate:</label>
+      <input type="range" id="surf-rot" min="0" max="360" value="30" oninput="drawSurface()">
+      <span class="cval i" id="surf-rot-v">30°</span>
+    </div>
+    <canvas id="surfaceCanvas" height="360"></canvas>
+    <p style="font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-top:.5rem;text-align:center">Drag the rotation slider to view from different angles</p>
+  </div>
+
+  <div class="sh2">Two Slices of the Surface</div>
+  <div class="grid2">
+    <div class="chart-wrap" style="margin:0">
+      <div class="flabel" style="margin-bottom:.5rem">Smile / Skew (fixed T, vary K)</div>
+      <canvas id="smileCanvas" height="200"></canvas>
+    </div>
+    <div class="chart-wrap" style="margin:0">
+      <div class="flabel" style="margin-bottom:.5rem">Term Structure (fixed K=ATM, vary T)</div>
+      <canvas id="termCanvas" height="200"></canvas>
+    </div>
+  </div>
+
+  <div class="sh2">The Yield Curve Analogy</div>
+  <div class="card i">
+    <table>
+      <thead><tr><th class="i">Fixed Income</th><th class="i">Equity / FX Options</th></tr></thead>
+      <tbody>
+        <tr><td>Yield Curve</td><td>Implied Volatility Surface</td></tr>
+        <tr><td>Tenor axis (3M, 6M, 1Y…)</td><td>Maturity axis (expiry dates)</td></tr>
+        <tr><td>Par yield by maturity</td><td>ATM vol by expiry</td></tr>
+        <tr><td>Credit spread curve</td><td>Skew (OTM vs ATM vol)</td></tr>
+        <tr><td>Prices every bond, swap, future</td><td>Prices every vanilla + exotic option</td></tr>
+        <tr><td>Risk-free "baseline"</td><td>Vol "baseline" for the book</td></tr>
+      </tbody>
+    </table>
+    <div class="alert pro">
+      <span class="ico">🧠</span>
+      <span><strong>"What does a flat vol surface imply?"</strong> — "A flat surface means Black-Scholes is exactly right: the underlying is perfectly log-normal, with no fat tails and constant vol. It almost never exists in practice. The moment you see curvature or skew, you know the market is pricing in something BS cannot capture."</span>
+    </div>
+  </div>
+
+</div><!-- /surface -->
+
+<!-- ═══════════════════════ TAB 4 — SKEW ══════════════════════════════ -->
+<div id="tab-skew" class="tab-content">
+
+  <div class="sh">Volatility Skew — Crash-o-Phobia Quantified</div>
+  <div class="card">
+    <p>Black-Scholes assumes a flat vol for all strikes. Reality disagrees. The skew is the <strong>slope of the IV curve</strong> as a function of strike — and it encodes the market's fear of directional moves.</p>
+    <div class="grid2" style="margin-top:1rem">
+      <div class="card" style="margin:0">
+        <div class="flabel" style="color:var(--accent2)">FX Smile — Symmetric Fear</div>
+        <p style="font-size:.87rem;color:var(--muted)">IV is higher for both low AND high strikes. The market fears large moves in <em>either</em> direction. EUR/USD could gap up or gap down. Curve looks like a "U" — a genuine smile.</p>
+      </div>
+      <div class="card r" style="margin:0">
+        <div class="flabel" style="color:var(--red)">Equity Skew — Directional Fear (Crash-o-Phobia)</div>
+        <p style="font-size:.87rem;color:var(--muted)">IV is much higher for low strikes (OTM puts). The market prices in the fear of crashes much more than rallies. Institutional demand for downside protection creates a persistent left-skew. It's asymmetric by design.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh2">Measuring the Skew — Two Approaches</div>
+
+  <details open>
+    <summary>1. Delta Skew — The Theoretical Gold Standard</summary>
+    <div class="dbody">
+      <div class="fx i">\[\text{Delta Skew} = \sigma_{\text{25-delta put}} - \sigma_{\text{25-delta call}}\]</div>
+      <p>Compares the IV of a 25-delta* put (OTM protection, roughly \(K \approx S \cdot e^{-0.5\sigma\sqrt{T}}\)) against a 25-delta* call (OTM upside). In equity markets, this is always positive because left-tail protection is more expensive.</p>
+      <p style="font-size:.78rem;color:var(--muted);margin-top:.4rem;line-height:1.5"><em>* <strong>25-Delta:</strong> Options with a delta of \(\pm 0.25\) (roughly a 25% probability of expiring in-the-money). Using delta instead of absolute strikes standardizes moneyness across different assets, naturally scaling with volatility and time to maturity.</em></p>
+      <p style="margin-top:.6rem"><strong>Normalised version (best for cross-asset comparison):</strong></p>
+      <div class="fx i">\[\text{Normalised Skew} = \frac{\sigma_{25P} - \sigma_{25C}}{\sigma_{\text{ATM}}}\]</div>
+      <div class="alert tip" style="margin-top:.8rem">
+        <span class="ico">💡</span>
+        <span>Dividing by ATM vol strips out the "level effect" — you're measuring pure skew, independent of how expensive vol is overall. This allows you to compare skew on Apple vs Gold vs the S&P.</span>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>2. Strike Skew — The Practitioner's Favourite</summary>
+    <div class="dbody">
+      <div class="fx">\[\text{Strike Skew} = \sigma(90\%) - \sigma_{\text{ATM}}\]</div>
+      <p style="font-size:.82rem;color:var(--muted);margin-top:-0.5rem;margin-bottom:0.8rem;line-height:1.4"><em>* <strong>Notation:</strong> \(\sigma(90\%)\) represents the implied volatility of an option with a strike price at 90% of the current stock price (e.g., a strike of $90 when stock is at $100). \(\sigma_{\text{ATM}}\) is At-The-Money volatility (where strike = 100%).</em></p>
+      <p>Or alternatively: \(\sigma(90\%) - \sigma(110\%)\) — comparing a 10% crash strike vs a 10% rally strike. This is highly intuitive because you can read it directly from a volatility surface screenshot without calculating options deltas.</p>
+      <div class="alert warn" style="margin-top:.8rem">
+        <span class="ico">⚠️</span>
+        <div>
+          <strong>Never normalize strike skew by ATM vol. Here is a clear numerical example of the pitfall:</strong>
+          <ul style="margin:.4rem 0 0 1.2rem; font-size:.84rem; line-height:1.55; color:var(--text)">
+            <li style="margin-bottom:.4rem"><strong>Normal Regime:</strong> ATM Vol = \(20\%\), and 90% Strike Vol = \(25\%\).
+              <br>• Absolute Skew = \(25\% - 20\% = 5\%\) (5 vols).
+              <br>• Normalized Skew = \(5\% / 20\% = 25\%\).
+            </li>
+            <li style="margin-bottom:.4rem"><strong>Crisis Regime (e.g., March 2020):</strong> ATM Vol explodes to \(60\%\), and 90% Strike Vol spikes to \(70\%\).
+              <br>• Absolute Skew = \(70\% - 60\% = 10\%\) (10 vols). In real dollar terms, the cost of downside protection has doubled.
+              <br>• Normalized Skew = \(10\% / 60\% \approx 16.7\%\).
+            </li>
+            <li><strong>The Illusion:</strong> If you only monitor the normalized skew, it appears to have <em>decreased</em> from \(25\%\) to \(16.7\%\), falsely signaling that downside panic has cooled. This mathematical compression is a dangerous trap for risk managers.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- INTERACTIVE SKEW CHART -->
+  <div class="sh2">Skew Visualiser</div>
+  <div class="chart-wrap">
+    <div class="chart-controls">
+      <label>Market:</label>
+      <select id="sk-type" onchange="drawSkew()">
+        <option value="equity">Equity (Left Skew)</option>
+        <option value="fx">FX (Smile)</option>
+        <option value="inverted">Inverted (Rally Fear)</option>
+      </select>
+      <label style="margin-left:.8rem">ATM vol (%):</label>
+      <input type="range" id="sk-atm" min="10" max="60" value="20" oninput="drawSkew()">
+      <span class="cval" id="sk-atm-v">20%</span>
+      <label style="margin-left:.8rem">Skew steepness:</label>
+      <input type="range" id="sk-steep" min="0" max="20" value="8" oninput="drawSkew()">
+      <span class="cval i" id="sk-steep-v">8</span>
+    </div>
+    <canvas id="skewCanvas" height="250"></canvas>
+    <div id="sk-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
+    <div style="font-size:0.75rem; color:var(--muted); margin-top:0.6rem; border-top:1px solid var(--border); padding-top:0.6rem; line-height:1.4">
+      <strong>Moneyness Notation Guide:</strong> 
+      <code>σ(90%)</code> is the implied volatility of an option with a strike price at 90% of the current stock price (e.g., a $90 strike when the stock is at $100). 
+      <code>σ(ATM)</code> is At-The-Money volatility (100% of spot). 
+      <code>σ(110%)</code> is the implied volatility of an option with a strike price at 110% of the current stock price.
+    </div>
+  </div>
+
+  <!-- Collapsible Examples for Skew Visualizer -->
+  <div class="grid2" style="margin-top:0.8rem; margin-bottom:1.5rem">
+    <details style="margin:0">
+      <summary style="font-size:0.85rem">📈 Walkthrough Example: Equity Skew (Crash Insurance)</summary>
+      <div class="dbody">
+        <p style="margin-bottom:0.5rem"><strong>What to set in the visualizer:</strong></p>
+        <ul style="margin-left:1.2rem; margin-bottom:0.8rem; font-size:0.84rem; color:var(--text)">
+          <li><strong>Market:</strong> Equity (Left Skew)</li>
+          <li><strong>ATM Vol:</strong> 20%</li>
+          <li><strong>Skew Steepness:</strong> 8</li>
+        </ul>
+        <p style="margin-bottom:0.5rem"><strong>Interpretation of results:</strong></p>
+        <p style="font-size:0.84rem; line-height:1.55">Note how the left wing is steep while the right wing is flat. The calculated stats will show:
+        <br>• \(\sigma(90\%) \approx 24.8\%\) (expensive OTM puts)
+        <br>• \(\sigma_{\text{ATM}} = 20.0\%\)
+        <br>• \(\sigma(110\%) \approx 17.2\%\) (cheap OTM calls)
+        <br><br>
+        This represents the standard equity market structure. Due to <strong>crash-o-phobia</strong> (dating back to the 1987 crash), portfolio managers are willing to pay a high premium for downside puts (\(90\%\) strike) to hedge their long equity positions, bidding up their IV. Meanwhile, they write upside calls (\(110\%\) strike) to fund this protection, which depresses call IV.</p>
+      </div>
+    </details>
+    <details style="margin:0">
+      <summary style="font-size:0.85rem">💱 Walkthrough Example: FX Smile (Two-Sided Jump Risk)</summary>
+      <div class="dbody">
+        <p style="margin-bottom:0.5rem"><strong>What to set in the visualizer:</strong></p>
+        <ul style="margin-left:1.2rem; margin-bottom:0.8rem; font-size:0.84rem; color:var(--text)">
+          <li><strong>Market:</strong> FX (Smile)</li>
+          <li><strong>ATM Vol:</strong> 12% (standard for major G10 currencies)</li>
+          <li><strong>Skew Steepness:</strong> 8</li>
+        </ul>
+        <p style="margin-bottom:0.5rem"><strong>Interpretation of results:</strong></p>
+        <p style="font-size:0.84rem; line-height:1.55">Note how the curve forms a symmetric "U" shape (a true "smile"). The calculated stats will show that both wings are expensive relative to ATM:
+        <br>• \(\sigma(90\%) \approx 16.8\%\) (expensive OTM puts)
+        <br>• \(\sigma_{\text{ATM}} = 12.0\%\)
+        <br>• \(\sigma(110\%) \approx 16.8\%\) (expensive OTM calls)
+        <br><br>
+        In currency markets, there is no single directional "default" or "crash" bias as there is in equities. A currency pair can gap violently in <em>either</em> direction (e.g., USD spikes vs EUR, or EUR spikes vs USD). Therefore, both OTM calls and OTM puts carry a volatility premium to protect against sudden two-sided tail events.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="sh2">Smile-Adjusted Delta</div>
+  <div class="card">
+    <p style="margin-bottom:.8rem">In practice, when spot moves, the vol surface moves with it. The standard BS Delta misses this "shadow" effect:</p>
+    <div class="fx" style="font-size:1.05rem">
+      \[ \Delta_{\text{smile}} = \underbrace{\frac{\partial C}{\partial S}}_{\text{BS Delta}} + \underbrace{\frac{\partial C}{\partial \sigma} \cdot \frac{\partial \sigma}{\partial S}}_{\text{Shadow Delta (Vega × Skew slope)}} \]
+    </div>
+    <div class="grid2" style="margin-top:1rem">
+      <div>
+        <div class="flabel">The Vega Contribution</div>
+        <p style="font-size:.87rem;color:var(--muted)">The second term is <strong>Vega × skew slope</strong>. In equity markets, when spot falls, IV rises (negative ∂σ/∂S). This means the true delta is <em>smaller</em> than BS suggests — you need fewer shares in your hedge than BS says.</p>
+      </div>
+      <div>
+        <div class="flabel i">Practical Implication</div>
+        <p style="font-size:.87rem;color:var(--muted)">Delta-hedgers running equity put books typically use a <strong>lower delta than Black-Scholes</strong> because they know that if spot falls, vol will spike — partially offsetting the put's intrinsic gain. Using raw BS delta over-hedges.</p>
+        <div class="fx i" style="font-size:.9rem;margin-top:.7rem">\[\frac{\partial \sigma}{\partial S} \approx \frac{\delta\sigma}{\delta K}\bigg|_{\text{skew slope}}\]</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh2">Term Structure of Skew — Why Front-Month Skew Is Steeper</div>
+  <div class="card y">
+    <p style="margin-bottom:1rem">Short-dated skew is systematically steeper than long-dated skew. Four reasons:</p>
+    <table>
+      <thead><tr><th class="i">Mechanism</th><th class="i">Explanation</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Jump Risk Concentration</strong></td>
+          <td>A 10% weekly move is a "crash." Over 2 years, the market has time to recover — the fear of any specific strike is "smeared" across the curve.</td>
+        </tr>
+        <tr>
+          <td><strong>Gamma Effect</strong></td>
+          <td>Short-dated options have very high Gamma. If a market maker is short front-month puts and the market drops, hedging requirements explode. To compensate, they charge much more for those strikes.</td>
+        </tr>
+        <tr>
+          <td><strong>Front-Loaded VRP</strong></td>
+          <td>Investors pay most for immediate protection. The "fire extinguisher premium" is highest when you can smell smoke now, not in 2 years.</td>
+        </tr>
+        <tr>
+          <td><strong>Vol-of-Vol</strong></td>
+          <td>Short-term IV is more volatile than long-term IV. This "uncertainty about uncertainty" makes the near-term skew curve sharper and more kinked.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sh2">Index Skew vs Single Stock Skew</div>
+  <div class="card i">
+    <div class="grid2">
+      <div>
+        <div class="flabel i">Equity Index (S&amp;P 500, Eurostoxx)</div>
+        <ul style="margin:.5rem 0 0 1.2rem;font-size:.87rem;color:var(--muted)">
+          <li style="margin:.3rem 0"><strong>Higher skew</strong> — persistent institutional demand for crash protection</li>
+          <li style="margin:.3rem 0"><strong>Lower curvature</strong> — diversification means no single-stock jump risk</li>
+          <li style="margin:.3rem 0">Slow to "crash to zero" — large cap diversification buffers</li>
+          <li style="margin:.3rem 0">Institutional put-buying creates structural skew supply</li>
+        </ul>
+      </div>
+      <div>
+        <div class="flabel p">Single Stock (AAPL, TSLA…)</div>
+        <ul style="margin:.5rem 0 0 1.2rem;font-size:.87rem;color:var(--muted)">
+          <li style="margin:.3rem 0"><strong>Lower skew</strong> — less directional crash demand</li>
+          <li style="margin:.3rem 0"><strong>Higher curvature</strong> — "jump-to-default" and earnings-gap risk sharpens the wings</li>
+          <li style="margin:.3rem 0">Fraud, M&amp;A, earnings miss can send a stock to near-zero</li>
+          <li style="margin:.3rem 0">Both wings (puts AND calls) expensive — M&amp;A rumour can cause a 40% up-move</li>
+        </ul>
+      </div>
+    </div>
+    <div class="alert key">
+      <span class="ico">🔑</span>
+      <span><strong>High-probability interview question:</strong> "Why does the S&P have higher skew but lower curvature than a single stock?" — Diversification removes idiosyncratic jump risk (less curvature) but leaves systemic crash risk fully intact, with strong structural demand from institutional hedgers (higher skew).</span>
+    </div>
+  </div>
+
+</div><!-- /skew -->
+
+<!-- ═══════════════════════ TAB 5 — CURVATURE ═══════════════════════════ -->
+<div id="tab-curvature" class="tab-content">
+
+  <div class="sh">Smile Curvature — The "U" Shape of Tail Risk</div>
+  <div class="card">
+    <p>If skew is the <em>slope</em> of the vol surface, curvature is its <em>bend</em>. It's the second derivative of IV with respect to strike — and it captures the market's demand for protection against extreme "black swan" events in <em>both</em> directions.</p>
+    <div class="fx">\[\text{Curvature} \sim \frac{\partial^2\,\sigma_{\text{imp}}(K)}{\partial K^2}\]</div>
+    <div class="grid2" style="margin-top:1rem">
+      <div class="kpi">
+        <div class="lbl">Low Strikes (OTM Puts)</div>
+        <div class="val" style="color:var(--red)">IV rises sharply</div>
+        <div class="sub">Sellers of crash protection demand massive premium for "below zero" type risks</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">High Strikes (OTM Calls)</div>
+        <div class="val" style="color:var(--green)">IV flattens then rises</div>
+        <div class="sub">Short-squeeze / M&A gap-up risk — the right wing re-inflates</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh2">Measuring Curvature — The Discrete Second Derivative</div>
+  <div class="card">
+    <div class="fx i">\[\text{Skew Convexity} \approx \frac{\sigma(90\%) + \sigma(110\%) - 2\,\sigma(100\%)}{(\Delta\text{Strike})^2}\]</div>
+    <p style="margin:.8rem 0;font-size:.88rem">Interpretation: how much the "wings" (90% and 110% strikes) overshoot the ATM vol relative to what a linear skew would predict. <strong>Higher = more fat-tail premium = more "U" shape.</strong></p>
+    <div class="alert tip">
+      <span class="ico">💡</span>
+      <span>This is mathematically analogous to <strong>bond convexity</strong>: just as bond convexity measures the second-order sensitivity of price to yield, skew convexity measures the second-order sensitivity of IV to strike. Both convexities are desirable and therefore have a cost.</span>
+    </div>
+  </div>
+
+  <!-- CURVATURE VISUALISER -->
+  <div class="sh2">Curvature Visualiser</div>
+  <div class="chart-wrap">
+    <div class="chart-controls">
+      <label>ATM vol (%):</label>
+      <input type="range" id="cv-atm" min="10" max="50" value="20" oninput="drawCurvature()">
+      <span class="cval" id="cv-atm-v">20%</span>
+      <label style="margin-left:.8rem">Skew slope:</label>
+      <input type="range" id="cv-skew" min="0" max="15" value="5" oninput="drawCurvature()">
+      <span class="cval i" id="cv-skew-v">5</span>
+      <label style="margin-left:.8rem">Curvature:</label>
+      <input type="range" id="cv-curv" min="0" max="20" value="8" oninput="drawCurvature()">
+      <span class="cval p" id="cv-curv-v">8</span>
+      <label style="margin-left:.8rem">Market:</label>
+      <select id="cv-type" onchange="drawCurvature()">
+        <option value="index">Index</option>
+        <option value="singlestock">Single Stock</option>
+        <option value="fx">FX</option>
+      </select>
+    </div>
+    <canvas id="curvCanvas" height="260"></canvas>
+    <div id="cv-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
+  </div>
+
+  <div class="sh2">Trading Curvature — The Butterfly Spread</div>
+  <div class="card y">
+    <p style="margin-bottom:.8rem">"How do you buy curvature?" → <strong>Butterfly spread</strong></p>
+    <div class="fx y">\[\text{Long Butterfly} = \underbrace{C(90\%) + C(110\%)}_{\text{Long Wings}} - \underbrace{2\,C(100\%)}_{\text{Short Body}}\]</div>
+    <div class="grid3" style="margin-top:1rem">
+      <div class="kpi">
+        <div class="lbl">What you're betting</div>
+        <div class="val" style="color:var(--yellow);font-size:.9rem">Wings get expensive relative to body</div>
+        <div class="sub">i.e. curvature increases — the smile becomes more "U-shaped"</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">P&amp;L Profile</div>
+        <div class="val" style="color:var(--yellow);font-size:.9rem">Long Convexity in vol space</div>
+        <div class="sub">Positive if tails reprice up relative to ATM. Max gain if S ends near 90% or 110%.</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Cost</div>
+        <div class="val" style="color:var(--yellow);font-size:.9rem">Must be positive</div>
+        <div class="sub">A butterfly costing &lt;0 is an arbitrage (violates no-arb condition 4)</div>
+      </div>
+    </div>
+    <div class="alert warn" style="margin-top:1rem">
+      <span class="ico">📊</span>
+      <span>Alternatively, in vol space: <strong>Long vol butterfly</strong> = buy 90% vol + buy 110% vol, sell 2× 100% vol. Pure curvature trade with no first-order skew or vega exposure (approximately). Used by vol arb desks to trade the shape of the smile independently.</span>
+    </div>
+  </div>
+
+</div><!-- /curvature -->
+
+<!-- ═══════════════════════ TAB 6 — ARB-FREE SURFACE ═══════════════════ -->
+<div id="tab-arbitrage" class="tab-content">
+
+  <div class="sh">The 4 Pillars of a Valid IV Surface</div>
+  <div class="card">
+    <p>For a volatility surface to be arbitrage-free, it must satisfy four constraints. Violating any one creates a risk-free profit opportunity:</p>
+  </div>
+
+  <details open>
+    <summary>Pillar 1 — Call Spreads Must Be Positive (C₁ ≥ C₂ for K₁ &lt; K₂)</summary>
+    <div class="dbody">
+      <div class="fx">\[C(K_1) \geq C(K_2) \quad \text{for } K_1 < K_2\]</div>
+      <p><strong>Logic:</strong> As K increases, the right to buy is worth less. A call at K=100 must be worth more than a call at K=110. If not, buy the 110-call and sell the 100-call → immediate risk-free profit.</p>
+      <p style="margin-top:.5rem"><strong>Implication for the surface:</strong> IV can be higher for lower strikes, but the option <em>dollar price</em> must still decrease as K increases. The dollar price slope must be negative in K.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Pillar 2 — Call Spread Ratio Bounded by 1 (No "Super-Replication")</summary>
+    <div class="dbody">
+      <div class="fx">\[0 \leq \frac{C(K_1) - C(K_2)}{K_2 - K_1} \leq 1\]</div>
+      <p><strong>Logic:</strong> A call spread's maximum payoff is the strike difference (K₂ − K₁). If the spread's price exceeds this, you can pocket instant arbitrage: sell the spread and invest the difference.</p>
+      <p style="margin-top:.5rem"><strong>Interpretation:</strong> Formally, this means the slope of the call price with respect to K is between −1 and 0. It bounds the implied risk-neutral probability of the underlying exceeding the strikes.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Pillar 3 — Calendar Spreads Must Be Positive (C(T₂) ≥ C(T₁) for T₂ &gt; T₁)</summary>
+    <div class="dbody">
+      <div class="fx">\[C(K, T_2) \geq C(K, T_1) \quad \text{for } T_2 > T_1\]</div>
+      <p><strong>Logic:</strong> More time = more optionality. A 12-month call should always be worth at least as much as a 6-month call at the same strike (for a non-dividend stock). If not, buy the long-dated call, sell the short-dated call → free money when the short-dated expires.</p>
+      <p style="margin-top:.5rem"><strong>Exception:</strong> Large discrete dividends can violate this for deep ITM calls (but almost never in practice for ATM options).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Pillar 4 — Butterfly Spreads Must Be Positive (Convexity in K)</summary>
+    <div class="dbody">
+      <div class="fx">\[C(K-\epsilon) + C(K+\epsilon) - 2C(K) \geq 0\]</div>
+      <p><strong>Logic:</strong> The option price must be <em>convex</em> in the strike price. This is the hardest constraint. If a butterfly spread has negative price, there exists a "negative probability" mass in the implied risk-neutral distribution — a mathematical impossibility.</p>
+      <div class="alert trap" style="margin-top:.8rem">
+        <span class="ico">🚩</span>
+        <span><strong>Most commonly violated in poorly calibrated models.</strong> When a vol model is calibrated too aggressively to fit market prices, it can create a non-convex price curve — a "dip" that implies negative probabilities. Any model used for production surface calibration (SVI, SABR, Heston) must explicitly enforce butterfly positivity.</span>
+      </div>
+    </div>
+  </details>
+
+  <!-- ARBITRAGE CHECKER -->
+  <div class="sh2">Arbitrage Condition Checker</div>
+  <div class="chart-wrap">
+    <div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
+      <div><label>σ(90%)</label><br><input type="number" id="arb-v90" value="28" style="width:65px" oninput="checkArb()"> <span style="font-family:var(--mono);font-size:.75rem;color:var(--muted)">%</span></div>
+      <div><label>σ(95%)</label><br><input type="number" id="arb-v95" value="25" style="width:65px" oninput="checkArb()"> <span style="font-family:var(--mono);font-size:.75rem;color:var(--muted)">%</span></div>
+      <div><label>σ(100%) ATM</label><br><input type="number" id="arb-v100" value="20" style="width:65px" oninput="checkArb()"> <span style="font-family:var(--mono);font-size:.75rem;color:var(--muted)">%</span></div>
+      <div><label>σ(105%)</label><br><input type="number" id="arb-v105" value="19" style="width:65px" oninput="checkArb()"> <span style="font-family:var(--mono);font-size:.75rem;color:var(--muted)">%</span></div>
+      <div><label>σ(110%)</label><br><input type="number" id="arb-v110" value="20" style="width:65px" oninput="checkArb()"> <span style="font-family:var(--mono);font-size:.75rem;color:var(--muted)">%</span></div>
+      <div><label>S₀</label><br><input type="number" id="arb-s" value="100" style="width:65px" oninput="checkArb()"></div>
+      <div><label>T (years)</label><br><input type="number" id="arb-t" value="1" step="0.25" style="width:65px" oninput="checkArb()"></div>
+      <div><label>r (%)</label><br><input type="number" id="arb-r" value="4" style="width:55px" oninput="checkArb()"></div>
+      <div><label style="visibility:hidden">Reinit</label><br><button class="btn-reset" onclick="resetArb()">Reinit</button></div>
+    </div>
+    <div id="arb-results" style="margin-top:1rem;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.8rem"></div>
+    <canvas id="arbCanvas" height="230" style="margin-top:1rem"></canvas>
+  </div>
+
+  <!-- Collapsible Examples for Arbitrage Checker -->
+  <div class="grid2" style="margin-top:0.8rem; margin-bottom:1.5rem">
+    <details style="margin:0">
+      <summary style="font-size:0.85rem">📈 Walkthrough Example: Call Spread Arbitrage (Monotonicity Violation)</summary>
+      <div class="dbody">
+        <p style="margin-bottom:0.5rem"><strong>What to set in the checker:</strong></p>
+        <ul style="margin-left:1.2rem; margin-bottom:0.8rem; font-size:0.84rem; color:var(--text)">
+          <li><strong>σ(90%)</strong>: 10%</li>
+          <li><strong>σ(95%)</strong>: 45% (massive volatility jump)</li>
+          <li><strong>σ(100%)</strong>: 20%</li>
+          <li><strong>σ(105%)</strong>: 19%</li>
+          <li><strong>σ(110%)</strong>: 20%</li>
+          <li><strong>S₀</strong>: 100 | <strong>T</strong>: 1 | <strong>r (%)</strong>: 4</li>
+        </ul>
+        <p style="margin-bottom:0.5rem"><strong>Interpretation of results:</strong></p>
+        <p style="font-size:0.84rem; line-height:1.55">A call option with a higher strike should never cost more than a call option with a lower strike. 
+        Here, the massive jump in volatility at the 95% strike makes the $95 call cost approximately <strong>$21.73</strong> while the $90 call costs only <strong>$13.83</strong>. This results in a Call Spread Monotonicity violation.
+        <br><br>
+        <strong>The Arbitrage Trade:</strong> Buy the $90 call and sell the $95 call. You collect approximately <strong>$7.90</strong> net premium upfront. At maturity, your portfolio payoff is \(S_T - 90\) (capped at $5 if \(S_T \ge 95\)) or $0 if \(S_T < 90\). Because the payoff is always non-negative, the upfront $7.90 credit represents a pure, risk-free profit.</p>
+      </div>
+    </details>
+    <details style="margin:0">
+      <summary style="font-size:0.85rem">🦋 Walkthrough Example: Butterfly Arbitrage (Convexity Violation)</summary>
+      <div class="dbody">
+        <p style="margin-bottom:0.5rem"><strong>What to set in the checker:</strong></p>
+        <ul style="margin-left:1.2rem; margin-bottom:0.8rem; font-size:0.84rem; color:var(--text)">
+          <li><strong>σ(90%)</strong>: 28%</li>
+          <li><strong>σ(95%)</strong>: 15% (volatility dip)</li>
+          <li><strong>σ(100%)</strong>: 28%</li>
+          <li><strong>σ(105%)</strong>: 19%</li>
+          <li><strong>σ(110%)</strong>: 20%</li>
+          <li><strong>S₀</strong>: 100 | <strong>T</strong>: 1 | <strong>r (%)</strong>: 4</li>
+        </ul>
+        <p style="margin-bottom:0.5rem"><strong>Interpretation of results:</strong></p>
+        <p style="font-size:0.84rem; line-height:1.55">The price curve must be convex in the strike price. A butterfly spread (buying a low and a high strike call, and selling two middle calls) must always have a positive cost.
+        Here, the volatility dip at 95% creates a concave bend. The calculations show a negative butterfly cost of approximately <strong>-$7.70</strong> (violating Butterfly Positivity).
+        <br><br>
+        <strong>The Arbitrage Trade:</strong> Buy 1 of the $95 call, buy 1 of the $105 call, and sell 2 of the $100 calls. Since the cost of this butterfly is negative, you receive a net credit of approximately <strong>$7.70</strong> upfront. At expiry, your maximum loss is $0 (if \(S_T \le 95\) or \(S_T \ge 105\)), and you make additional profit (up to $5) if the stock ends between $95 and $105.</p>
+      </div>
+    </details>
+  </div>
+
+</div><!-- /arbitrage -->
+
+<!-- ═══════════════════════ TAB 7 — RISK-NEUTRAL DENSITY ══════════════ -->
+<div id="tab-density" class="tab-content">
+
+  <div class="sh">The Option Triplet — Three Views of the Same Market</div>
+  <div class="card">
+    <p>There is a perfect, one-to-one mathematical relationship between three representations of market information. If you have one, you can derive the other two:</p>
+    <div class="grid3" style="margin-top:1rem">
+      <div class="card" style="margin:0;text-align:center">
+        <div class="flabel">View 1 — Vol Surface</div>
+        <p style="font-size:.85rem;color:var(--muted);margin-top:.4rem">IV plotted vs strike. Shows how expensive "insurance" is. The market's fear map.</p>
+        <div style="font-size:1.5rem;margin:.8rem 0">📈</div>
+      </div>
+      <div class="card i" style="margin:0;text-align:center">
+        <div class="flabel i">View 2 — Option Prices</div>
+        <p style="font-size:.85rem;color:var(--muted);margin-top:.4rem">Dollar prices of calls/puts. Must be convex in K (arbitrage-free condition).</p>
+        <div style="font-size:1.5rem;margin:.8rem 0">💲</div>
+      </div>
+      <div class="card p" style="margin:0;text-align:center">
+        <div class="flabel p">View 3 — Risk-Neutral PDF</div>
+        <p style="font-size:.85rem;color:var(--muted);margin-top:.4rem">The market's probability density over future \(S_T\). The "Holy Grail" — implied probability distribution.</p>
+        <div style="font-size:1.5rem;margin:.8rem 0">🔮</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh2">The Breeden-Litzenberger Formula</div>
+  <div class="card">
+    <p>The risk-neutral probability density is the <strong>second derivative of the call price with respect to the strike</strong>:</p>
+    <div class="fx p" style="font-size:1.1rem">
+      \[ f^{\mathbb{Q}}(S_T = K) = e^{rT}\,\frac{\partial^2 C}{\partial K^2} \]
+    </div>
+    <div class="alert pro" style="margin-top:1rem">
+      <span class="ico">🧠</span>
+      <span><strong>Masterclass interview answer — "How do you know the market-implied probability of a 20% S&P drop?"</strong><br>
+      "I look at the 20% OTM put prices across all strikes. By taking the second derivative of the call/put price curve (the Breeden-Litzenberger formula), I extract the Risk-Neutral PDF. The area under the left tail gives the market-implied probability of that drop. This is how event-driven traders price binary risk — earnings, Fed meetings, elections."</span>
+    </div>
+  </div>
+
+  <div class="sh2">What Different Vol Shapes Imply for the Distribution</div>
+  <div class="grid3">
+    <div class="card" style="text-align:center">
+      <div class="flabel">Flat Vol (BS World)</div>
+      <p style="font-size:.82rem;color:var(--muted);margin:.5rem 0">Perfectly log-normal distribution. Symmetric bell curve. No fat tails. Almost never observed in real markets.</p>
+      <div style="font-family:var(--mono);font-size:.75rem;color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:.4rem;margin-top:.5rem">→ Gaussian PDF</div>
+    </div>
+    <div class="card r" style="text-align:center">
+      <div class="flabel" style="color:var(--red)">Left Skew (Equity)</div>
+      <p style="font-size:.82rem;color:var(--muted);margin:.5rem 0">Distribution is left-shifted and has a fatter left tail. The market puts more probability mass on crashes than rallies. Negative skewness.</p>
+      <div style="font-family:var(--mono);font-size:.75rem;color:var(--red);border:1px solid rgba(248,113,113,.3);border-radius:6px;padding:.4rem;margin-top:.5rem">→ Negatively skewed PDF</div>
+    </div>
+    <div class="card i" style="text-align:center">
+      <div class="flabel i">High Curvature (Both Tails)</div>
+      <p style="font-size:.82rem;color:var(--muted);margin:.5rem 0">Fat tails on both sides. Sharp central peak ("leptokurtosis"). Market prices in high probability of staying near current price, but with extreme moves possible.</p>
+      <div style="font-family:var(--mono);font-size:.75rem;color:var(--accent2);border:1px solid rgba(129,140,248,.3);border-radius:6px;padding:.4rem;margin-top:.5rem">→ Leptokurtic PDF</div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE DENSITY VISUALISER -->
+  <div class="sh2">Risk-Neutral Density Visualiser</div>
+  <div class="chart-wrap">
+    <div class="chart-controls">
+      <label>Market type:</label>
+      <select id="dn-type" onchange="drawDensity()">
+        <option value="equity">Equity (Left Skew)</option>
+        <option value="fx">FX (Symmetric Smile)</option>
+        <option value="flat">Flat (Log-Normal)</option>
+        <option value="bimodal">Bimodal (Binary Event)</option>
+      </select>
+      <label style="margin-left:.8rem">ATM vol (%):</label>
+      <input type="range" id="dn-vol" min="10" max="60" value="20" oninput="drawDensity()">
+      <span class="cval" id="dn-vol-v">20%</span>
+      <label style="margin-left:.8rem">T (months):</label>
+      <input type="range" id="dn-t" min="1" max="24" value="3" oninput="drawDensity()">
+      <span class="cval i" id="dn-t-v">3m</span>
+    </div>
+    <canvas id="densityCanvas" height="280"></canvas>
+    <div id="dn-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
+  </div>
+
+  <div class="alert key">
+    <span class="ico">🔑</span>
+    <span><strong>Key insight:</strong> Curvature in the vol surface = fat tails in the PDF. Skew in the vol surface = asymmetry in the PDF. A flat vol surface = a perfectly Gaussian PDF. This is why traders study the shape of the smile — it directly reveals what the market collectively "believes" about the future distribution of returns.</span>
+  </div>
+
+</div><!-- /density -->
+
+<!-- ═══════════════════════ TAB 8 — WHY IT MATTERS ════════════════════ -->
+<div id="tab-why" class="tab-content">
+
+  <div class="sh">Why the Vol Surface Matters — The Strategic Role</div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="flabel">1. The Language of the Market</div>
+      <p style="font-size:.87rem;color:var(--muted)">Traders don't quote prices in dollars — those change every second with spot. They quote in <strong>"vols."</strong> The surface is the standardised coordinate system that remains relatively stable even as the underlying moves.</p>
+    </div>
+    <div class="card i">
+      <div class="flabel i">2. Encoding Market Expectations</div>
+      <p style="font-size:.87rem;color:var(--muted)">Via Breeden-Litzenberger, the surface is the primary tool for extracting the <strong>Risk-Neutral Distribution</strong>. It tells you the "market odds" on every possible future scenario — the probability of a 10% crash, a squeeze, a range-bound market.</p>
+    </div>
+    <div class="card p">
+      <div class="flabel p">3. The Pricing Anchor — Internal Consistency</div>
+      <p style="font-size:.87rem;color:var(--muted)">Without a unified surface, a trading book would have internal arbitrage. The surface ensures that a 6M option at K=110 is priced logically relative to a 1Y option at K=110. It is the single source of truth for the desk.</p>
+    </div>
+    <div class="card g">
+      <div class="flabel g">4. Bridge to Exotic Products</div>
+      <p style="font-size:.87rem;color:var(--muted)">Exotic options (barriers, Asians, cliquet) don't have observable market prices. You <em>calibrate</em> the surface to liquid vanillas, then use that calibrated surface to price the exotic consistently. Without the surface, structured products cannot be priced.</p>
+    </div>
+  </div>
+
+  <div class="sh2">The Full Picture — One-Page Summary</div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Concept</th><th>What It Measures</th><th>How To Trade It</th><th>Interview Angle</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Realized Vol</strong></td>
+          <td>Historical price variation — what actually happened</td>
+          <td>Compare to IV → long/short options</td>
+          <td>VRP: IV consistently &gt; RV — the vol selling carry</td>
+        </tr>
+        <tr>
+          <td><strong>Implied Vol</strong></td>
+          <td>Market's forward-looking vol expectation — the "price" of uncertainty</td>
+          <td>Buy/sell straddles, delta-hedge</td>
+          <td>Rebonato quote: wrong number, right price</td>
+        </tr>
+        <tr>
+          <td><strong>Vol Surface</strong></td>
+          <td>IV across all strikes and maturities — the market's full fear map</td>
+          <td>Calibrate models; price exotics</td>
+          <td>Analogy to yield curve; flat = BS world</td>
+        </tr>
+        <tr>
+          <td><strong>Skew</strong></td>
+          <td>Slope of IV curve — directional fear (crash-o-phobia)</td>
+          <td>25Δ risk reversals; put spread</td>
+          <td>Equity vs FX: one-sided vs smile</td>
+        </tr>
+        <tr>
+          <td><strong>Curvature</strong></td>
+          <td>Bend of IV curve — fat-tail / black-swan pricing</td>
+          <td>Butterfly spreads (long wings)</td>
+          <td>Index vs single stock: diversification removes curvature</td>
+        </tr>
+        <tr>
+          <td><strong>Arbitrage Constraints</strong></td>
+          <td>Math bounds ensuring no free money in the surface</td>
+          <td>Detect mis-calibrated models</td>
+          <td>4 pillars: call spread, ratio, calendar, butterfly</td>
+        </tr>
+        <tr>
+          <td><strong>Risk-Neutral PDF</strong></td>
+          <td>Market-implied probability distribution of future prices</td>
+          <td>Price binary events; tail hedging</td>
+          <td>Breeden-Litzenberger: ∂²C/∂K² = density</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sh2">Speed Hierarchy — Recap</div>
+  <div class="card i">
+    <div class="fx i multi" style="font-size:.9rem">
+      \[\text{Spot} \gg \text{ATM Vol} \gg \text{Skew} \gg \text{Dividends}\]
+    </div>
+    <p style="font-size:.87rem;color:var(--muted);margin-top:.8rem">This hierarchy governs <strong>Greeks re-hedging priorities</strong>. Delta (driven by spot) must be re-hedged first and most frequently. Vega (ATM vol) next. Skew exposure is re-hedged less often. Dividend risk is managed on a quarterly cycle.</p>
+  </div>
+
+</div><!-- /why -->
+
+<div class="footer">
+  <span>All About Volatility — S&T Interview Guide · Quantitative Finance · 2025-2026</span>
+  <span>Module 03 · Quantitative Finance · σ(K,T) · Breeden-Litzenberger · VRP</span>
+</div>
+
+</div><!-- /wrapper -->
+
+<script>
+/* ── TABS ── */
+function switchTab(id,el){
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-'+id).classList.add('active');
+  setTimeout(()=>{
+    const fns={realized:()=>{ updateRV(); }, implied:()=>{ calcIV(); },
+      surface:()=>{ drawSurface(); drawSmileTermSlices(); },
+      skew:()=>{ drawSkew(); }, curvature:()=>{ drawCurvature(); },
+      arbitrage:()=>{ checkArb(); }, density:()=>{ drawDensity(); }, why:()=>{}};
+    if(fns[id]) fns[id]();
+  },40);
+}
+
+/* ── MATH UTILS ── */
+function erf(x){
+  const t=1/(1+0.3275911*Math.abs(x));
+  const p=t*(0.254829592+t*(-0.284496736+t*(1.421413741+t*(-1.453152027+t*1.061405429))));
+  const s=1-p*Math.exp(-x*x);
+  return x>=0?s:-s;
+}
+function normcdf(x){ return 0.5*(1+erf(x/Math.SQRT2)) }
+function normpdf(x){ return Math.exp(-0.5*x*x)/Math.sqrt(2*Math.PI) }
+function bsCall(S,K,r,sig,T){
+  if(T<=0||sig<=0) return Math.max(S-K,0);
+  const d1=(Math.log(S/K)+(r+0.5*sig*sig)*T)/(sig*Math.sqrt(T));
+  const d2=d1-sig*Math.sqrt(T);
+  return S*normcdf(d1)-K*Math.exp(-r*T)*normcdf(d2);
+}
+function bsPut(S,K,r,sig,T){ return bsCall(S,K,r,sig,T)-S+K*Math.exp(-r*T) }
+function impliedVol(S,K,r,T,C,isCall=true){
+  let sig=0.3;
+  for(let i=0;i<100;i++){
+    const price=isCall?bsCall(S,K,r,sig,T):bsPut(S,K,r,sig,T);
+    const d1=(Math.log(S/K)+(r+0.5*sig*sig)*T)/(sig*Math.sqrt(T));
+    const vega=S*normpdf(d1)*Math.sqrt(T);
+    const diff=price-C;
+    if(Math.abs(diff)<1e-8) break;
+    sig-=diff/vega;
+    if(sig<=0) sig=0.001;
+  }
+  return sig;
+}
+
+/* ── CANVAS SETUP ── */
+function setupCanvas(id,H){
+  const canvas=document.getElementById(id); if(!canvas) return null;
+  const dpr=window.devicePixelRatio||1;
+  const W=canvas.parentElement.clientWidth-32;
+  canvas.width=W*dpr; canvas.height=H*dpr;
+  canvas.style.width=W+'px'; canvas.style.height=H+'px';
+  const ctx=canvas.getContext('2d'); ctx.scale(dpr,dpr);
+  return {ctx,W,H};
+}
+function drawAxes(ctx,pad,W,H,xMin,xMax,yMin,yMax,xLabel,yLabel,ticksX,ticksY,xFmt,yFmt){
+  ctx.fillStyle='#05070d'; ctx.fillRect(0,0,W,H);
+  const cw=W-pad.l-pad.r, ch=H-pad.t-pad.b;
+  const toX=x=>pad.l+(x-xMin)/(xMax-xMin)*cw;
+  const toY=y=>pad.t+(1-(y-yMin)/(yMax-yMin))*ch;
+  ctx.strokeStyle='#0d1525'; ctx.lineWidth=1;
+  (ticksY||[]).forEach(y=>{ const py=toY(y); ctx.beginPath(); ctx.moveTo(pad.l,py); ctx.lineTo(pad.l+cw,py); ctx.stroke(); });
+  (ticksX||[]).forEach(x=>{ const px=toX(x); ctx.beginPath(); ctx.moveTo(px,pad.t); ctx.lineTo(px,pad.t+ch); ctx.stroke(); });
+  if(yMin<0&&yMax>0){
+    ctx.strokeStyle='#1e2d4a'; ctx.lineWidth=1.5; ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(pad.l,toY(0)); ctx.lineTo(pad.l+cw,toY(0)); ctx.stroke(); ctx.setLineDash([]);
+  }
+  ctx.strokeStyle='#1e2d4a'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t); ctx.lineTo(pad.l,pad.t+ch); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.l,pad.t+ch); ctx.lineTo(pad.l+cw,pad.t+ch); ctx.stroke();
+  ctx.fillStyle='#64748b'; ctx.font='11px Fira Code,monospace';
+  ctx.textAlign='right';
+  (ticksY||[]).forEach(y=>ctx.fillText(yFmt?yFmt(y):y.toFixed(0),pad.l-5,toY(y)+4));
+  ctx.textAlign='center';
+  (ticksX||[]).forEach(x=>ctx.fillText(xFmt?xFmt(x):x.toFixed(0),toX(x),pad.t+ch+16));
+  if(xLabel){ ctx.fillStyle='#64748b'; ctx.fillText(xLabel,pad.l+cw/2,H-4) }
+  if(yLabel){ ctx.save(); ctx.translate(12,pad.t+ch/2); ctx.rotate(-Math.PI/2); ctx.fillText(yLabel,0,0); ctx.restore(); }
+  return {toX,toY,cw,ch};
+}
+
+/* ── REALIZED VOL ── */
+function updateRV(){
+  const sig=parseFloat(document.getElementById('rv-sig').value)/100;
+  const days=parseInt(document.getElementById('rv-days').value);
+  document.getElementById('rv-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  const daily=sig/Math.sqrt(days);
+  const weekly=sig/Math.sqrt(days/5);
+  const monthly=sig/Math.sqrt(12);
+  document.getElementById('rv-results').innerHTML=`
+    <div class="kpi"><div class="lbl">Annual Vol σ</div><div class="val" style="color:var(--accent)">${(sig*100).toFixed(0)}%</div></div>
+    <div class="kpi"><div class="lbl">Daily std dev (σ/√${days})</div><div class="val" style="color:var(--accent2)">${(daily*100).toFixed(2)}%</div><div class="sub">≈ $${(daily*100).toFixed(1)} on a $100 stock</div></div>
+    <div class="kpi"><div class="lbl">Weekly std dev (σ/√52)</div><div class="val" style="color:var(--accent3)">${(weekly*100).toFixed(2)}%</div></div>
+    <div class="kpi"><div class="lbl">Monthly std dev (σ/√12)</div><div class="val" style="color:var(--green)">${(monthly*100).toFixed(2)}%</div></div>
+    <div class="kpi"><div class="lbl">√T Scaling Factor</div><div class="val" style="color:var(--yellow)">${Math.sqrt(days).toFixed(2)}</div><div class="sub">Annualise daily vol: ×${Math.sqrt(days).toFixed(1)}</div></div>
+    <div class="kpi"><div class="lbl">Expected 1-day move ($100)</div><div class="val">${(daily*100).toFixed(2)}</div><div class="sub">68% of days within ±$${(daily*100).toFixed(2)}</div></div>
+  `;
+  const r=setupCanvas('rvCanvas',200); if(!r) return;
+  const {ctx,W,H}=r;
+  const horizons=[1,5,10,21,63,126,252];
+  const vols=horizons.map(d=>sig*Math.sqrt(d/days)*100);
+  const pad={l:55,r:15,t:15,b:35};
+  const {toX,toY}=drawAxes(ctx,pad,W,H,0,252,0,50,'Trading Days','Vol (%)',
+    horizons,[0,10,20,30,40,50],
+    null,v=>v+'%');
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(pad.l, pad.t, W-pad.l-pad.r, H-pad.t-pad.b);
+  ctx.clip();
+
+  ctx.strokeStyle='#22d3ee'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  horizons.forEach((d,i)=>i===0?ctx.moveTo(toX(d),toY(vols[i])):ctx.lineTo(toX(d),toY(vols[i])));
+  ctx.stroke();
+  horizons.forEach((d,i)=>{ ctx.fillStyle='#818cf8'; ctx.beginPath(); ctx.arc(toX(d),toY(vols[i]),4,0,Math.PI*2); ctx.fill(); });
+  ctx.fillStyle='#64748b'; ctx.font='10px Fira Code,monospace';
+  ctx.textAlign='center'; ctx.fillText('Daily',toX(1),toY(vols[0])-8);
+  ctx.fillText('Weekly',toX(5),toY(vols[1])-8);
+  ctx.fillText('Monthly',toX(21),toY(vols[3])-8);
+  ctx.fillText('Annual',toX(252),toY(vols[6])-8);
+
+  ctx.restore();
+}
+
+/* ── IMPLIED VOL SOLVER ── */
+function calcIV(){
+  const S=parseFloat(document.getElementById('iv-s').value)||100;
+  const K=parseFloat(document.getElementById('iv-k').value)||100;
+  const C=parseFloat(document.getElementById('iv-c').value)||8.5;
+  const r=parseFloat(document.getElementById('iv-r').value)/100||0.04;
+  const T=parseFloat(document.getElementById('iv-t').value)||0.5;
+  const iv=impliedVol(S,K,r,T,C,true);
+  const moneyness=S>K?'ITM':S<K?'OTM':'ATM';
+  const atm=0.4*iv*Math.sqrt(T)*S;
+  document.getElementById('iv-results').innerHTML=`
+    <div class="kpi"><div class="lbl">Implied Vol (IV)</div><div class="val" style="color:var(--accent)">${(iv*100).toFixed(2)}%</div></div>
+    <div class="kpi"><div class="lbl">Moneyness</div><div class="val" style="color:var(--accent2)">${moneyness}</div><div class="sub">S/K = ${(S/K).toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">ATM Approximation</div><div class="val" style="color:var(--yellow)">${atm.toFixed(3)}</div><div class="sub">0.4·IV·√T·S</div></div>
+    <div class="kpi"><div class="lbl">Daily 1σ Move</div><div class="val" style="color:var(--green)">${(iv*S/16).toFixed(3)}</div><div class="sub">IV·S/16</div></div>
+  `;
+  // show BS price as function of vol
+  const rc=setupCanvas('ivSolverCanvas',220); if(!rc) return;
+  const {ctx,W,H}=rc;
+  const vols=Array.from({length:200},(_,i)=>0.01+i*0.99/200);
+  const prices=vols.map(v=>bsCall(S,K,r,v,T));
+  const pad={l:60,r:20,t:20,b:35};
+  const yMax=Math.max(...prices)*1.1;
+  const {toX,toY}=drawAxes(ctx,pad,W,H,1,100,0,yMax,'IV (%)','Call Price',
+    [10,20,30,40,50,60,70,80,90,100],[0,yMax*0.25,yMax*0.5,yMax*0.75,yMax].map(v=>parseFloat(v.toFixed(1))),
+    v=>v+'%');
+  ctx.strokeStyle='#22d3ee'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  vols.forEach((v,i)=>i===0?ctx.moveTo(toX(v*100),toY(prices[i])):ctx.lineTo(toX(v*100),toY(prices[i])));
+  ctx.stroke();
+  // mark the solution
+  ctx.strokeStyle='rgba(248,113,113,.7)'; ctx.lineWidth=1; ctx.setLineDash([4,4]);
+  const ivPct=iv*100;
+  ctx.beginPath(); ctx.moveTo(toX(ivPct),pad.t); ctx.lineTo(toX(ivPct),H-35); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(pad.l,toY(C)); ctx.lineTo(W-20,toY(C)); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#f472b6'; ctx.beginPath(); ctx.arc(toX(ivPct),toY(C),5,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle='#f472b6'; ctx.font='11px Fira Code,monospace'; ctx.textAlign='left';
+  ctx.fillText(`IV=${ivPct.toFixed(1)}%, C=${C}`,toX(ivPct)+8,toY(C)-6);
+}
+
+/* ── VOL SURFACE ── */
+function surfaceVolFn(K_norm, T, type, atm){
+  const k=K_norm-1; // deviation from ATM
+  switch(type){
+    case 'equity': {
+      const factor = (atm / 20) / Math.sqrt(T + 0.2);
+      return atm + (- 12*k + 20*k*k + Math.max(0,-k)*12) * factor;
+    }
+    case 'fx': {
+      const factor = (atm / 20) / Math.sqrt(T + 0.2);
+      return atm + (12*k*k + 4*Math.abs(k)) * factor;
+    }
+    case 'flat': {
+      return atm;
+    }
+    case 'stress': {
+      const factor = (atm / 20) / Math.sqrt(T + 0.1);
+      return atm*1.8 + (- 22*k + 40*k*k + Math.max(0,-k)*40) * factor;
+    }
+    default:
+      return atm;
+  }
+}
+
+function drawSurface(){
+  const type=document.getElementById('surf-type').value;
+  const atm=parseFloat(document.getElementById('surf-atm').value);
+  const rot=parseFloat(document.getElementById('surf-rot').value)*Math.PI/180;
+  document.getElementById('surf-atm-v').textContent=atm+'%';
+  document.getElementById('surf-rot-v').textContent=document.getElementById('surf-rot').value+'°';
+  const rc=setupCanvas('surfaceCanvas',360); if(!rc) return;
+  const {ctx,W,H}=rc;
+  ctx.fillStyle='#05070d'; ctx.fillRect(0,0,W,H);
+  const NX=25, NT=15;
+  const Ks=Array.from({length:NX},(_,i)=>0.7+i*0.6/(NX-1));
+  const Ts=Array.from({length:NT},(_,i)=>0.1+i*2.9/(NT-1));
+  const vols=Ks.map(K=>Ts.map(T=>Math.max(5,surfaceVolFn(K,T,type,atm))));
+  const minV=Math.min(...vols.flat()), maxV=Math.max(...vols.flat());
+
+  function getColor(v){
+    if(maxV===minV) return 'rgba(129,140,248,0.85)';
+    const t=(v-minV)/(maxV-minV);
+    if(t<0.33) return `rgba(34,${Math.round(211-100*t/0.33)},238,0.85)`;
+    if(t<0.67) return `rgba(${Math.round(129+120*(t-0.33)/0.34)},140,248,0.85)`;
+    return `rgba(${Math.round(244)},${Math.round(114-80*(t-0.67)/0.33)},182,0.85)`;
+  }
+
+  // isometric projection with rotation
+  const cx=W/2, cy=H*0.80;
+  const scale=Math.min(W,H)*0.35;
+  function project3D(kn,tn,v){
+    const xr=kn*Math.cos(rot)-tn*Math.sin(rot);
+    const yr=kn*Math.sin(rot)+tn*Math.cos(rot);
+    const zMin=0, zMax=100;
+    const zn=(v-zMin)/(zMax-zMin);
+    return { x:cx+xr*scale, y:cy+yr*scale*0.4-zn*scale*1.1 };
+  }
+  function project(k_idx,t_idx,v){
+    const kn=(k_idx/(NX-1)-0.5)*2;
+    const tn=(t_idx/(NT-1)-0.5)*2;
+    return project3D(kn,tn,v);
+  }
+
+  // draw quads (back to front)
+  for(let ti=0;ti<NT-1;ti++){
+    for(let ki=0;ki<NX-1;ki++){
+      const p00=project(ki,ti,vols[ki][ti]);
+      const p10=project(ki+1,ti,vols[ki+1][ti]);
+      const p11=project(ki+1,ti+1,vols[ki+1][ti+1]);
+      const p01=project(ki,ti+1,vols[ki][ti+1]);
+      const avgV=(vols[ki][ti]+vols[ki+1][ti]+vols[ki+1][ti+1]+vols[ki][ti+1])/4;
+      ctx.beginPath();
+      ctx.moveTo(p00.x,p00.y); ctx.lineTo(p10.x,p10.y);
+      ctx.lineTo(p11.x,p11.y); ctx.lineTo(p01.x,p01.y);
+      ctx.closePath();
+      ctx.fillStyle=getColor(avgV);
+      ctx.fill();
+      ctx.strokeStyle='rgba(8,11,18,0.6)'; ctx.lineWidth=0.5; ctx.stroke();
+    }
+  }
+
+  // Draw 3D floor grid and axis arrows
+  const pA = project(0, 0, 0);
+  const pB = project(NX-1, 0, 0);
+  const pC = project(NX-1, NT-1, 0);
+  const pD = project(0, NT-1, 0);
+
+  // Draw light floor grid boundary
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pA.x, pA.y);
+  ctx.lineTo(pB.x, pB.y);
+  ctx.lineTo(pC.x, pC.y);
+  ctx.lineTo(pD.x, pD.y);
+  ctx.closePath();
+  ctx.stroke();
+
+  // Define offset axes endpoints in 3D projection space (kn, tn, v)
+  const offsetDistance = 1.35;
+  const pD_off = project3D(-1.0, offsetDistance, 0);
+  const pC_off = project3D(1.0, offsetDistance, 0);
+  
+  const pB_off = project3D(offsetDistance, -1.0, 0);
+  const pC_off_mat = project3D(offsetDistance, 1.0, 0);
+  
+  const pA_off = project3D(-offsetDistance, -offsetDistance, 0);
+  const pA_top_off = project3D(-offsetDistance, -offsetDistance, 100);
+
+  // Draw light dashed connector lines from grid corners to offset axes
+  ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([3, 3]);
+  
+  ctx.beginPath();
+  // Connectors for Strike axis
+  ctx.moveTo(pD.x, pD.y); ctx.lineTo(pD_off.x, pD_off.y);
+  ctx.moveTo(pC.x, pC.y); ctx.lineTo(pC_off.x, pC_off.y);
+  
+  // Connectors for Maturity axis
+  ctx.moveTo(pB.x, pB.y); ctx.lineTo(pB_off.x, pB_off.y);
+  ctx.moveTo(pC.x, pC.y); ctx.lineTo(pC_off_mat.x, pC_off_mat.y);
+  
+  // Connector for Volatility axis base
+  ctx.moveTo(pA.x, pA.y); ctx.lineTo(pA_off.x, pA_off.y);
+  ctx.stroke();
+  ctx.setLineDash([]); // Reset line dash
+
+  // Helper function to draw 3D axis arrows with rotated labels
+  function drawAxisArrow(fromP, toP, label, color) {
+    const dx = toP.x - fromP.x;
+    const dy = toP.y - fromP.y;
+    const len = Math.sqrt(dx*dx + dy*dy);
+    if(len < 10) return;
+    const angle = Math.atan2(dy, dx);
+    const headlen = 7;
+    
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(fromP.x, fromP.y);
+    ctx.lineTo(toP.x, toP.y);
+    ctx.stroke();
+    
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.moveTo(toP.x, toP.y);
+    ctx.lineTo(toP.x - headlen * Math.cos(angle - Math.PI/6), toP.y - headlen * Math.sin(angle - Math.PI/6));
+    ctx.lineTo(toP.x - headlen * Math.cos(angle + Math.PI/6), toP.y - headlen * Math.sin(angle + Math.PI/6));
+    ctx.closePath();
+    ctx.fill();
+    
+    // Draw text parallel to line
+    ctx.save();
+    ctx.shadowColor = '#05070d';
+    ctx.shadowBlur = 4;
+    ctx.translate(fromP.x + dx*0.5, fromP.y + dy*0.5);
+    let textAngle = angle;
+    if (Math.abs(textAngle) > Math.PI/2) {
+      textAngle += Math.PI;
+    }
+    ctx.rotate(textAngle);
+    ctx.font = '10px Fira Code, monospace';
+    ctx.fillStyle = color;
+    ctx.textAlign = 'center';
+    ctx.fillText(label, 0, -6);
+    ctx.restore();
+  }
+
+  // Helper to draw corner label dynamically aligned with drop shadow for premium contrast
+  function drawCornerLabel(p, text, color) {
+    ctx.save();
+    ctx.shadowColor = '#05070d';
+    ctx.shadowBlur = 4;
+    ctx.fillStyle = color || 'rgba(255, 255, 255, 0.7)';
+    ctx.font = '10px Fira Code, monospace';
+    ctx.textAlign = p.x < cx ? 'right' : 'left';
+    ctx.fillText(text, p.x + (p.x < cx ? -8 : 8), p.y + 4);
+    ctx.restore();
+  }
+
+  // Draw Strike axis (from pD_off to pC_off) pointing from lower to higher
+  drawAxisArrow(pD_off, pC_off, 'Strike K (70% ➔ 130% [Higher Strike] ➔)', 'rgba(96, 165, 250, 0.85)');
+  drawCornerLabel(pD_off, '70% Strike (Min)', 'rgba(147, 197, 253, 0.85)');
+  drawCornerLabel(pC_off, '130% Strike (Max)', 'rgba(147, 197, 253, 0.85)');
+
+  // Draw Maturity axis (from pB_off to pC_off_mat) pointing from lower to higher
+  drawAxisArrow(pB_off, pC_off_mat, 'Maturity T (0.1Y ➔ 3.0Y [Higher Maturity] ➔)', 'rgba(251, 146, 60, 0.85)');
+  drawCornerLabel(pB_off, '0.1Y Maturity (Min)', 'rgba(253, 186, 116, 0.85)');
+  drawCornerLabel(pC_off_mat, '3.0Y Maturity (Max)', 'rgba(253, 186, 116, 0.85)');
+
+  // Draw Volatility vertical axis (from floor corner pA_off to top pA_top_off) pointing from lower to higher
+  drawAxisArrow(pA_off, pA_top_off, 'Implied Volatility (0% ➔ 100% [Higher Vol] ➔)', 'rgba(167, 139, 250, 0.85)');
+  drawCornerLabel(pA_off, '0% Vol (Min)', 'rgba(196, 181, 253, 0.85)');
+  drawCornerLabel(pA_top_off, '100% Vol (Max)', 'rgba(196, 181, 253, 0.85)');
+
+  // axes labels
+  ctx.fillStyle='#64748b'; ctx.font='11px Fira Code,monospace'; ctx.textAlign='center';
+  ctx.save(); ctx.translate(15,cy); ctx.rotate(-Math.PI/2); ctx.fillText('Implied Vol (%)',0,0); ctx.restore();
+  // color legend
+  const lgW=120, lgH=10, lgX=W-lgW-20, lgY=20;
+  const lg=ctx.createLinearGradient(lgX,lgY,lgX+lgW,lgY);
+  lg.addColorStop(0,'rgba(34,211,238,0.85)');
+  lg.addColorStop(0.5,'rgba(129,140,248,0.85)');
+  lg.addColorStop(1,'rgba(244,114,182,0.85)');
+  ctx.fillStyle=lg; ctx.fillRect(lgX,lgY,lgW,lgH);
+  ctx.fillStyle='#64748b'; ctx.textAlign='left'; ctx.fillText(minV.toFixed(0)+'%',lgX,lgY+22);
+  ctx.textAlign='right'; ctx.fillText(maxV.toFixed(0)+'%',lgX+lgW,lgY+22);
+  ctx.textAlign='center'; ctx.fillStyle='#22d3ee'; ctx.font='bold 12px Fira Code,monospace';
+  ctx.fillText(type.toUpperCase()+' SURFACE',W/2,20);
+
+  drawSmileTermSlices();
+}
+
+function drawSmileTermSlices(){
+  const type=document.getElementById('surf-type')?document.getElementById('surf-type').value:'equity';
+  const atm=document.getElementById('surf-atm')?parseFloat(document.getElementById('surf-atm').value):20;
+  // SMILE slice at T=0.5
+  const rS=setupCanvas('smileCanvas',200); if(!rS) return;
+  {
+    const {ctx,W,H}=rS;
+    const Ks=Array.from({length:100},(_,i)=>0.7+i*0.6/100);
+    const v1=Ks.map(K=>Math.max(5,surfaceVolFn(K,0.25,type,atm)));
+    const v2=Ks.map(K=>Math.max(5,surfaceVolFn(K,1,type,atm)));
+    const v3=Ks.map(K=>Math.max(5,surfaceVolFn(K,2,type,atm)));
+    const yMin=0, yMax=100;
+    const pad={l:45,r:10,t:15,b:35};
+    const {toX,toY}=drawAxes(ctx,pad,W,H,70,130,yMin,yMax,'Strike (% ATM)','IV (%)',
+      [80,90,100,110,120],[0,20,40,60,80,100],
+      v=>v+'%',v=>v+'%');
+    [[v1,'#22d3ee','3M'],[v2,'#818cf8','1Y'],[v3,'#f472b6','2Y']].forEach(([v,col,lbl],li)=>{
+      ctx.strokeStyle=col; ctx.lineWidth=2;
+      ctx.beginPath();
+      Ks.forEach((K,i)=>i===0?ctx.moveTo(toX(K*100),toY(v[i])):ctx.lineTo(toX(K*100),toY(v[i])));
+      ctx.stroke();
+      ctx.fillStyle=col; ctx.font='10px Fira Code,monospace'; ctx.textAlign='left';
+      ctx.fillText(lbl,pad.l+8+li*32,pad.t+14);
+    });
+  }
+  // TERM STRUCTURE at ATM
+  const rT=setupCanvas('termCanvas',200); if(!rT) return;
+  {
+    const {ctx,W,H}=rT;
+    const Ts=Array.from({length:50},(_,i)=>0.1+i*2.9/50);
+    const vATM=Ts.map(T=>Math.max(5,surfaceVolFn(1,T,type,atm)));
+    const v90=Ts.map(T=>Math.max(5,surfaceVolFn(0.9,T,type,atm)));
+    const yMin=0, yMax=100;
+    const pad={l:45,r:10,t:15,b:35};
+    const {toX,toY}=drawAxes(ctx,pad,W,H,0,3,yMin,yMax,'Maturity (years)','IV (%)',
+      [0,0.5,1,1.5,2,2.5,3],[0,20,40,60,80,100],
+      null,v=>v+'%');
+    [[vATM,'#22d3ee','ATM'],[v90,'#f87171','90%']].forEach(([v,col,lbl],li)=>{
+      ctx.strokeStyle=col; ctx.lineWidth=2;
+      ctx.beginPath();
+      Ts.forEach((T,i)=>i===0?ctx.moveTo(toX(T),toY(v[i])):ctx.lineTo(toX(T),toY(v[i])));
+      ctx.stroke();
+      ctx.fillStyle=col; ctx.font='10px Fira Code,monospace'; ctx.textAlign='left';
+      ctx.fillText(lbl,pad.l+8+li*45,pad.t+14);
+    });
+  }
+}
+
+/* ── SKEW ── */
+function skewVol(K_norm, type, atm, steep){
+  const k=K_norm-1;
+  switch(type){
+    case 'equity':   return atm - (steep * 4.75) * k + (steep * 12.5) * k * k;
+    case 'fx':       return atm + (steep * 37.5) * k * k + (steep * 2.25) * Math.abs(k);
+    case 'flat':     return atm;
+    case 'inverted': return atm + (steep * 4.75) * k + (steep * 12.5) * k * k;
+    default:         return atm;
+  }
+}
+function drawSkew(){
+  const type=document.getElementById('sk-type').value;
+  const atm=parseFloat(document.getElementById('sk-atm').value);
+  const steep=parseFloat(document.getElementById('sk-steep').value);
+  document.getElementById('sk-atm-v').textContent=atm+'%';
+  document.getElementById('sk-steep-v').textContent=steep;
+  const r=setupCanvas('skewCanvas',250); if(!r) return;
+  const {ctx,W,H}=r;
+  const Ks=Array.from({length:200},(_,i)=>0.7+i*0.6/200);
+  const vols=Ks.map(K=>Math.max(1,skewVol(K,type,atm,steep)));
+  const yMin=Math.min(...vols)*0.92, yMax=Math.max(...vols)*1.08;
+  const pad={l:50,r:15,t:20,b:35};
+  const ticksY=[yMin,atm,(yMin+yMax)/2,yMax].map(v=>parseFloat(v.toFixed(0)));
+  const {toX,toY}=drawAxes(ctx,pad,W,H,70,130,yMin,yMax,'Strike (% of Spot)','IV (%)',
+    [80,90,100,110,120],ticksY,v=>v+'%',v=>v+'%');
+
+  // fill under curve
+  ctx.fillStyle='rgba(34,211,238,.06)';
+  ctx.beginPath(); ctx.moveTo(toX(Ks[0]*100),toY(vols[0]));
+  Ks.forEach((K,i)=>ctx.lineTo(toX(K*100),toY(vols[i])));
+  ctx.lineTo(toX(Ks[Ks.length-1]*100),H-35); ctx.lineTo(toX(Ks[0]*100),H-35);
+  ctx.closePath(); ctx.fill();
+
+  ctx.strokeStyle='#22d3ee'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  Ks.forEach((K,i)=>i===0?ctx.moveTo(toX(K*100),toY(vols[i])):ctx.lineTo(toX(K*100),toY(vols[i])));
+  ctx.stroke();
+
+  // ATM dot
+  ctx.fillStyle='#f472b6'; ctx.beginPath(); ctx.arc(toX(100),toY(atm),5,0,Math.PI*2); ctx.fill();
+  // 25-delta approx marks
+  const k25p=Math.max(...vols.filter((_,i)=>Ks[i]<0.9));
+  const k25c=vols[Math.round(0.9*Ks.length)];
+  const sk25=document.getElementById('sk-atm-v');
+
+  const v90=Math.max(1,skewVol(0.9,type,atm,steep));
+  const v100=atm;
+  const v110=Math.max(1,skewVol(1.1,type,atm,steep));
+  const strikeSkew=v90-v100;
+  const deltaSkew=v90-v110;
+  document.getElementById('sk-stats').innerHTML=`
+    <span>σ(90%) = <strong style="color:var(--accent)">${v90.toFixed(1)}%</strong></span>
+    <span>σ(ATM) = <strong style="color:var(--yellow)">${v100.toFixed(1)}%</strong></span>
+    <span>σ(110%) = <strong style="color:var(--green)">${v110.toFixed(1)}%</strong></span>
+    <span>Strike Skew = <strong style="color:var(--accent3)">${strikeSkew.toFixed(1)} vols</strong></span>
+    <span>25Δ-style Skew ≈ <strong style="color:var(--red)">${deltaSkew.toFixed(1)} vols</strong></span>
+  `;
+}
+
+/* ── CURVATURE ── */
+function curvatureVol(K_norm, type, atm, skew, curv){
+  const k=K_norm-1;
+  switch(type){
+    case 'index':       return atm - skew*k + curv*k*k*0.7;
+    case 'singlestock': return atm - skew*k*0.5 + curv*k*k*1.8 + Math.pow(Math.abs(k),2.5)*30;
+    case 'fx':          return atm + curv*k*k + 1.5*Math.abs(k);
+    default:            return atm;
+  }
+}
+function drawCurvature(){
+  const atm=parseFloat(document.getElementById('cv-atm').value);
+  const skew=parseFloat(document.getElementById('cv-skew').value);
+  const curv=parseFloat(document.getElementById('cv-curv').value);
+  const type=document.getElementById('cv-type').value;
+  document.getElementById('cv-atm-v').textContent=atm+'%';
+  document.getElementById('cv-skew-v').textContent=skew;
+  document.getElementById('cv-curv-v').textContent=curv;
+  const r=setupCanvas('curvCanvas',260); if(!r) return;
+  const {ctx,W,H}=r;
+  const Ks=Array.from({length:200},(_,i)=>0.7+i*0.6/200);
+  const vols=Ks.map(K=>Math.max(1,curvatureVol(K,type,atm,skew,curv)));
+  const yMin=Math.min(...vols)*0.92, yMax=Math.max(...vols)*1.08;
+  const pad={l:50,r:15,t:20,b:35};
+  const {toX,toY}=drawAxes(ctx,pad,W,H,70,130,yMin,yMax,'Strike (% of Spot)','IV (%)',
+    [80,90,100,110,120],[yMin,atm,yMax].map(v=>parseFloat(v.toFixed(0))),v=>v+'%',v=>v+'%');
+  ctx.fillStyle='rgba(129,140,248,.07)';
+  ctx.beginPath(); ctx.moveTo(toX(Ks[0]*100),toY(vols[0]));
+  Ks.forEach((K,i)=>ctx.lineTo(toX(K*100),toY(vols[i])));
+  ctx.lineTo(toX(Ks[Ks.length-1]*100),H-35); ctx.lineTo(toX(Ks[0]*100),H-35);
+  ctx.closePath(); ctx.fill();
+  ctx.strokeStyle='#818cf8'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  Ks.forEach((K,i)=>i===0?ctx.moveTo(toX(K*100),toY(vols[i])):ctx.lineTo(toX(K*100),toY(vols[i])));
+  ctx.stroke();
+  // marks for 90/100/110
+  [0.9,1.0,1.1].forEach(K=>{
+    const v=Math.max(1,curvatureVol(K,type,atm,skew,curv));
+    const col=K===1.0?'#f472b6':K===0.9?'#f87171':'#4ade80';
+    ctx.fillStyle=col; ctx.beginPath(); ctx.arc(toX(K*100),toY(v),5,0,Math.PI*2); ctx.fill();
+    ctx.strokeStyle='rgba(255,255,255,.15)'; ctx.lineWidth=1; ctx.setLineDash([3,3]);
+    ctx.beginPath(); ctx.moveTo(toX(K*100),toY(v)); ctx.lineTo(toX(K*100),H-35); ctx.stroke();
+    ctx.setLineDash([]);
+  });
+  const v90=Math.max(1,curvatureVol(0.9,type,atm,skew,curv));
+  const v100=Math.max(1,curvatureVol(1.0,type,atm,skew,curv));
+  const v110=Math.max(1,curvatureVol(1.1,type,atm,skew,curv));
+  const curvMeasure=((v90+v110-2*v100)/0.01).toFixed(1);
+  document.getElementById('cv-stats').innerHTML=`
+    <span>σ(90%) = <strong style="color:var(--red)">${v90.toFixed(1)}%</strong></span>
+    <span>σ(100%) = <strong style="color:var(--accent3)">${v100.toFixed(1)}%</strong></span>
+    <span>σ(110%) = <strong style="color:var(--green)">${v110.toFixed(1)}%</strong></span>
+    <span>Skew Convexity ≈ <strong style="color:var(--accent2)">${curvMeasure}</strong></span>
+    <span>Butterfly P&L proxy: <strong style="color:var(--yellow)">${(v90+v110-2*v100).toFixed(2)} vols</strong></span>
+  `;
+}
+
+/* ── ARBITRAGE CHECK ── */
+function checkArb(){
+  const vols={90:parseFloat(document.getElementById('arb-v90').value)/100,
+              95:parseFloat(document.getElementById('arb-v95').value)/100,
+              100:parseFloat(document.getElementById('arb-v100').value)/100,
+              105:parseFloat(document.getElementById('arb-v105').value)/100,
+              110:parseFloat(document.getElementById('arb-v110').value)/100};
+  const S=parseFloat(document.getElementById('arb-s').value)||100;
+  const T=parseFloat(document.getElementById('arb-t').value)||1;
+  const r=parseFloat(document.getElementById('arb-r').value)/100||0.04;
+  const Ks=[90,95,100,105,110].map(k=>k*S/100);
+  const prices=Ks.map((K,i)=>bsCall(S,K,r,Object.values(vols)[i],T));
+
+  // Check conditions
+  const cs1=prices[0]>=prices[1]; // C(90)>=C(95)
+  const cs2=prices[1]>=prices[2]; // C(95)>=C(100)
+  const cs3=prices[2]>=prices[3]; // C(100)>=C(105)
+  const cs4=prices[3]>=prices[4]; // C(105)>=C(110)
+  const bfly=prices[0]+prices[4]-2*prices[2]; // 90+110-2*100
+  const bflyOk=bfly>=0;
+  const maxRatio=Math.max((prices[0]-prices[1])/(Ks[1]-Ks[0]),(prices[1]-prices[2])/(Ks[2]-Ks[1]),(prices[2]-prices[3])/(Ks[3]-Ks[2]),(prices[3]-prices[4])/(Ks[4]-Ks[3]));
+  const ratioOk=maxRatio<=1;
+
+  const ok='<span style="color:var(--green)">✓ OK</span>';
+  const fail='<span style="color:var(--red)">⚠️ VIOLATED</span>';
+  document.getElementById('arb-results').innerHTML=`
+    <div class="kpi"><div class="lbl">Call Spread Monotonicity</div><div class="val">${cs1&&cs2&&cs3&&cs4?ok:fail}</div><div class="sub">C(K) decreasing in K</div></div>
+    <div class="kpi"><div class="lbl">Call Spread Ratio ≤ 1</div><div class="val">${ratioOk?ok:fail}</div><div class="sub">Max ratio: ${maxRatio.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">Butterfly Positivity</div><div class="val">${bflyOk?ok:fail}</div><div class="sub">Bfly = ${bfly.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">Overall Status</div><div class="val">${(cs1&&cs2&&cs3&&cs4&&ratioOk&&bflyOk)?'<span style="color:var(--green)">ARB-FREE</span>':'<span style="color:var(--red)">ARBITRAGE!</span>'}</div></div>
+    ${Ks.map((K,i)=>`<div class="kpi"><div class="lbl">C(${(K*100/S).toFixed(0)}%)</div><div class="val" style="color:var(--accent)">${prices[i].toFixed(3)}</div><div class="sub">IV=${(Object.values(vols)[i]*100).toFixed(0)}%</div></div>`).join('')}
+  `;
+  // plot
+  const ra=setupCanvas('arbCanvas',230); if(!ra) return;
+  const {ctx,W,H}=ra;
+  const Krange=Array.from({length:200},(_,i)=>0.75+i*0.5/200);
+  // interpolate vol linearly between given strikes
+  const volFn=K_norm=>{
+    const k=K_norm*100;
+    const pts=[[90,vols[90]],[95,vols[95]],[100,vols[100]],[105,vols[105]],[110,vols[110]]];
+    if(k<=pts[0][0]) return pts[0][1];
+    if(k>=pts[pts.length-1][0]) return pts[pts.length-1][1];
+    for(let i=0;i<pts.length-1;i++){
+      if(k>=pts[i][0]&&k<=pts[i+1][0]){
+        const t=(k-pts[i][0])/(pts[i+1][0]-pts[i][0]);
+        return pts[i][1]*(1-t)+pts[i+1][1]*t;
+      }
+    }
+    return vols[100];
+  };
+  const callPrices=Krange.map(K=>bsCall(S,K*S,r,volFn(K),T));
+  const pad={l:55,r:15,t:15,b:35};
+  const yMax=Math.max(...callPrices)*1.1;
+  const {toX,toY}=drawAxes(ctx,pad,W,H,75,125,0,yMax,'Strike (%S)','Call Price',
+    [80,90,100,110,120],[0,yMax*0.5,yMax].map(v=>parseFloat(v.toFixed(1))),v=>v+'%');
+  // convexity shading
+  const dx=Krange[1]-Krange[0];
+  const d2=callPrices.map((_,i)=>i===0||i===callPrices.length-1?0:(callPrices[i+1]-2*callPrices[i]+callPrices[i-1])/(dx*dx));
+  Krange.forEach((K,i)=>{
+    if(i===0||i===Krange.length-1) return;
+    const col=d2[i]>=0?'rgba(74,222,128,.08)':'rgba(248,113,113,.2)';
+    ctx.fillStyle=col; ctx.fillRect(toX(K*100)-1,pad.t,3,H-pad.t-35);
+  });
+  ctx.strokeStyle='#22d3ee'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  Krange.forEach((K,i)=>i===0?ctx.moveTo(toX(K*100),toY(callPrices[i])):ctx.lineTo(toX(K*100),toY(callPrices[i])));
+  ctx.stroke();
+  prices.forEach((p,i)=>{ ctx.fillStyle='#f472b6'; ctx.beginPath(); ctx.arc(toX(Ks[i]*100/S),toY(p),4,0,Math.PI*2); ctx.fill(); });
+  ctx.fillStyle='#64748b'; ctx.font='10px Fira Code,monospace'; ctx.textAlign='left';
+  ctx.fillStyle='#4ade80'; ctx.fillText('Green = Convex (OK)',pad.l+6,pad.t+14);
+  ctx.fillStyle='#f87171'; ctx.fillText('Red = Concave (ARB)',pad.l+6,pad.t+26);
+}
+function resetArb(){
+  document.getElementById('arb-v90').value = 28;
+  document.getElementById('arb-v95').value = 25;
+  document.getElementById('arb-v100').value = 20;
+  document.getElementById('arb-v105').value = 19;
+  document.getElementById('arb-v110').value = 20;
+  document.getElementById('arb-s').value = 100;
+  document.getElementById('arb-t').value = 1;
+  document.getElementById('arb-r').value = 4;
+  checkArb();
+}
+
+/* ── DENSITY ── */
+function drawDensity(){
+  const type=document.getElementById('dn-type').value;
+  const vol=parseFloat(document.getElementById('dn-vol').value)/100;
+  const Tm=parseFloat(document.getElementById('dn-t').value);
+  const T=Tm/12;
+  document.getElementById('dn-vol-v').textContent=(vol*100).toFixed(0)+'%';
+  document.getElementById('dn-t-v').textContent=Tm+'m';
+  const S0=100, r=0.04;
+
+  // Calculate dynamic boundaries based on volatility and time to maturity
+  const stdDev = vol * Math.sqrt(T) * S0;
+  const xMin = Math.round(Math.max(10, S0 - 3.2 * stdDev));
+  const xMax = Math.round(S0 + 3.2 * stdDev);
+  const Krange = Array.from({length:300}, (_,i) => xMin + i*(xMax-xMin)/300);
+  const dK = Krange[1] - Krange[0];
+
+  function volFn(K){
+    const k=K/S0-1;
+    const eps=0.15; // increased smoothing parameter to eliminate sharp ATM peak
+    const abs_k=Math.sqrt(k*k+eps*eps);
+    const max_neg_k=(-k+abs_k)/2;
+    switch(type){
+      case 'equity':  return Math.max(0.02,vol-0.07*k+0.15*k*k+max_neg_k*0.08/(T+0.2));
+      case 'fx':      return Math.max(0.02,vol+0.12*k*k+0.03*abs_k);
+      case 'flat':    return vol;
+      case 'bimodal': return Math.max(0.02,vol+0.25*abs_k-0.05*k*k);
+      default:        return vol;
+    }
+  }
+
+  const calls=Krange.map(K=>bsCall(S0,K,r,volFn(K),T));
+  // Breeden-Litzenberger: d²C/dK² * e^(rT)
+  const density=Krange.map((_,i)=>{
+    if(i===0||i===Krange.length-1) return 0;
+    return Math.max(0,(calls[i+1]-2*calls[i]+calls[i-1])/(dK*dK))*Math.exp(r*T);
+  });
+  const lognormalDensity=Krange.map(K=>{
+    if(K<=0) return 0;
+    const drift=(r-0.5*vol*vol)*T;
+    const z=(Math.log(K/S0)-drift)/(vol*Math.sqrt(T));
+    return normpdf(z)/(K*vol*Math.sqrt(T));
+  });
+
+  // normalize for display
+  const maxD=Math.max(...density,0.001);
+  const maxL=Math.max(...lognormalDensity,0.001);
+  const normFactor=maxD/maxL;
+
+  const rd=setupCanvas('densityCanvas',280); if(!rd) return;
+  const {ctx,W,H}=rd;
+  const yMax=Math.max(...density)*1.12;
+  const pad={l:45,r:15,t:25,b:35};
+
+  // Generate ticksX dynamically to match the dynamic x-axis range
+  const ticksX = [];
+  const tickStep = (xMax - xMin) / 6;
+  for(let i=0; i<=6; i++) {
+    ticksX.push(Math.round(xMin + i * tickStep));
+  }
+
+  const {toX,toY}=drawAxes(ctx,pad,W,H,xMin,xMax,0,yMax,'Stock Price at Maturity S_T','Probability Density',
+    ticksX,[],null);
+
+  // fill under density
+  ctx.fillStyle='rgba(34,211,238,.1)';
+  ctx.beginPath(); ctx.moveTo(toX(Krange[0]),toY(0));
+  Krange.forEach((K,i)=>ctx.lineTo(toX(K),toY(density[i])));
+  ctx.lineTo(toX(Krange[Krange.length-1]),toY(0)); ctx.closePath(); ctx.fill();
+
+  // log-normal reference
+  ctx.strokeStyle='rgba(255,255,255,.25)'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+  ctx.beginPath();
+  Krange.forEach((K,i)=>i===0?ctx.moveTo(toX(K),toY(lognormalDensity[i]*normFactor)):ctx.lineTo(toX(K),toY(lognormalDensity[i]*normFactor)));
+  ctx.stroke(); ctx.setLineDash([]);
+
+  // density
+  ctx.strokeStyle='#22d3ee'; ctx.lineWidth=2.5;
+  ctx.beginPath();
+  Krange.forEach((K,i)=>i===0?ctx.moveTo(toX(K),toY(density[i])):ctx.lineTo(toX(K),toY(density[i])));
+  ctx.stroke();
+
+  // mean & mode markers
+  const totalDens=density.reduce((a,b)=>a+b,0)*dK;
+  const mean=Krange.reduce((a,K,i)=>a+K*density[i]*dK,0)/totalDens;
+  const modeIdx=density.indexOf(Math.max(...density));
+  ctx.strokeStyle='#f472b6'; ctx.lineWidth=1.5; ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(toX(mean),pad.t); ctx.lineTo(toX(mean),H-35); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#f472b6'; ctx.font='10px Fira Code,monospace'; ctx.textAlign='center';
+  ctx.fillText('Mean',toX(mean),pad.t-8);
+
+  // ATM line
+  ctx.strokeStyle='rgba(251,191,36,.5)'; ctx.lineWidth=1; ctx.setLineDash([3,4]);
+  ctx.beginPath(); ctx.moveTo(toX(S0),pad.t); ctx.lineTo(toX(S0),H-35); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle='#fbbf24'; ctx.textAlign='center'; ctx.fillText('S₀=100',toX(S0),pad.t-8);
+
+  // area labels
+  const prob20drop=density.filter((_,i)=>Krange[i]<=80).reduce((a,b)=>a+b,0)*dK;
+  const prob10drop=density.filter((_,i)=>Krange[i]<=90).reduce((a,b)=>a+b,0)*dK;
+  document.getElementById('dn-stats').innerHTML=`
+    <span>Prob(S_T ≤ 80%) = <strong style="color:var(--red)">${(prob20drop*100).toFixed(1)}%</strong></span>
+    <span>Prob(S_T ≤ 90%) = <strong style="color:var(--yellow)">${(prob10drop*100).toFixed(1)}%</strong></span>
+    <span>Risk-neutral mean ≈ <strong style="color:var(--accent)">${mean.toFixed(1)}</strong></span>
+    <span>Type: <strong style="color:var(--accent2)">${type}</strong></span>
+  `;
+
+  // legend
+  ctx.textAlign='left'; ctx.font='11px Fira Code,monospace';
+  ctx.fillStyle='#22d3ee'; ctx.fillText('Implied PDF',pad.l+8,pad.t+14);
+  ctx.fillStyle='rgba(255,255,255,.4)'; ctx.fillText('Log-Normal (BS)',pad.l+8,pad.t+28);
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded',()=>{
+  renderMathInElement(document.body,{
+    delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],
+    throwOnError:false
+  });
+  setTimeout(()=>{
+    updateRV(); calcIV(); drawSurface(); drawSkew(); drawCurvature(); checkArb(); drawDensity();
+  },300);
+});
+</script>
+</body>
+</html>

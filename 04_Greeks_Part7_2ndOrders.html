@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Greeks — Part VII: 2nd Orders | S&amp;T Prep</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" rel="stylesheet"/>
+<script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+
+
+<script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#08080d;
+  --surface:#0c0c16;
+  --card:#101020;
+  --border:#1c1c35;
+  --rho:#fb7185;       /* rose — Rho */
+  --volga:#f97316;     /* orange — Volga */
+  --vanna:#818cf8;     /* indigo — Vanna */
+  --charm:#2dd4bf;     /* teal — Charm */
+  --gamma:#fbbf24;     /* amber — continuity */
+  --theta:#38bdf8;     /* sky blue */
+  --vega:#a78bfa;      /* violet */
+  --green:#4ade80;
+  --red:#f87171;
+  --text:#e2e8f0;
+  --muted:#484868;
+  --mono:'Fira Code','Cascadia Code',monospace;
+  --sans:'IBM Plex Sans','Segoe UI',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.74;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9990;
+  background-image:radial-gradient(rgba(251,113,133,.05) 1px,transparent 1px);
+  background-size:30px 30px;}
+
+.topbar{background:var(--surface);border-bottom:2px solid var(--rho);padding:.6rem 2rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:200;backdrop-filter:blur(14px)}
+.tag{font-family:var(--mono);font-size:.67rem;letter-spacing:.13em;background:var(--rho);color:#000;padding:.2rem .55rem;border-radius:3px;font-weight:800}
+.crumb{font-family:var(--mono);font-size:.74rem;color:var(--muted)} .crumb a{color:inherit;text-decoration:none;transition:color .2s} .crumb a:hover{color:var(--text)}
+.crumb span{color:var(--rho)}
+.topbar-right{margin-left:auto;display:flex;gap:.6rem;align-items:center}
+.gbadge{font-family:var(--mono);font-size:.68rem;padding:.15rem .5rem;border-radius:3px;border:1px solid}
+.gbadge.r{color:var(--rho);border-color:rgba(251,113,133,.3)}
+.gbadge.o{color:var(--volga);border-color:rgba(249,115,22,.3)}
+.gbadge.i{color:var(--vanna);border-color:rgba(129,140,248,.3)}
+.gbadge.t{color:var(--charm);border-color:rgba(45,212,191,.3)}
+
+.wrapper{max-width:1150px;margin:0 auto;padding:2.5rem 1.5rem 6rem}
+
+.hero{padding:2.8rem 0 2.2rem;border-bottom:1px solid var(--border);margin-bottom:2.5rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;right:0;top:0;font-family:var(--mono);font-size:9rem;font-weight:900;line-height:1;user-select:none;pointer-events:none;letter-spacing:-.1em;
+  background:linear-gradient(135deg,rgba(251,113,133,.08),rgba(249,115,22,.06),rgba(129,140,248,.06),rgba(45,212,191,.06));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero .sub{font-size:.9rem;color:var(--muted);margin-bottom:.3rem;font-family:var(--mono);letter-spacing:.08em}
+.hero h1{font-size:2.8rem;font-weight:800;letter-spacing:-.04em;line-height:1.05;
+  background:linear-gradient(120deg,var(--rho) 0%,var(--volga) 33%,var(--vanna) 66%,var(--charm) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.4rem;position:relative}
+.hero p{color:var(--muted);font-size:.92rem;max-width:660px;margin-top:.5rem;position:relative}
+.meta{display:flex;gap:.65rem;margin-top:1.1rem;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:.67rem;font-weight:600;border:1px solid var(--border);padding:.2rem .65rem;border-radius:99px;color:var(--muted)}
+.pill.r{border-color:var(--rho);color:var(--rho)}
+.pill.o{border-color:var(--volga);color:var(--volga)}
+.pill.i{border-color:var(--vanna);color:var(--vanna)}
+.pill.t{border-color:var(--charm);color:var(--charm)}
+
+.nav-tabs{display:flex;gap:.3rem;flex-wrap:wrap;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+.nav-tab{font-family:var(--mono);font-size:.67rem;font-weight:700;letter-spacing:.07em;padding:.5rem .85rem;border-radius:6px 6px 0 0;cursor:pointer;border:1px solid transparent;border-bottom:none;color:var(--muted);background:transparent;transition:all .18s;position:relative;top:1px;text-transform:uppercase}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.ar{background:var(--card);border-color:var(--border);color:var(--rho);border-bottom:2px solid var(--card)}
+.nav-tab.ao{background:var(--card);border-color:var(--border);color:var(--volga);border-bottom:2px solid var(--card)}
+.nav-tab.ai{background:var(--card);border-color:var(--border);color:var(--vanna);border-bottom:2px solid var(--card)}
+.nav-tab.at{background:var(--card);border-color:var(--border);color:var(--charm);border-bottom:2px solid var(--card)}
+.nav-tab.ag{background:var(--card);border-color:var(--border);color:var(--gamma);border-bottom:2px solid var(--card)}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* headings */
+.sh{font-size:1.18rem;font-weight:700;margin:2.5rem 0 1rem;display:flex;align-items:center;gap:.7rem}
+.sh::before{font-family:var(--mono);font-size:.85rem;opacity:.7}
+.sh.r{color:var(--rho)}.sh.r::before{content:'ρ'}
+.sh.o{color:var(--volga)}.sh.o::before{content:'Ω'}
+.sh.i{color:var(--vanna)}.sh.i::before{content:'V'}
+.sh.t{color:var(--charm)}.sh.t::before{content:'Ψ'}
+.sh.g{color:var(--gamma)}.sh.g::before{content:'Σ'}
+.sh2{font-size:.93rem;font-weight:700;margin:1.8rem 0 .8rem;padding-left:1rem;border-left:3px solid}
+.sh2.r{color:var(--rho);border-color:var(--rho)}
+.sh2.o{color:var(--volga);border-color:var(--volga)}
+.sh2.i{color:var(--vanna);border-color:var(--vanna)}
+.sh2.t{color:var(--charm);border-color:var(--charm)}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.35rem 1.55rem;margin-bottom:1.2rem;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.card.r::before{background:linear-gradient(90deg,var(--rho),transparent)}
+.card.o::before{background:linear-gradient(90deg,var(--volga),transparent)}
+.card.i::before{background:linear-gradient(90deg,var(--vanna),transparent)}
+.card.t::before{background:linear-gradient(90deg,var(--charm),transparent)}
+.card.g::before{background:linear-gradient(90deg,var(--gamma),transparent)}
+.card.grn::before{background:linear-gradient(90deg,var(--green),transparent)}
+.card.red::before{background:linear-gradient(90deg,var(--red),transparent)}
+
+/* formulas */
+.fx{border-radius:8px;padding:1rem 1.5rem;margin:1rem 0;text-align:center;font-size:1.1rem;overflow-x:auto}
+.fx.r{border:1px solid var(--rho);background:#0d0608}
+.fx.o{border:1px solid var(--volga);background:#0d0900}
+.fx.i{border:1px solid var(--vanna);background:#080810}
+.fx.t{border:1px solid var(--charm);background:#030d0c}
+.fx.g{border:1px solid var(--gamma);background:#0d0a00}
+.fx.multi{text-align:left;font-size:.96rem}
+.flabel{font-family:var(--mono);font-size:.64rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:.5rem}
+.flabel.r{color:var(--rho)}.flabel.o{color:var(--volga)}.flabel.i{color:var(--vanna)}.flabel.t{color:var(--charm)}.flabel.g{color:var(--gamma)}.flabel.green{color:var(--green)}.flabel.red{color:var(--red)}
+
+/* alerts */
+.alert{border-radius:8px;padding:.88rem 1.2rem;margin:.85rem 0;display:flex;gap:.8rem;align-items:flex-start;font-size:.87rem}
+.alert .ico{font-size:1.05rem;flex-shrink:0;margin-top:.05rem}
+.alert.r{background:rgba(251,113,133,.06);border:1px solid rgba(251,113,133,.25);color:#fda4af}
+.alert.o{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.25);color:#fdba74}
+.alert.i{background:rgba(129,140,248,.06);border:1px solid rgba(129,140,248,.25);color:#c7d2fe}
+.alert.t{background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.25);color:#99f6e4}
+.alert.g{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.25);color:#fde68a}
+.alert.key{background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.25);color:#86efac}
+.alert.warn{background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.25);color:#fca5a5}
+
+/* grid */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:1rem 0}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin:1rem 0}
+@media(max-width:740px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+
+.kpi{background:#07070f;border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem;transition:border-color .2s}
+.kpi .lbl{font-family:var(--mono);font-size:.63rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.kpi .val{font-family:var(--mono);font-size:1rem;font-weight:700}
+.kpi .sub{font-size:.76rem;color:var(--muted);margin-top:.2rem}
+
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.87rem}
+th{background:#07070f;font-family:var(--mono);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;padding:.7rem 1rem;border-bottom:2px solid;text-align:left}
+th.r{color:var(--rho);border-bottom-color:var(--rho)}
+th.o{color:var(--volga);border-bottom-color:var(--volga)}
+th.i{color:var(--vanna);border-bottom-color:var(--vanna)}
+th.t{color:var(--charm);border-bottom-color:var(--charm)}
+th.g{color:var(--gamma);border-bottom-color:var(--gamma)}
+td{padding:.65rem 1rem;border-bottom:1px solid var(--border);vertical-align:top;font-size:.86rem}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.015)}
+.up{color:var(--green);font-weight:600}.dn{color:var(--red);font-weight:600}
+
+.chart-wrap{background:#07070f;border:1px solid var(--border);border-radius:10px;padding:1rem;margin:1rem 0}
+.chart-controls{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:.8rem;align-items:center}
+.chart-controls label{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.chart-controls input[type=range]{accent-color:var(--rho);width:100px}
+.chart-controls select,.chart-controls input[type=number]{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.74rem;padding:.25rem .5rem;border-radius:5px}
+.cval{font-family:var(--mono);font-size:.77rem;font-weight:700;min-width:2.8rem}
+.cval.r{color:var(--rho)}.cval.o{color:var(--volga)}.cval.i{color:var(--vanna)}.cval.t{color:var(--charm)}.cval.g{color:var(--gamma)}
+canvas{display:block;width:100%;border-radius:6px}
+
+/* channel comparison */
+.channel-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.channel-card{border-radius:9px;padding:1.1rem 1.3rem;border:1px solid var(--border)}
+
+/* drift family */
+.drift-eq{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.7rem;padding:1.3rem;background:#07070f;border-radius:8px;border:1px solid var(--border);margin:1rem 0}
+.drift-term{text-align:center;padding:.6rem .9rem;border-radius:7px;font-family:var(--mono);font-size:.88rem}
+.dt-gamma{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:#fde68a}
+.dt-charm{background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.3);color:#99f6e4}
+.dt-vanna{background:rgba(129,140,248,.08);border:1px solid rgba(129,140,248,.3);color:#c7d2fe}
+.dt-op{font-size:1.3rem;color:var(--muted)}
+
+/* greeks master table */
+.master-row-r td:first-child{color:var(--rho)}
+.master-row-o td:first-child{color:var(--volga)}
+.master-row-i td:first-child{color:var(--vanna)}
+.master-row-t td:first-child{color:var(--charm)}
+.master-row-g td:first-child{color:var(--gamma)}
+.master-row-th td:first-child{color:var(--theta)}
+.master-row-ve td:first-child{color:var(--vega)}
+
+details{background:var(--card);border:1px solid var(--border);border-radius:8px;margin:.7rem 0;overflow:hidden}
+details[open]{border-color:var(--rho)}
+details.o[open]{border-color:var(--volga)}
+details.i[open]{border-color:var(--vanna)}
+details.t[open]{border-color:var(--charm)}
+summary{padding:.85rem 1.3rem;cursor:pointer;font-weight:600;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;list-style:none;color:var(--text)}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'＋';font-family:var(--mono);color:var(--rho)}
+details.o summary::after{color:var(--volga)}
+details.i summary::after{color:var(--vanna)}
+details.t summary::after{color:var(--charm)}
+details[open] summary::after{content:'－'}
+.dbody{padding:.3rem 1.3rem 1.3rem;font-size:.89rem;color:var(--muted)}
+
+code{font-family:var(--mono);font-size:.82em;color:var(--charm);background:rgba(45,212,191,.1);padding:.1em .4em;border-radius:4px}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--border);font-family:var(--mono);font-size:.7rem;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+</style>
+</head>
+<body>
+<div class="topbar">
+<div class="tag">S&amp;T PREP</div>
+<div class="crumb"><a href="index.html">Derivatives</a> &nbsp;/&nbsp; <span>04 — The Greeks · Part VII: 2nd Orders</span></div>
+<div class="topbar-right">
+<span class="gbadge o">Ω Volga</span>
+<span class="gbadge i">Vanna</span>
+<span class="gbadge t">Ψ Charm</span>
+</div>
+</div>
+<div class="wrapper">
+<div class="hero">
+<div class="hero-bg">Ω Ψ</div>
+<div class="sub">THE GREEKS — PART 7 OF 7</div>
+<h1>Second-Order Greeks &amp; Master Summary</h1>
+<p>Volga — convexity in vol space. Vanna — the skew machine. Charm — the weekend effect. And the complete Delta Drift Family that ties it all together.</p>
+<div class="meta"><span class="pill o">Volga — Vol Convexity</span><span class="pill i">Vanna — Skew Risk</span><span class="pill t">Charm — Time Drift</span><span class="pill c">Part 7 / 7</span></div>
+</div>
+<div class="nav-tabs"><div class="nav-tab ao" onclick="switchTab('volga',this,'o')">Volga (Ω)</div><div class="nav-tab" onclick="switchTab('vanna',this,'i')">Vanna</div><div class="nav-tab" onclick="switchTab('charm',this,'t')">Charm (Ψ)</div><div class="nav-tab" onclick="switchTab('drift',this,'t')">Delta Drift Family</div><div class="nav-tab" onclick="switchTab('master',this,'g')">Greeks Master Table</div></div>
+<!-- ════════════════════════ TAB 1: RHO ══════════════════════════════ -->
+<!-- /rho -->
+<!-- ════════════════════════ TAB 2: RHO HEDGING ══════════════════════════ -->
+<!-- /rhohedge -->
+<!-- ════════════════════════ TAB 3: VOLGA ════════════════════════════════ -->
+<div class="tab-content active" id="tab-volga">
+<div class="sh o">Volga (Vomma) — Convexity in Vol Space</div>
+<div class="card o">
+<div class="flabel o">Definition</div>
+<div class="fx o" style="font-size:1.1rem">
+      \[\text{Volga} = \frac{\partial^2 V}{\partial \sigma^2} = \frac{\partial \nu}{\partial \sigma} = \nu \cdot \frac{d_1 d_2}{\sigma}\]
+    </div>
+<div class="grid3" style="margin-top:1rem">
+<div class="kpi"><div class="lbl">What it is</div><div class="val" style="color:var(--volga)">Vol's Gamma</div><div class="sub">Vega is the slope in vol space; Volga is the curvature. Analogous to how Gamma is the curvature in spot space.</div></div>
+<div class="kpi"><div class="lbl">Sign driver</div><div class="val" style="color:var(--volga)">Sign of d₁·d₂</div><div class="sub">Volga &gt; 0 when d₁·d₂ &gt; 0 (wings). Near ATM, d₁·d₂ can be negative → Volga ≈ 0 or slightly negative.</div></div>
+<div class="kpi"><div class="lbl">P&amp;L formula</div><div class="val" style="color:var(--volga);font-size:.85rem">½·Volga·(Δσ)²</div><div class="sub">Non-linear vol risk — critical for large vol moves and stress scenarios.</div></div>
+</div>
+</div>
+<div class="sh2 o">The Double-Hump Profile</div>
+<div class="chart-wrap">
+<div class="chart-controls">
+<label>K =</label>
+<input id="vg-k" max="120" min="80" oninput="drawVolga()" type="range" value="100"/>
+<span class="cval o" id="vg-k-v">100</span>
+<label style="margin-left:.8rem">σ (%) =</label>
+<input id="vg-sig" max="60" min="5" oninput="drawVolga()" type="range" value="20"/>
+<span class="cval" id="vg-sig-v">20%</span>
+<label style="margin-left:.8rem">T (years) =</label>
+<input id="vg-t" max="3" min="0.1" oninput="drawVolga()" step="0.1" type="range" value="1"/>
+<span class="cval" id="vg-t-v">1.0</span>
+</div>
+<canvas height="270" id="volgaCanvas"></canvas>
+<div id="vg-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
+</div>
+<div class="grid2" style="margin-top:1rem">
+<div class="card">
+<div class="flabel">ATM — Volga ≈ 0 (slightly negative)</div>
+<p style="font-size:.87rem;color:var(--muted)">Near the strike, d₁ and d₂ have opposite signs — their product is negative (or small positive). Higher vol flattens the Vega peak but doesn't add much more convexity. ATM Vega is nearly linear in vol.</p>
+</div>
+<div class="card o">
+<div class="flabel o">Wings (OTM/ITM) — Volga &gt; 0</div>
+<p style="font-size:.87rem;color:var(--muted)">Away from the strike, d₁·d₂ &gt; 0. A small increase in vol dramatically increases the probability that these "far-from-ATM" options could finish ITM, creating significant convexity in vol. This is why OTM options are "Volga plays."</p>
+</div>
+</div>
+<div class="sh2 o">Long vs Short Volga — Convexity in Vol Space</div>
+<div class="grid2">
+<div class="card grn">
+<div class="flabel green">Long Volga — Positive Convexity</div>
+<p style="font-size:.87rem;color:var(--muted)">Your Vega <em>increases</em> when vol rises. To stay Vega-neutral, you sell vol (sell high). When vol falls, Vega decreases → you buy vol (buy low). Systematic "vol scalping" — sell high, buy low in vol space.</p>
+</div>
+<div class="card red">
+<div class="flabel red">Short Volga — Negative Convexity</div>
+<p style="font-size:.87rem;color:var(--muted)">Your Vega <em>decreases</em> when vol rises → forced to buy vol high. When vol falls, Vega increases → sell vol low. Systematic "vol anti-scalping" — buy high, sell low. The losing side of vol convexity.</p>
+</div>
+</div>
+<div class="sh2 o">P&amp;L Approximation &amp; Vol-of-Vol</div>
+<div class="card">
+<div class="flabel o">Complete Vol P&amp;L Including Convexity</div>
+<div class="fx o" style="font-size:1.1rem">
+      \[\Delta V \approx \underbrace{\nu \cdot \Delta\sigma}_{\text{linear Vega P\&amp;L}} + \underbrace{\frac{1}{2}\,\text{Volga}\cdot(\Delta\sigma)^2}_{\text{non-linear convexity}}\]
+    </div>
+<div class="alert o">
+<span class="ico">⚡</span>
+<span><strong>When Volga dominates:</strong> During large vol moves (crisis, vol crush), the (Δσ)² term grows quadratically. If vol jumps 5 points (Δσ = 0.05) and Volga = 200, the convexity P&amp;L = ½ × 200 × 0.0025 = $0.25 — which can dwarf the linear Vega P&amp;L on short-dated OTM options. This is why wing options profit disproportionately during vol spikes.</span>
+</div>
+<div class="alert o" style="margin-top:.5rem">
+<span class="ico">🎲</span>
+<span><strong>Vol-of-Vol connection:</strong> Volga is the primary measure of exposure to stochastic volatility — vol-of-vol. Even if Δσ has zero mean (vol is mean-reverting), a non-zero vol-of-vol generates systematic Volga P&amp;L. This is why Heston and rough vol models, which capture vol clustering, produce different Volga profiles than Black-Scholes.</span>
+</div>
+</div>
+<!-- Volga P&L calculator -->
+<div class="sh2 o">Volga P&amp;L Calculator</div>
+<div class="chart-wrap">
+<div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
+<div><label>S₀</label><br/><input id="vpc-s" oninput="calcVolgaPnl()" style="width:70px" type="number" value="100"/></div>
+<div><label>K</label><br/><input id="vpc-k" oninput="calcVolgaPnl()" style="width:70px" type="number" value="110"/></div>
+<div><label>σ (%)</label><br/><input id="vpc-sig" oninput="calcVolgaPnl()" style="width:60px" type="number" value="20"/></div>
+<div><label>r (%)</label><br/><input id="vpc-r" oninput="calcVolgaPnl()" style="width:55px" type="number" value="4"/></div>
+<div><label>T (years)</label><br/><input id="vpc-t" oninput="calcVolgaPnl()" step="0.25" style="width:70px" type="number" value="1"/></div>
+<div><label>Δσ (vol pts)</label><br/><input id="vpc-dsig" oninput="calcVolgaPnl()" style="width:65px" type="number" value="5"/></div>
+</div>
+<div id="vpc-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.8rem;margin:.8rem 0"></div>
+</div>
+</div><!-- /volga -->
+<!-- ════════════════════════ TAB 4: VANNA ════════════════════════════════ -->
+<div class="tab-content" id="tab-vanna">
+<div class="sh i">Vanna — The Skew Machine</div>
+<div class="card i">
+<div class="flabel i">Definition — Two Equivalent Interpretations</div>
+<div class="fx i" style="font-size:1.1rem">
+      \[\text{Vanna} = \frac{\partial^2 V}{\partial S\,\partial\sigma} = \underbrace{\frac{\partial \nu}{\partial S}}_{\text{Vega's spot sensitivity}} = \underbrace{\frac{\partial \Delta}{\partial \sigma}}_{\text{Delta's vol sensitivity}}\]
+    </div>
+<div class="grid2" style="margin-top:1rem">
+<div class="kpi"><div class="lbl">As ∂ν/∂S</div><div class="val" style="color:var(--vanna);font-size:.88rem">How vol exposure shifts as spot moves</div><div class="sub">When the stock rallies, does your Vega increase or decrease?</div></div>
+<div class="kpi"><div class="lbl">As ∂Δ/∂σ</div><div class="val" style="color:var(--vanna);font-size:.88rem">How hedge ratio shifts as vol changes</div><div class="sub">When IV spikes, does your Delta go up or down? (The smile-adjusted delta from module 3)</div></div>
+</div>
+<div class="alert i">
+<span class="ico">💡</span>
+<span><strong>Key property:</strong> Call Vanna = Put Vanna (same strike, same maturity). Both have identical Vega → identical ∂ν/∂S. This is a direct consequence of put-call parity.</span>
+</div>
+</div>
+<div class="sh2 i">The Vanna Profile — Slope of Vega</div>
+<div class="card">
+<p style="margin-bottom:.8rem">Vanna is essentially the <em>derivative</em> (slope) of the Vega bell curve. Since Vega peaks at ATM, the slope (Vanna) is zero at ATM and changes sign on either side:</p>
+<div class="grid3" style="margin-top:.5rem">
+<div class="kpi"><div class="lbl">OTM Calls / ITM Puts (S &lt; K)</div><div class="val" style="color:var(--vanna)">Positive Vanna</div><div class="sub">d₂ &lt; 0. As vol rises, OTM call Delta increases (more likely to go ITM). As spot rises, Vega increases (approaching ATM).</div></div>
+<div class="kpi"><div class="lbl">ATM (S ≈ K)</div><div class="val" style="color:var(--muted)">Vanna ≈ 0</div><div class="sub">At the Vega peak. The slope of the bell curve is zero at the maximum.</div></div>
+<div class="kpi"><div class="lbl">ITM Calls / OTM Puts (S &gt; K)</div><div class="val" style="color:var(--red)">Negative Vanna</div><div class="sub">d₂ &gt; 0. As vol rises, ITM call Delta decreases (less certain to stay ITM). As spot falls toward K, Vega increases.</div></div>
+</div>
+</div>
+<!-- Vanna chart -->
+<div class="sh2 i">Vanna Profile Visualiser</div>
+<div class="chart-wrap">
+<div class="chart-controls">
+<label>K =</label>
+<input id="van-k" max="120" min="80" oninput="drawVanna()" type="range" value="100"/>
+<span class="cval i" id="van-k-v">100</span>
+<label style="margin-left:.8rem">σ (%) =</label>
+<input id="van-sig" max="60" min="5" oninput="drawVanna()" type="range" value="20"/>
+<span class="cval" id="van-sig-v">20%</span>
+<label style="margin-left:.8rem">T (years) =</label>
+<input id="van-t" max="3" min="0.1" oninput="drawVanna()" step="0.1" type="range" value="1"/>
+<span class="cval" id="van-t-v">1.0</span>
+</div>
+<canvas height="270" id="vannaCanvas"></canvas>
+</div>
+<div class="sh2 i">Spot-Vol Correlation — The Equity Skew Connection</div>
+<div class="card">
+<p style="margin-bottom:.8rem">In equity markets, spot and vol are <strong>negatively correlated</strong>: when the market falls, IV spikes. This creates the famous equity volatility skew.</p>
+<div class="fx i">\[\text{Vanna P\&amp;L} = \text{Vanna} \times \Delta S \times \Delta\sigma\]</div>
+<div class="grid2" style="margin-top:1rem">
+<div class="kpi">
+<div class="lbl">Long Vanna</div>
+<div class="val" style="color:var(--green)">Profitable when ΔS·Δσ &gt; 0</div>
+<div class="sub">Same-direction moves in spot and vol. In equities (negative ρ_SV), this means SHORT positions (spot down, vol up).</div>
+</div>
+<div class="kpi">
+<div class="lbl">Short Vanna</div>
+<div class="val" style="color:var(--red)">Profitable when ΔS·Δσ &lt; 0</div>
+<div class="sub">Opposite-direction moves. Typical for long equity positions with hedged vol.</div>
+</div>
+</div>
+</div>
+<div class="sh2 i">The Risk Reversal Trade — No Free Lunch</div>
+<div class="card">
+<p style="margin-bottom:.8rem">A common interview question: <em>"Can you harvest the Vanna P&amp;L in equity markets by buying OTM puts and selling OTM calls (Long Risk Reversal)?"</em></p>
+<div class="grid2">
+<div>
+<div class="flabel i">The temptation</div>
+<ul style="margin:.5rem 0 0 1.2rem;font-size:.86rem;color:var(--muted)">
+<li style="margin:.3rem 0">OTM puts have positive Vanna P&amp;L in a crash (spot ↓, vol ↑)</li>
+<li style="margin:.3rem 0">OTM calls have negative Vanna P&amp;L</li>
+<li style="margin:.3rem 0">Long risk reversal = long put Vanna → sounds free</li>
+</ul>
+</div>
+<div>
+<div class="flabel red">The "Skew Theta" offset</div>
+<ul style="margin:.5rem 0 0 1.2rem;font-size:.86rem;color:var(--muted)">
+<li style="margin:.3rem 0">OTM puts have <em>higher IV</em> than OTM calls (equity skew)</li>
+<li style="margin:.3rem 0">Higher IV → <strong>higher Theta</strong> on the long put</li>
+<li style="margin:.3rem 0">"Skew Theta" creates negative daily carry that offsets expected Vanna P&amp;L</li>
+</ul>
+</div>
+</div>
+<div class="alert warn">
+<span class="ico">🚩</span>
+<span><strong>No free lunch:</strong> The skew exists precisely because of the negative spot-vol correlation. The market has already priced the Vanna P&amp;L into the skew via higher put IV. You pay for this in Theta every day. The expected Vanna gain = the Skew Theta cost. To profit from Vanna, you need your view on vol correlation to be better than the market's.</span>
+</div>
+</div>
+</div><!-- /vanna -->
+<!-- ════════════════════════ TAB 5: CHARM ════════════════════════════════ -->
+<div class="tab-content" id="tab-charm">
+<div class="sh t">Charm — Delta's Time Decay</div>
+<div class="card t">
+<div class="flabel t">Definition</div>
+<div class="fx t" style="font-size:1.1rem">
+      \[\text{Charm} = \frac{\partial \Delta}{\partial t} = -\frac{\partial \Delta}{\partial T} = \frac{\partial \Theta}{\partial S} = -\frac{\partial^2 V}{\partial S\,\partial T}\]
+    </div>
+<p style="margin:.7rem 0;font-size:.88rem">Charm is the rate at which Delta <em>bleeds</em> or <em>grows</em> as time passes, even with spot and vol held constant. It is also the spatial derivative of Theta — telling you how Theta changes across different spot prices.</p>
+<div class="grid3" style="margin-top:1rem">
+<div class="kpi"><div class="lbl">Range</div><div class="val" style="color:var(--charm)">−1 to +1</div><div class="sub">Typical Delta decay/growth per unit time</div></div>
+<div class="kpi"><div class="lbl">Positive Charm</div><div class="val" style="color:var(--green)">ITM calls, OTM puts</div><div class="sub">Delta grows toward 1 (or 0) as option approaches certainty of exercise</div></div>
+<div class="kpi"><div class="lbl">Negative Charm</div><div class="val" style="color:var(--red)">OTM calls, ITM puts</div><div class="sub">Delta decays toward 0 as probability of exercise falls with time</div></div>
+</div>
+</div>
+<div class="sh2 t">Charm Profile vs Spot</div>
+<div class="chart-wrap">
+<div class="chart-controls">
+<label>K =</label>
+<input id="ch-k" max="120" min="80" oninput="drawCharm()" type="range" value="100"/>
+<span class="cval t" id="ch-k-v">100</span>
+<label style="margin-left:.8rem">σ (%) =</label>
+<input id="ch-sig" max="50" min="5" oninput="drawCharm()" type="range" value="20"/>
+<span class="cval" id="ch-sig-v">20%</span>
+<label style="margin-left:.8rem">T (years) =</label>
+<input id="ch-t" max="3" min="0.05" oninput="drawCharm()" step="0.05" type="range" value="1"/>
+<span class="cval" id="ch-t-v">1.0</span>
+<label style="margin-left:.8rem">r (%) =</label>
+<input id="ch-r" max="8" min="0" oninput="drawCharm()" type="range" value="4"/>
+<span class="cval" id="ch-r-v">4%</span>
+</div>
+<canvas height="270" id="charmCanvas"></canvas>
+</div>
+<div class="sh2 t">Charm Through Time — The Expiry Explosion</div>
+<div class="chart-wrap">
+<div class="chart-controls">
+<label>K =</label>
+<input id="cht-k" max="120" min="80" oninput="drawCharmTime()" type="range" value="100"/>
+<span class="cval t" id="cht-k-v">100</span>
+<label style="margin-left:.8rem">σ (%) =</label>
+<input id="cht-sig" max="50" min="5" oninput="drawCharmTime()" type="range" value="20"/>
+<span class="cval" id="cht-sig-v">20%</span>
+</div>
+<canvas height="260" id="charmTimeCanvas"></canvas>
+</div>
+<div class="sh2 t">The Path to Certainty</div>
+<div class="grid3">
+<div class="card">
+<div class="flabel">OTM Options</div>
+<p style="font-size:.87rem;color:var(--muted)">Delta decays toward <strong>0</strong>. The probability of finishing ITM falls with each passing day. The option becomes increasingly worthless. Charm is negative (Delta falling).</p>
+</div>
+<div class="card t">
+<div class="flabel t">ATM Options</div>
+<p style="font-size:.87rem;color:var(--muted)">Delta gravitates toward <strong>±0.5</strong>. This is already the ATM value, so Charm ≈ 0 for options that stay exactly ATM. But the step function becomes sharper — any tiny move creates massive delta change (the Gamma effect).</p>
+</div>
+<div class="card">
+<div class="flabel">ITM Options</div>
+<p style="font-size:.87rem;color:var(--muted)">Delta grows toward <strong>±1</strong>. The option increasingly behaves like the underlying. The "uncertainty" about exercise is being resolved daily. Charm is positive for ITM calls (Delta growing).</p>
+</div>
+</div>
+<div class="sh2 t">The Weekend Effect — Interview Favourite</div>
+<div class="card">
+<div class="alert t">
+<span class="ico">🎯</span>
+<span><strong>Interview question:</strong> "You are delta-neutral on Friday afternoon. The market doesn't open over the weekend. When you arrive Monday morning with spot unchanged — is your book still delta-neutral?"</span>
+</div>
+<div class="grid2" style="margin-top:.8rem">
+<div class="kpi">
+<div class="lbl">If long OTM calls</div>
+<div class="val" style="color:var(--red);font-size:.88rem">Delta decayed over weekend</div>
+<div class="sub">Negative Charm on OTM calls. You are now over-hedged (sold too many shares). Must buy back some stock Monday morning.</div>
+</div>
+<div class="kpi">
+<div class="lbl">If long ITM calls</div>
+<div class="val" style="color:var(--green);font-size:.88rem">Delta grew over weekend</div>
+<div class="sub">Positive Charm on ITM calls. You are now under-hedged. Must sell more stock Monday morning to restore delta-neutrality.</div>
+</div>
+</div>
+<p style="font-size:.86rem;color:var(--muted);margin-top:.8rem">This "time-induced rebalancing" proves that being delta-neutral is a <em>point-in-time statement</em>. Even without any market moves, your hedge ratio changes just from the calendar turning.</p>
+</div>
+</div><!-- /charm -->
+<!-- ════════════════════════ TAB 6: DELTA DRIFT FAMILY ═══════════════════ -->
+<div class="tab-content" id="tab-drift">
+<div class="sh t">The Delta Drift Family — Everything That Moves Your Hedge</div>
+<div class="card">
+<p style="margin-bottom:1rem">Delta is never static. Three forces cause it to drift continuously — and each corresponds to a second-order Greek:</p>
+<div class="drift-eq">
+<div class="dt-op" style="font-size:1.1rem;color:var(--text)">d\(\Delta\) =</div>
+<div class="drift-term dt-gamma">
+<div style="font-size:.65rem;color:#fde68a;margin-bottom:.2rem">SPOT MOVES</div>
+        \(\Gamma\cdot dS\)
+      </div>
+<div class="dt-op">+</div>
+<div class="drift-term dt-charm">
+<div style="font-size:.65rem;color:#99f6e4;margin-bottom:.2rem">TIME PASSES</div>
+        \(\text{Charm}\cdot dt\)
+      </div>
+<div class="dt-op">+</div>
+<div class="drift-term dt-vanna">
+<div style="font-size:.65rem;color:#c7d2fe;margin-bottom:.2rem">VOL SHIFTS</div>
+        \(\text{Vanna}\cdot d\sigma\)
+      </div>
+</div>
+<div class="grid3" style="margin-top:1rem">
+<div class="kpi"><div class="lbl">Γ·dS — Spot-driven</div><div class="val" style="color:var(--gamma)">Hedged by trading</div><div class="sub">Buy/sell underlying. This is what most "delta hedging" addresses.</div></div>
+<div class="kpi"><div class="lbl">Charm·dt — Time-driven</div><div class="val" style="color:var(--charm)">Rebalance overnight</div><div class="sub">Even flat markets require re-hedging every morning due to time passing.</div></div>
+<div class="kpi"><div class="lbl">Vanna·dσ — Vol-driven</div><div class="val" style="color:var(--vanna)">Rebalance on vol moves</div><div class="sub">A vol spike forces delta re-hedging even if spot hasn't moved. Often overlooked.</div></div>
+</div>
+</div>
+<!-- Interactive drift simulator -->
+<div class="sh2 t">Delta Drift Simulator</div>
+<div class="chart-wrap">
+<div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
+<div><label>S₀</label><br/><input id="dd-s" oninput="runDriftSim()" style="width:70px" type="number" value="100"/></div>
+<div><label>K</label><br/><input id="dd-k" oninput="runDriftSim()" style="width:70px" type="number" value="110"/></div>
+<div><label>σ (%)</label><br/><input id="dd-sig" oninput="runDriftSim()" style="width:60px" type="number" value="20"/></div>
+<div><label>r (%)</label><br/><input id="dd-r" oninput="runDriftSim()" style="width:55px" type="number" value="4"/></div>
+<div><label>T (years)</label><br/><input id="dd-t" oninput="runDriftSim()" step="0.1" style="width:70px" type="number" value="0.5"/></div>
+</div>
+<div id="dd-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.8rem;margin:.8rem 0"></div>
+<canvas height="260" id="driftCanvas"></canvas>
+</div>
+<div class="sh2 t">Why "Delta-Neutral" is a Moment, Not a State</div>
+<div class="card">
+<table>
+<thead><tr><th class="t">Event</th><th class="t">Greek Triggered</th><th class="t">Hedge Required</th><th class="t">Magnitude</th></tr></thead>
+<tbody>
+<tr><td>Spot moves +1%</td><td style="color:var(--gamma)">Gamma</td><td>Sell shares (long Γ) / Buy shares (short Γ)</td><td>Γ × S × 1% notional</td></tr>
+<tr><td>One day passes</td><td style="color:var(--charm)">Charm</td><td>Rebalance based on delta drift</td><td>Charm × (1/365) notional</td></tr>
+<tr><td>Vol spikes +5 pts</td><td style="color:var(--vanna)">Vanna</td><td>Rebalance delta even with flat spot</td><td>Vanna × 0.05 notional</td></tr>
+<tr><td>All three simultaneously</td><td>All second-order</td><td>Rebalance urgently, in the right order</td><td>Full drift formula above</td></tr>
+</tbody>
+</table>
+<div class="alert t">
+<span class="ico">🧠</span>
+<span><strong>S&amp;T interview answer — "What does it mean to manage delta?":</strong><br/>"Managing delta is not a one-time hedge. It's a continuous battle against three forces: Gamma from market moves, Charm from time passing, and Vanna from vol shifts. Each day, even in a completely flat, quiet market, your hedge ratio changes — and you need to know by how much and in which direction before the market opens."</span>
+</div>
+</div>
+</div><!-- /drift -->
+<!-- ════════════════════════ TAB 7: MASTER TABLE ═══════════════════════════ -->
+<div class="tab-content" id="tab-master">
+<div class="sh g">Complete Greeks Reference — All Four Parts</div>
+<div class="card g">
+<p>Every Greek from all four modules in one place. The complete vocabulary of an options trader.</p>
+</div>
+<div class="sh2" style="color:var(--gamma);border-left:3px solid var(--gamma)">First-Order Greeks</div>
+<div class="card">
+<table>
+<thead>
+<tr><th class="g">Greek</th><th class="g">Symbol</th><th class="g">Formula</th><th class="g">Exposure</th><th class="g">Peaks At</th><th class="g">Key Interview Point</th></tr>
+</thead>
+<tbody>
+<tr class="master-row-g"><td><strong>Delta</strong></td><td>\(\Delta\)</td><td>\(\partial V/\partial S\)</td><td>Spot / directional</td><td>N/A (s-curve)</td><td>Hedge ratio, NOT P(ITM). N(d₁) ≠ N(d₂).</td></tr>
+<tr class="master-row-th"><td><strong>Theta</strong></td><td>\(\Theta\)</td><td>\(\partial V/\partial t\)</td><td>Time decay</td><td>ATM, near expiry</td><td>"Rent" for Gamma. Deep ITM puts → Θ &gt; 0 with high r.</td></tr>
+<tr class="master-row-ve"><td><strong>Vega</strong></td><td>\(\nu\)</td><td>\(\partial V/\partial\sigma\)</td><td>Implied vol</td><td>ATM, long-dated</td><td>Cannot hedge with stock. Need other options. ν = σS²T·Γ.</td></tr>
+<tr class="master-row-r"><td><strong>Rho</strong></td><td>\(\rho\)</td><td>\(\partial V/\partial r\)</td><td>Interest rates</td><td>ITM, long-dated</td><td>"The quiet Greek." Two channels: discounting + financing.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="sh2" style="color:var(--gamma);border-left:3px solid var(--gamma)">Second-Order Greeks</div>
+<div class="card">
+<table>
+<thead>
+<tr><th class="g">Greek</th><th class="g">Formula</th><th class="g">Links</th><th class="g">Shape</th><th class="g">Key Interview Point</th></tr>
+</thead>
+<tbody>
+<tr class="master-row-g"><td><strong>Gamma (Γ)</strong></td><td>\(\partial^2V/\partial S^2\)</td><td>Δ's rate of change vs S</td><td>Bell curve, peaks ATM</td><td>∝1/√T. Explodes near expiry. Long Γ = buy low/sell high.</td></tr>
+<tr class="master-row-o"><td><strong>Volga (Vomma)</strong></td><td>\(\partial^2V/\partial\sigma^2 = \nu\cdot d_1d_2/\sigma\)</td><td>ν's rate of change vs σ</td><td>Double hump; ATM≈0, wings&gt;0</td><td>Long Volga = long convexity in vol space. ΔV ≈ ½·Volga·(Δσ)².</td></tr>
+<tr class="master-row-i"><td><strong>Vanna</strong></td><td>\(\partial^2V/\partial S\partial\sigma = \partial\Delta/\partial\sigma\)</td><td>Δ vs σ, OR ν vs S</td><td>Anti-symmetric S-curve through ATM</td><td>Skew machine. Equity neg. spot-vol correlation → neg. implied skew.</td></tr>
+<tr class="master-row-t"><td><strong>Charm</strong></td><td>\(\partial^2V/\partial S\partial t = \partial\Delta/\partial t\)</td><td>Δ's time decay</td><td>Anti-symmetric; OTM negative, ITM positive</td><td>Weekend effect. dΔ = Γ·dS + Charm·dt + Vanna·dσ.</td></tr>
+</tbody>
+</table>
+</div>
+<div class="sh2" style="color:var(--gamma);border-left:3px solid var(--gamma)">Key Relationships — Connecting the Greeks</div>
+<div class="card">
+<table>
+<thead><tr><th class="g">Relationship</th><th class="g">Formula</th><th class="g">Meaning</th></tr></thead>
+<tbody>
+<tr><td><strong>Θ–Γ PDE (r=0)</strong></td><td>\(\Theta + \tfrac{1}{2}\sigma^2S^2\Gamma = 0\)</td><td>Perfect offset: rent = paycheck at IV = RV</td></tr>
+<tr><td><strong>Vega–Gamma link</strong></td><td>\(\nu = \sigma S^2 T \cdot \Gamma\)</td><td>Short-dated = Gamma play. Long-dated = Vega play.</td></tr>
+<tr><td><strong>Γ = Θ/vol² link</strong></td><td>\(\Gamma = -2\Theta/(\sigma^2S^2)\)</td><td>High Gamma ↔ High Theta. No free convexity.</td></tr>
+<tr><td><strong>BS Delta (call)</strong></td><td>\(N(d_1) \neq N(d_2)\)</td><td>Δ = hedge ratio; N(d₂) = P(ITM). Gap = σ√T.</td></tr>
+<tr><td><strong>Delta Drift Family</strong></td><td>\(d\Delta = \Gamma\,dS + \text{Charm}\,dt + \text{Vanna}\,d\sigma\)</td><td>Delta-neutral is a moment, not a state.</td></tr>
+<tr><td><strong>Volga P&amp;L</strong></td><td>\(\Delta V \approx \nu\Delta\sigma + \tfrac{1}{2}\text{Volga}(\Delta\sigma)^2\)</td><td>Linear + convexity vol P&amp;L.</td></tr>
+<tr><td><strong>Vanna P&amp;L</strong></td><td>\(\Delta V_{\text{Vanna}} = \text{Vanna}\cdot\Delta S\cdot\Delta\sigma\)</td><td>Only matters when spot and vol move together.</td></tr>
+<tr><td><strong>Rho (call)</strong></td><td>\(\rho_C = KTe^{-rT}N(d_2)\)</td><td>Proportional to T. Dominant for LEAPS.</td></tr>
+</tbody>
+</table>
+</div>
+<!-- Interactive mini BS dashboard -->
+<div class="sh2" style="color:var(--gamma);border-left:3px solid var(--gamma)">All-Greeks Calculator</div>
+<div class="chart-wrap">
+<div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
+<div><label>S₀</label><br/><input id="ag-s" oninput="calcAllGreeks()" style="width:70px" type="number" value="100"/></div>
+<div><label>K</label><br/><input id="ag-k" oninput="calcAllGreeks()" style="width:70px" type="number" value="105"/></div>
+<div><label>σ (%)</label><br/><input id="ag-sig" oninput="calcAllGreeks()" style="width:60px" type="number" value="20"/></div>
+<div><label>r (%)</label><br/><input id="ag-r" oninput="calcAllGreeks()" style="width:55px" type="number" value="4"/></div>
+<div><label>T (years)</label><br/><input id="ag-t" oninput="calcAllGreeks()" step="0.25" style="width:70px" type="number" value="1"/></div>
+</div>
+<div id="ag-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.7rem;margin:.8rem 0"></div>
+</div>
+</div><!-- /master -->
+<div class="footer">
+<span>The Greeks Pt.7 — 2nd Orders &amp; Master Table · S&amp;T Interview Guide · Quantitative Finance · 2025-2026</span>
+<span>Volga · Vanna · Charm · Delta Drift Family · Module 04</span>
+</div>
+</div><!-- /wrapper -->
+<script>
+/* ─── TABS ─────────────────────────────────────────────────────────── */
+function switchTab(id,el,cls){
+  document.querySelectorAll('.nav-tab').forEach(t=>{['ar','ao','ai','at','ag'].forEach(c=>t.classList.remove(c))});
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  el.classList.add('a'+cls);
+  document.getElementById('tab-'+id).classList.add('active');
+  setTimeout(()=>{
+    const fns={volga:()=>{drawVolga();calcVolgaPnl();},
+      vanna:drawVanna,charm:()=>{drawCharm();drawCharmTime();},drift:()=>{runDriftSim();},master:calcAllGreeks};
+    if(fns[id]) fns[id]();
+  },40);
+}
+
+/* ─── MATH ──────────────────────────────────────────────────────────── */
+function erf(x){const t=1/(1+.3275911*Math.abs(x));const p=t*(.254829592+t*(-.284496736+t*(1.421413741+t*(-1.453152027+t*1.061405429))));const s=1-p*Math.exp(-x*x);return x>=0?s:-s}
+function normcdf(x){return 0.5*(1+erf(x/Math.SQRT2))}
+function normpdf(x){return Math.exp(-.5*x*x)/Math.sqrt(2*Math.PI)}
+function calcD1(S,K,r,sig,T){return(Math.log(S/K)+(r+.5*sig*sig)*T)/(sig*Math.sqrt(T))}
+function calcD2(S,K,r,sig,T){return calcD1(S,K,r,sig,T)-sig*Math.sqrt(T)}
+function bsGamma(S,K,r,sig,T){if(T<=0||sig<=0) return 0;return normpdf(calcD1(S,K,r,sig,T))/(S*sig*Math.sqrt(T))}
+function bsVega(S,K,r,sig,T){if(T<=0||sig<=0) return 0;return S*Math.sqrt(T)*normpdf(calcD1(S,K,r,sig,T))/100}
+function bsTheta(S,K,r,sig,T,isC=true){
+  if(T<=0||sig<=0) return 0;
+  const d1=calcD1(S,K,r,sig,T),d2=d1-sig*Math.sqrt(T);
+  return(-S*normpdf(d1)*sig/(2*Math.sqrt(T))+(isC?-1:1)*r*K*Math.exp(-r*T)*(isC?normcdf(d2):normcdf(-d2)));
+}
+function bsCallDelta(S,K,r,sig,T){if(T<=0) return S>K?1:0;return normcdf(calcD1(S,K,r,sig,T))}
+function bsCall(S,K,r,sig,T){if(T<=0||sig<=0) return Math.max(S-K,0);const d1=calcD1(S,K,r,sig,T),d2=d1-sig*Math.sqrt(T);return S*normcdf(d1)-K*Math.exp(-r*T)*normcdf(d2)}
+function bsRhoCall(S,K,r,sig,T){if(T<=0||sig<=0) return 0;return K*T*Math.exp(-r*T)*normcdf(calcD2(S,K,r,sig,T))}
+function bsRhoPut(S,K,r,sig,T){if(T<=0||sig<=0) return 0;return -K*T*Math.exp(-r*T)*normcdf(-calcD2(S,K,r,sig,T))}
+function bsVolga(S,K,r,sig,T){
+  if(T<=0||sig<=0) return 0;
+  const d1=calcD1(S,K,r,sig,T),d2=d1-sig*Math.sqrt(T);
+  const vega=S*Math.sqrt(T)*normpdf(d1); // unscaled
+  return vega*d1*d2/sig;
+}
+function bsVanna(S,K,r,sig,T){
+  if(T<=0||sig<=0) return 0;
+  const d1=calcD1(S,K,r,sig,T),d2=d1-sig*Math.sqrt(T);
+  return -normpdf(d1)*d2/sig;
+}
+function bsCharm(S,K,r,sig,T){
+  // numerical derivative of delta w.r.t. T
+  const dT=0.001;
+  return(bsCallDelta(S,K,r,sig,T)-bsCallDelta(S,K,r,sig,T+dT))/dT;
+}
+
+/* ─── CANVAS SETUP ──────────────────────────────────────────────────── */
+function setupCanvas(id,H){
+  const c=document.getElementById(id);if(!c)return null;
+  const dpr=window.devicePixelRatio||1,W=c.parentElement.clientWidth-32;
+  c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';
+  const ctx=c.getContext('2d');ctx.scale(dpr,dpr);return{ctx,W,H};
+}
+function drawAxes(ctx,pad,W,H,xMin,xMax,yMin,yMax,xLbl,yLbl,txX,txY,xFmt,yFmt){
+  ctx.fillStyle='#07070f';ctx.fillRect(0,0,W,H);
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+  const toX=x=>pad.l+(x-xMin)/(xMax-xMin)*cw;
+  const toY=y=>pad.t+(1-(y-yMin)/(yMax-yMin))*ch;
+  ctx.strokeStyle='#0d0d25';ctx.lineWidth=1;
+  (txY||[]).forEach(y=>{ctx.beginPath();ctx.moveTo(pad.l,toY(y));ctx.lineTo(pad.l+cw,toY(y));ctx.stroke()});
+  (txX||[]).forEach(x=>{ctx.beginPath();ctx.moveTo(toX(x),pad.t);ctx.lineTo(toX(x),pad.t+ch);ctx.stroke()});
+  if(yMin<0&&yMax>0){ctx.strokeStyle='#1a1a35';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(pad.l,toY(0));ctx.lineTo(pad.l+cw,toY(0));ctx.stroke();ctx.setLineDash([])}
+  ctx.strokeStyle='#1a1a35';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ch);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t+ch);ctx.lineTo(pad.l+cw,pad.t+ch);ctx.stroke();
+  ctx.fillStyle='#484868';ctx.font='11px Fira Code,monospace';
+  ctx.textAlign='right';(txY||[]).forEach(y=>ctx.fillText(yFmt?yFmt(y):y.toFixed(2),pad.l-5,toY(y)+4));
+  ctx.textAlign='center';(txX||[]).forEach(x=>ctx.fillText(xFmt?xFmt(x):x.toFixed(0),toX(x),pad.t+ch+16));
+  if(xLbl){ctx.fillText(xLbl,pad.l+cw/2,H-4)}
+  if(yLbl){ctx.save();ctx.translate(12,pad.t+ch/2);ctx.rotate(-Math.PI/2);ctx.fillText(yLbl,0,0);ctx.restore()}
+  return{toX,toY,cw,ch};
+}
+
+/* ─── RHO CHART ─────────────────────────────────────────────────────── */
+function drawRho(){
+  const K=parseFloat(document.getElementById('rh-k').value)||100;
+  const sig=parseFloat(document.getElementById('rh-sig').value)/100||.2;
+  const mode=document.getElementById('rh-mode').value;
+  document.getElementById('rh-k-v').textContent=K;document.getElementById('rh-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  const r=0.04;
+  const Srange=Array.from({length:300},(_,i)=>40+i*160/300);
+  const mats=[[1/12,'1M','#484868'],[3/12,'3M','#fb7185'],[0.5,'6M','#f97316'],[1,'1Y','#fbbf24'],[2,'2Y','#4ade80'],[3,'3Y','#818cf8']];
+  const allR=mats.flatMap(([T])=>Srange.map(S=>bsRhoCall(S,K,r,sig,T)));
+  const yMax=Math.max(...allR)*1.1;
+  const rk=setupCanvas('rhoCanvas',270);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const pad={l:60,r:85,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,40,200,0,yMax,'Spot S','Rho (call)',
+    [60,80,100,120,140,160,180],[0,yMax*.25,yMax*.5,yMax*.75,yMax].map(v=>parseFloat(v.toFixed(2))),null,v=>v.toFixed(2));
+  mats.forEach(([T,label,col])=>{
+    const rhos=Srange.map(S=>bsRhoCall(S,K,r,sig,T));
+    ctx.strokeStyle=col;ctx.lineWidth=T>=1?2.5:1.5;ctx.beginPath();
+    Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(rhos[i])):ctx.lineTo(toX(S),toY(rhos[i])));ctx.stroke();
+  });
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#fb7185';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+  ctx.textAlign='left';ctx.font='10px Fira Code,monospace';
+  mats.forEach(([T,label,col],i)=>{ctx.fillStyle=col;ctx.fillRect(W-80,pad.t+i*16,14,2);ctx.fillStyle=col;ctx.fillText(label,W-62,pad.t+i*16+4)});
+}
+
+function calcRho(){
+  const S=parseFloat(document.getElementById('rhc-s').value)||100;
+  const K=parseFloat(document.getElementById('rhc-k').value)||100;
+  const sig=parseFloat(document.getElementById('rhc-sig').value)/100||.2;
+  const r=parseFloat(document.getElementById('rhc-r').value)/100||.04;
+  const T=parseFloat(document.getElementById('rhc-t').value)||2;
+  const drBps=parseFloat(document.getElementById('rhc-dr').value)||100;
+  const dr=drBps/10000;
+  const rhC=bsRhoCall(S,K,r,sig,T),rhP=bsRhoPut(S,K,r,sig,T);
+  const dC=rhC*dr*100,dP=rhP*dr*100; // P&L for drBps move
+  document.getElementById('rhc-results').innerHTML=`
+    <div class="kpi"><div class="lbl">ρ_call</div><div class="val" style="color:var(--green)">${rhC.toFixed(4)}</div><div class="sub">Per 100bps rise</div></div>
+    <div class="kpi"><div class="lbl">ρ_put</div><div class="val" style="color:var(--red)">${rhP.toFixed(4)}</div><div class="sub">Per 100bps rise</div></div>
+    <div class="kpi"><div class="lbl">P&L call (${drBps}bps)</div><div class="val" style="color:${dC>=0?'var(--green)':'var(--red)'}">${dC.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">P&L put (${drBps}bps)</div><div class="val" style="color:${dP>=0?'var(--green)':'var(--red)'}">${dP.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">KT·e^(-rT)</div><div class="val">${(K*T*Math.exp(-r*T)).toFixed(2)}</div></div>
+    <div class="kpi"><div class="lbl">N(d₂)</div><div class="val">${normcdf(calcD2(S,K,r,sig,T)).toFixed(4)}</div><div class="sub">Prob. of exercise</div></div>
+  `;
+}
+
+/* ─── VOLGA ─────────────────────────────────────────────────────────── */
+function drawVolga(){
+  const K=parseFloat(document.getElementById('vg-k').value)||100;
+  const sig=parseFloat(document.getElementById('vg-sig').value)/100||.2;
+  const T=parseFloat(document.getElementById('vg-t').value)||1;
+  document.getElementById('vg-k-v').textContent=K;document.getElementById('vg-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  document.getElementById('vg-t-v').textContent=T.toFixed(1);
+  const r=0.04;
+  const Srange=Array.from({length:300},(_,i)=>20+i*160/300);
+  const volgas=Srange.map(S=>bsVolga(S,K,r,sig,T));
+  const vegas=Srange.map(S=>bsVega(S,K,r,sig,T)*100);
+  const yMin=Math.min(...volgas)*1.1,yMax=Math.max(...volgas,...vegas)*1.1;
+  const rk=setupCanvas('volgaCanvas',270);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const pad={l:60,r:15,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,20,180,yMin,yMax,'Spot S','Value',
+    [40,60,80,100,120,140,160],[yMin,0,yMax*.25,yMax*.5,yMax*.75,yMax].map(v=>parseFloat(v.toFixed(2))));
+  // Vega (reference)
+  ctx.strokeStyle='rgba(167,139,250,.4)';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);ctx.beginPath();
+  Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(vegas[i])):ctx.lineTo(toX(S),toY(vegas[i])));ctx.stroke();ctx.setLineDash([]);
+  // Volga fill
+  ctx.fillStyle='rgba(249,115,22,.07)';ctx.beginPath();ctx.moveTo(toX(Srange[0]),toY(0));
+  Srange.forEach((S,i)=>ctx.lineTo(toX(S),toY(Math.max(volgas[i],0))));
+  ctx.lineTo(toX(Srange[Srange.length-1]),toY(0));ctx.closePath();ctx.fill();
+  // Volga line
+  ctx.strokeStyle='#f97316';ctx.lineWidth=2.5;ctx.beginPath();
+  Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(volgas[i])):ctx.lineTo(toX(S),toY(volgas[i])));ctx.stroke();
+  // strike
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#f97316';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+  ctx.textAlign='left';ctx.fillStyle='#f97316';ctx.fillText('Volga (double hump)',pad.l+8,pad.t+14);
+  ctx.fillStyle='rgba(167,139,250,.7)';ctx.fillText('Vega (reference)',pad.l+8,pad.t+26);
+  const vAtm=bsVolga(K,K,r,sig,T);
+  const vOtm=bsVolga(K*1.1,K,r,sig,T);
+  document.getElementById('vg-stats').innerHTML=`
+    <span>Volga(ATM) = <strong style="color:var(--volga)">${vAtm.toFixed(3)}</strong></span>
+    <span>Volga(110%K) = <strong style="color:var(--volga)">${vOtm.toFixed(3)}</strong></span>
+    <span>d₁·d₂/σ at ATM = <strong style="color:var(--muted)">${(calcD1(K,K,r,sig,T)*calcD2(K,K,r,sig,T)/sig).toFixed(3)}</strong></span>
+  `;
+}
+
+function calcVolgaPnl(){
+  const S=parseFloat(document.getElementById('vpc-s').value)||100;
+  const K=parseFloat(document.getElementById('vpc-k').value)||110;
+  const sig=parseFloat(document.getElementById('vpc-sig').value)/100||.2;
+  const r=parseFloat(document.getElementById('vpc-r').value)/100||.04;
+  const T=parseFloat(document.getElementById('vpc-t').value)||1;
+  const dsig=parseFloat(document.getElementById('vpc-dsig').value)/100||.05;
+  const vega=bsVega(S,K,r,sig,T)*100;
+  const volga=bsVolga(S,K,r,sig,T);
+  const linearPnl=vega*dsig*100;
+  const convexPnl=0.5*volga*(dsig*dsig);
+  const totalPnl=linearPnl+convexPnl;
+  document.getElementById('vpc-results').innerHTML=`
+    <div class="kpi"><div class="lbl">Vega ν</div><div class="val" style="color:var(--vega)">${vega.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl">Volga</div><div class="val" style="color:var(--volga)">${volga.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">Linear Vega P&L (ν·Δσ)</div><div class="val" style="color:var(--green)">${linearPnl.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl">Convexity P&L (½·V·Δσ²)</div><div class="val" style="color:var(--volga)">${convexPnl.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl">Total ΔV</div><div class="val" style="color:${totalPnl>=0?'var(--green)':'var(--red)'}">${totalPnl.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl">Convexity % of total</div><div class="val" style="color:var(--volga)">${Math.abs(totalPnl)>0.0001?(convexPnl/Math.abs(totalPnl)*100).toFixed(1)+'%':'N/A'}</div></div>
+  `;
+}
+
+/* ─── VANNA ─────────────────────────────────────────────────────────── */
+function drawVanna(){
+  const K=parseFloat(document.getElementById('van-k').value)||100;
+  const sig=parseFloat(document.getElementById('van-sig').value)/100||.2;
+  const T=parseFloat(document.getElementById('van-t').value)||1;
+  document.getElementById('van-k-v').textContent=K;document.getElementById('van-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  document.getElementById('van-t-v').textContent=T.toFixed(1);
+  const r=0.04;
+  const Srange=Array.from({length:300},(_,i)=>40+i*160/300);
+  const vannas=Srange.map(S=>bsVanna(S,K,r,sig,T));
+  const yMin=Math.min(...vannas)*1.1,yMax=Math.max(...vannas)*1.1;
+  const rk=setupCanvas('vannaCanvas',270);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const pad={l:60,r:15,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,40,200,Math.min(yMin,-.05),Math.max(yMax,.05),'Spot S','Vanna',
+    [60,80,100,120,140,160,180],[yMin,0,yMax].map(v=>parseFloat(v.toFixed(3))));
+  // positive fill
+  ctx.fillStyle='rgba(74,222,128,.07)';ctx.beginPath();
+  Srange.forEach((S,i)=>{if(i===0)ctx.moveTo(toX(S),toY(0));if(vannas[i]>0)ctx.lineTo(toX(S),toY(vannas[i]));else ctx.lineTo(toX(S),toY(0))});
+  ctx.closePath();ctx.fill();
+  // negative fill
+  ctx.fillStyle='rgba(248,113,113,.07)';ctx.beginPath();
+  Srange.forEach((S,i)=>{if(i===0)ctx.moveTo(toX(S),toY(0));if(vannas[i]<0)ctx.lineTo(toX(S),toY(vannas[i]));else ctx.lineTo(toX(S),toY(0))});
+  ctx.closePath();ctx.fill();
+  // vanna line
+  ctx.strokeStyle='#818cf8';ctx.lineWidth=2.5;ctx.beginPath();
+  Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(vannas[i])):ctx.lineTo(toX(S),toY(vannas[i])));ctx.stroke();
+  // strike
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#818cf8';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K (Vanna=0)',toX(K),pad.t-5);
+  ctx.textAlign='left';ctx.fillStyle='#4ade80';ctx.fillText('Positive Vanna',pad.l+8,pad.t+14);
+  ctx.fillStyle='#f87171';ctx.fillText('Negative Vanna',pad.l+8,pad.t+26);
+}
+
+/* ─── CHARM ─────────────────────────────────────────────────────────── */
+function drawCharm(){
+  const K=parseFloat(document.getElementById('ch-k').value)||100;
+  const sig=parseFloat(document.getElementById('ch-sig').value)/100||.2;
+  const T=parseFloat(document.getElementById('ch-t').value)||1;
+  const r=parseFloat(document.getElementById('ch-r').value)/100||.04;
+  document.getElementById('ch-k-v').textContent=K;document.getElementById('ch-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  document.getElementById('ch-t-v').textContent=T.toFixed(2);document.getElementById('ch-r-v').textContent=(r*100).toFixed(0)+'%';
+  const Srange=Array.from({length:300},(_,i)=>40+i*160/300);
+  const charmC=Srange.map(S=>bsCharm(S,K,r,sig,T));
+  const charmP=Srange.map(S=>bsCharm(S,K,r,sig,T)-1); // put charm from put-call parity
+  const allV=[...charmC,...charmP];
+  const yMin=Math.max(Math.min(...allV)*1.1,-.25),yMax=Math.min(Math.max(...allV)*1.1,.25);
+  const rk=setupCanvas('charmCanvas',270);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const pad={l:60,r:15,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,40,200,yMin,yMax,'Spot S','Charm (ΔΔ/day)',
+    [60,80,100,120,140,160,180],[yMin,0,yMax].map(v=>parseFloat(v.toFixed(3))));
+  // Call charm
+  ctx.strokeStyle='#2dd4bf';ctx.lineWidth=2.5;ctx.beginPath();
+  Srange.forEach((S,i)=>{const v=Math.max(yMin,Math.min(yMax,charmC[i]));i===0?ctx.moveTo(toX(S),toY(v)):ctx.lineTo(toX(S),toY(v))});ctx.stroke();
+  // Put charm
+  ctx.strokeStyle='#f472b6';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.beginPath();
+  Srange.forEach((S,i)=>{const v=Math.max(yMin,Math.min(yMax,charmP[i]));i===0?ctx.moveTo(toX(S),toY(v)):ctx.lineTo(toX(S),toY(v))});ctx.stroke();ctx.setLineDash([]);
+  // strike
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#2dd4bf';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+  ctx.textAlign='left';ctx.fillStyle='#2dd4bf';ctx.fillText('Call Charm',pad.l+8,pad.t+14);
+  ctx.fillStyle='#f472b6';ctx.fillText('Put Charm',pad.l+8,pad.t+26);
+}
+
+function drawCharmTime(){
+  const K=parseFloat(document.getElementById('cht-k').value)||100;
+  const sig=parseFloat(document.getElementById('cht-sig').value)/100||.2;
+  document.getElementById('cht-k-v').textContent=K;document.getElementById('cht-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  const r=0.04;
+  const mats=[[3,'3Y','#484868'],[1,'1Y','#818cf8'],[0.5,'6M','#4ade80'],[1/12,'1M','#f97316'],[7/252,'1W','#fb7185'],[1/252,'1D','#f87171']];
+  const normX=K*.8+i*K*.4/200;
+  const Srange=Array.from({length:200},(_,i)=>K*.7+i*K*.6/200);
+  const allC=mats.flatMap(([T])=>Srange.map(S=>{const c=bsCharm(S,K,r,sig,T);return isNaN(c)||!isFinite(c)?0:c}));
+  const yMin=Math.max(Math.min(...allC)*1.05,-.12),yMax=Math.min(Math.max(...allC)*1.05,.12);
+  const rc=setupCanvas('charmTimeCanvas',260);if(!rc)return;
+  const{ctx,W,H}=rc;
+  const pad={l:60,r:85,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,K*.7,K*1.3,yMin,yMax,'Spot S','Charm',
+    [K*.75,K*.875,K,K*1.125,K*1.25],[yMin,0,yMax].map(v=>parseFloat(v.toFixed(3))));
+  mats.forEach(([T,label,col])=>{
+    const charms=Srange.map(S=>{const c=bsCharm(S,K,r,sig,T);return isNaN(c)||!isFinite(c)?0:Math.max(yMin,Math.min(yMax,c))});
+    ctx.strokeStyle=col;ctx.lineWidth=T<.1?2.5:1.5;ctx.beginPath();
+    Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(charms[i])):ctx.lineTo(toX(S),toY(charms[i])));ctx.stroke();
+  });
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#2dd4bf';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+  ctx.textAlign='left';ctx.font='10px Fira Code,monospace';
+  mats.forEach(([T,label,col],i)=>{ctx.fillStyle=col;ctx.fillRect(W-80,pad.t+i*16,14,2);ctx.fillStyle=col;ctx.fillText(label,W-62,pad.t+i*16+4)});
+}
+
+/* ─── DELTA DRIFT SIMULATOR ─────────────────────────────────────────── */
+function runDriftSim(){
+  const S=parseFloat(document.getElementById('dd-s').value)||100;
+  const K=parseFloat(document.getElementById('dd-k').value)||110;
+  const sig=parseFloat(document.getElementById('dd-sig').value)/100||.2;
+  const r=parseFloat(document.getElementById('dd-r').value)/100||.04;
+  const T=parseFloat(document.getElementById('dd-t').value)||.5;
+  const gma=bsGamma(S,K,r,sig,T);
+  const vanna=bsVanna(S,K,r,sig,T);
+  const charm=bsCharm(S,K,r,sig,T);
+  const delta0=bsCallDelta(S,K,r,sig,T);
+  const dS=S*.01;  // 1% move
+  const dsig=.01;  // 1 vol pt
+  const dt=1/252;  // 1 day
+  const dDelta_gamma=gma*dS;
+  const dDelta_charm=charm*dt;
+  const dDelta_vanna=vanna*dsig;
+  document.getElementById('dd-results').innerHTML=`
+    <div class="kpi"><div class="lbl">Current Delta (Δ)</div><div class="val" style="color:var(--gamma)">${delta0.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl">Gamma Γ</div><div class="val" style="color:var(--gamma)">${gma.toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl">Charm</div><div class="val" style="color:var(--charm)">${charm.toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl">Vanna</div><div class="val" style="color:var(--vanna)">${vanna.toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl">ΔΔ from Γ (1% spot)</div><div class="val" style="color:var(--gamma)">${(dDelta_gamma).toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl">ΔΔ from Charm (1 day)</div><div class="val" style="color:var(--charm)">${(dDelta_charm).toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl">ΔΔ from Vanna (1 vol pt)</div><div class="val" style="color:var(--vanna)">${(dDelta_vanna).toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl">Total drift (all three)</div><div class="val" style="color:var(--rho)">${(dDelta_gamma+dDelta_charm+dDelta_vanna).toFixed(5)}</div></div>
+  `;
+  // bar chart of drift contributions
+  const rc=setupCanvas('driftCanvas',260);if(!rc)return;
+  const{ctx,W,H}=rc;
+  ctx.fillStyle='#07070f';ctx.fillRect(0,0,W,H);
+  const scenarios=[
+    {label:'Spot +1% (Γ effect)',val:dDelta_gamma,col:'#fbbf24'},
+    {label:'1 day (Charm)',val:dDelta_charm,col:'#2dd4bf'},
+    {label:'Vol +1pt (Vanna)',val:dDelta_vanna,col:'#818cf8'},
+    {label:'All combined',val:dDelta_gamma+dDelta_charm+dDelta_vanna,col:'#fb7185'},
+  ];
+  const maxAbs=Math.max(...scenarios.map(s=>Math.abs(s.val)));
+  const barW=Math.min(140,(W-80)/scenarios.length);
+  const cx=W/2,cy=H/2,barH=100;
+  scenarios.forEach((s,i)=>{
+    const x=40+i*(barW+10);
+    const barLen=Math.abs(s.val)/maxAbs*barH;
+    const isPos=s.val>=0;
+    ctx.fillStyle=s.col+'40';
+    ctx.fillRect(x,isPos?cy-barLen:cy,barW,barLen);
+    ctx.strokeStyle=s.col;ctx.lineWidth=1.5;
+    ctx.strokeRect(x,isPos?cy-barLen:cy,barW,barLen);
+    ctx.fillStyle=s.col;ctx.font='bold 11px Fira Code,monospace';ctx.textAlign='center';
+    ctx.fillText((s.val>0?'+':'')+s.val.toFixed(4),x+barW/2,isPos?cy-barLen-5:cy+barLen+15);
+    ctx.fillStyle='#484868';ctx.font='9px Fira Code,monospace';
+    const words=s.label.split(' ');words.forEach((w,wi)=>ctx.fillText(w,x+barW/2,H-35+(wi*11)));
+  });
+  ctx.strokeStyle='#1a1a35';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(30,cy);ctx.lineTo(W-15,cy);ctx.stroke();
+  ctx.fillStyle='#484868';ctx.font='10px Fira Code,monospace';ctx.textAlign='right';
+  ctx.fillText('0',28,cy+4);
+}
+
+/* ─── ALL GREEKS CALCULATOR ─────────────────────────────────────────── */
+function calcAllGreeks(){
+  const S=parseFloat(document.getElementById('ag-s').value)||100;
+  const K=parseFloat(document.getElementById('ag-k').value)||105;
+  const sig=parseFloat(document.getElementById('ag-sig').value)/100||.2;
+  const r=parseFloat(document.getElementById('ag-r').value)/100||.04;
+  const T=parseFloat(document.getElementById('ag-t').value)||1;
+  if(T<=0||sig<=0) return;
+  const d1v=calcD1(S,K,r,sig,T),d2v=d1v-sig*Math.sqrt(T);
+  const delta=bsCallDelta(S,K,r,sig,T);
+  const gamma=bsGamma(S,K,r,sig,T);
+  const theta=bsTheta(S,K,r,sig,T,true)/365;
+  const vega=bsVega(S,K,r,sig,T);
+  const rhoV=bsRhoCall(S,K,r,sig,T);
+  const volga=bsVolga(S,K,r,sig,T);
+  const vanna=bsVanna(S,K,r,sig,T);
+  const charm=bsCharm(S,K,r,sig,T);
+  const C=bsCall(S,K,r,sig,T);
+  document.getElementById('ag-results').innerHTML=`
+    <div class="kpi" style="border-color:rgba(74,222,128,.3)"><div class="lbl">Call Price C</div><div class="val" style="color:var(--green)">${C.toFixed(4)}</div></div>
+    <div class="kpi" style="border-color:rgba(74,222,128,.3)"><div class="lbl">Δ Delta</div><div class="val" style="color:var(--green)">${delta.toFixed(4)}</div></div>
+    <div class="kpi" style="border-color:rgba(251,191,36,.3)"><div class="lbl">Γ Gamma</div><div class="val" style="color:var(--gamma)">${gamma.toFixed(5)}</div></div>
+    <div class="kpi" style="border-color:rgba(56,189,248,.3)"><div class="lbl">Θ Theta (daily)</div><div class="val" style="color:var(--theta)">${theta.toFixed(5)}</div></div>
+    <div class="kpi" style="border-color:rgba(167,139,250,.3)"><div class="lbl">ν Vega (per 1%)</div><div class="val" style="color:var(--vega)">${vega.toFixed(4)}</div></div>
+    <div class="kpi" style="border-color:rgba(251,113,133,.3)"><div class="lbl">ρ Rho (call)</div><div class="val" style="color:var(--rho)">${rhoV.toFixed(4)}</div></div>
+    <div class="kpi" style="border-color:rgba(249,115,22,.3)"><div class="lbl">Volga</div><div class="val" style="color:var(--volga)">${volga.toFixed(4)}</div></div>
+    <div class="kpi" style="border-color:rgba(129,140,248,.3)"><div class="lbl">Vanna</div><div class="val" style="color:var(--vanna)">${vanna.toFixed(5)}</div></div>
+    <div class="kpi" style="border-color:rgba(45,212,191,.3)"><div class="lbl">Charm (daily)</div><div class="val" style="color:var(--charm)">${(charm/365).toFixed(6)}</div></div>
+    <div class="kpi"><div class="lbl">d₁ / d₂</div><div class="val" style="font-size:.85rem">${d1v.toFixed(3)} / ${d2v.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">N(d₂) = P(ITM)</div><div class="val">${normcdf(d2v).toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl">ν = σS²T·Γ</div><div class="val" style="color:var(--muted);font-size:.85rem">${(sig*S*S*T*gamma/100).toFixed(4)}</div></div>
+  `;
+}
+
+/* ─── INIT ──────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded',()=>{
+  renderMathInElement(document.body,{
+    delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],
+    throwOnError:false
+  });
+  setTimeout(()=>{
+    drawVolga();calcVolgaPnl();
+    drawVanna();drawCharm();drawCharmTime();runDriftSim();calcAllGreeks();
+  },300);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Greeks — Part VI: Rho | S&amp;T Prep</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css" rel="stylesheet"/>
+<script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+
+
+<script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+:root{
+  --bg:#08080d;
+  --surface:#0c0c16;
+  --card:#101020;
+  --border:#1c1c35;
+  --rho:#fb7185;       /* rose — Rho */
+  --volga:#f97316;     /* orange — Volga */
+  --vanna:#818cf8;     /* indigo — Vanna */
+  --charm:#2dd4bf;     /* teal — Charm */
+  --gamma:#fbbf24;     /* amber — continuity */
+  --theta:#38bdf8;     /* sky blue */
+  --vega:#a78bfa;      /* violet */
+  --green:#4ade80;
+  --red:#f87171;
+  --text:#e2e8f0;
+  --muted:#484868;
+  --mono:'Fira Code','Cascadia Code',monospace;
+  --sans:'IBM Plex Sans','Segoe UI',sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.74;min-height:100vh}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9990;
+  background-image:radial-gradient(rgba(251,113,133,.05) 1px,transparent 1px);
+  background-size:30px 30px;}
+
+.topbar{background:var(--surface);border-bottom:2px solid var(--rho);padding:.6rem 2rem;display:flex;align-items:center;gap:1rem;position:sticky;top:0;z-index:200;backdrop-filter:blur(14px)}
+.tag{font-family:var(--mono);font-size:.67rem;letter-spacing:.13em;background:var(--rho);color:#000;padding:.2rem .55rem;border-radius:3px;font-weight:800}
+.crumb{font-family:var(--mono);font-size:.74rem;color:var(--muted)} .crumb a{color:inherit;text-decoration:none;transition:color .2s} .crumb a:hover{color:var(--text)}
+.crumb span{color:var(--rho)}
+.topbar-right{margin-left:auto;display:flex;gap:.6rem;align-items:center}
+.gbadge{font-family:var(--mono);font-size:.68rem;padding:.15rem .5rem;border-radius:3px;border:1px solid}
+.gbadge.r{color:var(--rho);border-color:rgba(251,113,133,.3)}
+.gbadge.o{color:var(--volga);border-color:rgba(249,115,22,.3)}
+.gbadge.i{color:var(--vanna);border-color:rgba(129,140,248,.3)}
+.gbadge.t{color:var(--charm);border-color:rgba(45,212,191,.3)}
+
+.wrapper{max-width:1150px;margin:0 auto;padding:2.5rem 1.5rem 6rem}
+
+.hero{padding:2.8rem 0 2.2rem;border-bottom:1px solid var(--border);margin-bottom:2.5rem;position:relative;overflow:hidden}
+.hero-bg{position:absolute;right:0;top:0;font-family:var(--mono);font-size:9rem;font-weight:900;line-height:1;user-select:none;pointer-events:none;letter-spacing:-.1em;
+  background:linear-gradient(135deg,rgba(251,113,133,.08),rgba(249,115,22,.06),rgba(129,140,248,.06),rgba(45,212,191,.06));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero .sub{font-size:.9rem;color:var(--muted);margin-bottom:.3rem;font-family:var(--mono);letter-spacing:.08em}
+.hero h1{font-size:2.8rem;font-weight:800;letter-spacing:-.04em;line-height:1.05;
+  background:linear-gradient(120deg,var(--rho) 0%,var(--volga) 33%,var(--vanna) 66%,var(--charm) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:.4rem;position:relative}
+.hero p{color:var(--muted);font-size:.92rem;max-width:660px;margin-top:.5rem;position:relative}
+.meta{display:flex;gap:.65rem;margin-top:1.1rem;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:.67rem;font-weight:600;border:1px solid var(--border);padding:.2rem .65rem;border-radius:99px;color:var(--muted)}
+.pill.r{border-color:var(--rho);color:var(--rho)}
+.pill.o{border-color:var(--volga);color:var(--volga)}
+.pill.i{border-color:var(--vanna);color:var(--vanna)}
+.pill.t{border-color:var(--charm);color:var(--charm)}
+
+.nav-tabs{display:flex;gap:.3rem;flex-wrap:wrap;border-bottom:1px solid var(--border);margin-bottom:2.5rem}
+.nav-tab{font-family:var(--mono);font-size:.67rem;font-weight:700;letter-spacing:.07em;padding:.5rem .85rem;border-radius:6px 6px 0 0;cursor:pointer;border:1px solid transparent;border-bottom:none;color:var(--muted);background:transparent;transition:all .18s;position:relative;top:1px;text-transform:uppercase}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.ar{background:var(--card);border-color:var(--border);color:var(--rho);border-bottom:2px solid var(--card)}
+.nav-tab.ao{background:var(--card);border-color:var(--border);color:var(--volga);border-bottom:2px solid var(--card)}
+.nav-tab.ai{background:var(--card);border-color:var(--border);color:var(--vanna);border-bottom:2px solid var(--card)}
+.nav-tab.at{background:var(--card);border-color:var(--border);color:var(--charm);border-bottom:2px solid var(--card)}
+.nav-tab.ag{background:var(--card);border-color:var(--border);color:var(--gamma);border-bottom:2px solid var(--card)}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* headings */
+.sh{font-size:1.18rem;font-weight:700;margin:2.5rem 0 1rem;display:flex;align-items:center;gap:.7rem}
+.sh::before{font-family:var(--mono);font-size:.85rem;opacity:.7}
+.sh.r{color:var(--rho)}.sh.r::before{content:'ρ'}
+.sh.o{color:var(--volga)}.sh.o::before{content:'Ω'}
+.sh.i{color:var(--vanna)}.sh.i::before{content:'V'}
+.sh.t{color:var(--charm)}.sh.t::before{content:'Ψ'}
+.sh.g{color:var(--gamma)}.sh.g::before{content:'Σ'}
+.sh2{font-size:.93rem;font-weight:700;margin:1.8rem 0 .8rem;padding-left:1rem;border-left:3px solid}
+.sh2.r{color:var(--rho);border-color:var(--rho)}
+.sh2.o{color:var(--volga);border-color:var(--volga)}
+.sh2.i{color:var(--vanna);border-color:var(--vanna)}
+.sh2.t{color:var(--charm);border-color:var(--charm)}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.35rem 1.55rem;margin-bottom:1.2rem;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px}
+.card.r::before{background:linear-gradient(90deg,var(--rho),transparent)}
+.card.o::before{background:linear-gradient(90deg,var(--volga),transparent)}
+.card.i::before{background:linear-gradient(90deg,var(--vanna),transparent)}
+.card.t::before{background:linear-gradient(90deg,var(--charm),transparent)}
+.card.g::before{background:linear-gradient(90deg,var(--gamma),transparent)}
+.card.grn::before{background:linear-gradient(90deg,var(--green),transparent)}
+.card.red::before{background:linear-gradient(90deg,var(--red),transparent)}
+
+/* formulas */
+.fx{border-radius:8px;padding:1rem 1.5rem;margin:1rem 0;text-align:center;font-size:1.1rem;overflow-x:auto}
+.fx.r{border:1px solid var(--rho);background:#0d0608}
+.fx.o{border:1px solid var(--volga);background:#0d0900}
+.fx.i{border:1px solid var(--vanna);background:#080810}
+.fx.t{border:1px solid var(--charm);background:#030d0c}
+.fx.g{border:1px solid var(--gamma);background:#0d0a00}
+.fx.multi{text-align:left;font-size:.96rem}
+.flabel{font-family:var(--mono);font-size:.64rem;letter-spacing:.13em;text-transform:uppercase;margin-bottom:.5rem}
+.flabel.r{color:var(--rho)}.flabel.o{color:var(--volga)}.flabel.i{color:var(--vanna)}.flabel.t{color:var(--charm)}.flabel.g{color:var(--gamma)}.flabel.green{color:var(--green)}.flabel.red{color:var(--red)}
+
+/* alerts */
+.alert{border-radius:8px;padding:.88rem 1.2rem;margin:.85rem 0;display:flex;gap:.8rem;align-items:flex-start;font-size:.87rem}
+.alert .ico{font-size:1.05rem;flex-shrink:0;margin-top:.05rem}
+.alert.r{background:rgba(251,113,133,.06);border:1px solid rgba(251,113,133,.25);color:#fda4af}
+.alert.o{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.25);color:#fdba74}
+.alert.i{background:rgba(129,140,248,.06);border:1px solid rgba(129,140,248,.25);color:#c7d2fe}
+.alert.t{background:rgba(45,212,191,.06);border:1px solid rgba(45,212,191,.25);color:#99f6e4}
+.alert.g{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.25);color:#fde68a}
+.alert.key{background:rgba(74,222,128,.06);border:1px solid rgba(74,222,128,.25);color:#86efac}
+.alert.warn{background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.25);color:#fca5a5}
+
+/* grid */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin:1rem 0}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;margin:1rem 0}
+@media(max-width:740px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+
+.kpi{background:#07070f;border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem;transition:border-color .2s}
+.kpi .lbl{font-family:var(--mono);font-size:.63rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
+.kpi .val{font-family:var(--mono);font-size:1rem;font-weight:700}
+.kpi .sub{font-size:.76rem;color:var(--muted);margin-top:.2rem}
+
+table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.87rem}
+th{background:#07070f;font-family:var(--mono);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;padding:.7rem 1rem;border-bottom:2px solid;text-align:left}
+th.r{color:var(--rho);border-bottom-color:var(--rho)}
+th.o{color:var(--volga);border-bottom-color:var(--volga)}
+th.i{color:var(--vanna);border-bottom-color:var(--vanna)}
+th.t{color:var(--charm);border-bottom-color:var(--charm)}
+th.g{color:var(--gamma);border-bottom-color:var(--gamma)}
+td{padding:.65rem 1rem;border-bottom:1px solid var(--border);vertical-align:top;font-size:.86rem}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.015)}
+.up{color:var(--green);font-weight:600}.dn{color:var(--red);font-weight:600}
+
+.chart-wrap{background:#07070f;border:1px solid var(--border);border-radius:10px;padding:1rem;margin:1rem 0}
+.chart-controls{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:.8rem;align-items:center}
+.chart-controls label{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.chart-controls input[type=range]{accent-color:var(--rho);width:100px}
+.chart-controls select,.chart-controls input[type=number]{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.74rem;padding:.25rem .5rem;border-radius:5px}
+.cval{font-family:var(--mono);font-size:.77rem;font-weight:700;min-width:2.8rem}
+.cval.r{color:var(--rho)}.cval.o{color:var(--volga)}.cval.i{color:var(--vanna)}.cval.t{color:var(--charm)}.cval.g{color:var(--gamma)}
+canvas{display:block;width:100%;border-radius:6px}
+
+/* channel comparison */
+.channel-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.channel-card{border-radius:9px;padding:1.1rem 1.3rem;border:1px solid var(--border)}
+
+/* drift family */
+.drift-eq{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.7rem;padding:1.3rem;background:#07070f;border-radius:8px;border:1px solid var(--border);margin:1rem 0}
+.drift-term{text-align:center;padding:.6rem .9rem;border-radius:7px;font-family:var(--mono);font-size:.88rem}
+.dt-gamma{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.3);color:#fde68a}
+.dt-charm{background:rgba(45,212,191,.08);border:1px solid rgba(45,212,191,.3);color:#99f6e4}
+.dt-vanna{background:rgba(129,140,248,.08);border:1px solid rgba(129,140,248,.3);color:#c7d2fe}
+.dt-op{font-size:1.3rem;color:var(--muted)}
+
+/* greeks master table */
+.master-row-r td:first-child{color:var(--rho)}
+.master-row-o td:first-child{color:var(--volga)}
+.master-row-i td:first-child{color:var(--vanna)}
+.master-row-t td:first-child{color:var(--charm)}
+.master-row-g td:first-child{color:var(--gamma)}
+.master-row-th td:first-child{color:var(--theta)}
+.master-row-ve td:first-child{color:var(--vega)}
+
+details{background:var(--card);border:1px solid var(--border);border-radius:8px;margin:.7rem 0;overflow:hidden}
+details[open]{border-color:var(--rho)}
+details.o[open]{border-color:var(--volga)}
+details.i[open]{border-color:var(--vanna)}
+details.t[open]{border-color:var(--charm)}
+summary{padding:.85rem 1.3rem;cursor:pointer;font-weight:600;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;list-style:none;color:var(--text)}
+summary::-webkit-details-marker{display:none}
+summary::after{content:'＋';font-family:var(--mono);color:var(--rho)}
+details.o summary::after{color:var(--volga)}
+details.i summary::after{color:var(--vanna)}
+details.t summary::after{color:var(--charm)}
+details[open] summary::after{content:'－'}
+.dbody{padding:.3rem 1.3rem 1.3rem;font-size:.89rem;color:var(--muted)}
+
+code{font-family:var(--mono);font-size:.82em;color:var(--charm);background:rgba(45,212,191,.1);padding:.1em .4em;border-radius:4px}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--border);font-family:var(--mono);font-size:.7rem;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+</style>
+</head>
+<body>
+<div class="topbar">
+<div class="tag">S&amp;T PREP</div>
+<div class="crumb"><a href="index.html">Derivatives</a> &nbsp;/&nbsp; <span>04 — The Greeks · Part VI: Rho</span></div>
+<div class="topbar-right">
+<div class="badge">ρ = ∂V/∂r</div>
+<div class="live-dot"></div>
+</div>
+</div>
+<div class="wrapper">
+<div class="hero">
+<div class="hero-bg">ρ</div>
+<div class="sub">THE GREEKS — PART 6 OF 7</div>
+<h1>Rho &amp; Interest Rate Risk</h1>
+<p>The "quiet Greek" and its two channels of influence — discounting and cost of carry. Mechanics of interest rate risk, and how rates affect calls and puts differently.</p>
+<div class="meta"><span class="pill r">ρ — Interest Rate</span><span class="pill">Option Greeks</span><span class="pill c">Part 6 / 7</span></div>
+</div>
+<div class="nav-tabs"><div class="nav-tab ar" onclick="switchTab('rho',this,'r')">ρ Rho</div><div class="nav-tab ar" onclick="switchTab('rhohedge',this,'r')">ρ Hedging</div></div>
+<!-- ════════════════════════ TAB 1: RHO ══════════════════════════════ -->
+<div class="tab-content active" id="tab-rho">
+<div class="sh r">Rho — The Quiet Greek</div>
+<div class="card r">
+<div class="flabel r">Definition</div>
+<div class="fx r" style="font-size:1.2rem">
+      \[ \rho = \frac{\partial V}{\partial r} \qquad \begin{cases} \rho_C = +KTe^{-rT}N(d_2) &gt; 0 \\ \rho_P = -KTe^{-rT}N(-d_2) &lt; 0 \end{cases} \]
+    </div>
+<p style="margin:.7rem 0;font-size:.88rem">Rho measures the absolute change in option price for a <strong>100 basis point (1%)</strong> change in the risk-free rate. It is the least volatile first-order Greek in normal markets — but becomes critical for long-dated structures and in high-rate environments.</p>
+<div class="grid3" style="margin-top:1rem">
+<div class="kpi"><div class="lbl">Call Rho</div><div class="val" style="color:var(--green)">Positive</div><div class="sub">Higher r → call more valuable. You pay K later, so its PV falls, benefiting the call buyer.</div></div>
+<div class="kpi"><div class="lbl">Put Rho</div><div class="val" style="color:var(--red)">Negative</div><div class="sub">Higher r → put less valuable. You receive K later, so its PV falls, hurting the put buyer.</div></div>
+<div class="kpi"><div class="lbl">Nickname</div><div class="val" style="color:var(--rho)">"The LEAPS Greek"</div><div class="sub">Almost negligible for short-dated options. Dominant for 2Y+ structures.</div></div>
+</div>
+</div>
+<div class="sh2 r">Two Channels of Influence</div>
+<div class="channel-grid">
+<div class="channel-card" style="border-top:3px solid var(--rho)">
+<div class="flabel r">Channel A — Discounting (PV of Strike)</div>
+<p style="font-size:.87rem;color:var(--muted);margin:.5rem 0">The option's value depends on the PV of the strike <span>\(K\,e^{-rT}\)</span>. Higher r → lower PV(K).</p>
+<table style="margin-top:.7rem">
+<thead><tr><th class="r">Call</th><th class="r">Put</th></tr></thead>
+<tbody>
+<tr>
+<td class="up">Positive. Lower PV(K) you must pay → call more attractive.</td>
+<td class="dn">Negative. Lower PV(K) you receive → put less attractive.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="channel-card" style="border-top:3px solid var(--rho)">
+<div class="flabel r">Channel B — Financing (Cost of Carry)</div>
+<p style="font-size:.87rem;color:var(--muted);margin:.5rem 0">Think like a market-maker delta-hedging their option book:</p>
+<table style="margin-top:.7rem">
+<thead><tr><th class="r">Short Call (hedge: buy stock)</th><th class="r">Short Put (hedge: short stock)</th></tr></thead>
+<tbody>
+<tr>
+<td class="up">Borrowing cost ↑ with r → higher premium demanded from buyer.</td>
+<td class="dn">Cash received from short earns more → dealer can offer cheaper put.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sh2 r">Rho Sensitivities — Moneyness &amp; Time</div>
+<div class="chart-wrap">
+<div class="chart-controls">
+<label>K =</label>
+<input id="rh-k" max="120" min="80" oninput="drawRho()" type="range" value="100"/>
+<span class="cval r" id="rh-k-v">100</span>
+<label style="margin-left:.8rem">σ (%) =</label>
+<input id="rh-sig" max="50" min="5" oninput="drawRho()" type="range" value="20"/>
+<span class="cval" id="rh-sig-v">20%</span>
+<label style="margin-left:.8rem">Chart:</label>
+<select id="rh-mode" onchange="drawRho()">
+<option value="moneyness">vs Spot (vary Maturity)</option>
+<option value="maturity">vs Spot (fixed T=1Y)</option>
+</select>
+</div>
+<canvas height="270" id="rhoCanvas"></canvas>
+</div>
+<div class="sh2 r">Black-Scholes Rho Formulas</div>
+<div class="card">
+<div class="grid2">
+<div>
+<div class="flabel r">Call Rho</div>
+<div class="fx r">\[\rho_C = K\,T\,e^{-rT}\,N(d_2)\]</div>
+<p style="font-size:.84rem;color:var(--muted)">N(d₂) is the risk-neutral probability of exercise. ITM options (high N(d₂)) have the highest Rho — the future cash payment K is nearly certain.</p>
+</div>
+<div>
+<div class="flabel r">Put Rho</div>
+<div class="fx r">\[\rho_P = -K\,T\,e^{-rT}\,N(-d_2)\]</div>
+<p style="font-size:.84rem;color:var(--muted)">Mirror image. Rho is most negative for deep ITM puts. OTM options → Rho ≈ 0 (unlikely to be exercised, so the PV of K is irrelevant).</p>
+</div>
+</div>
+<div class="alert r" style="margin-top:1rem">
+<span class="ico">🎯</span>
+<span><strong>Interview insight — Why does N(d₂) appear?</strong> Because Rho is about the probability that the <em>cash settlement</em> (the strike payment/receipt) will actually happen. Deep ITM options are almost certain to be exercised — so the full rate sensitivity applies. Deep OTM options will likely expire worthless — no K changes hands, so Rho → 0.</span>
+</div>
+</div>
+<!-- Rho Calculator -->
+<div class="sh2 r">Rho Calculator</div>
+<div class="chart-wrap">
+<div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
+<div><label>S₀</label><br/><input id="rhc-s" oninput="calcRho()" style="width:70px" type="number" value="100"/></div>
+<div><label>K</label><br/><input id="rhc-k" oninput="calcRho()" style="width:70px" type="number" value="100"/></div>
+<div><label>σ (%)</label><br/><input id="rhc-sig" oninput="calcRho()" style="width:60px" type="number" value="20"/></div>
+<div><label>r (%)</label><br/><input id="rhc-r" oninput="calcRho()" style="width:55px" type="number" value="4"/></div>
+<div><label>T (years)</label><br/><input id="rhc-t" oninput="calcRho()" step="0.25" style="width:70px" type="number" value="2"/></div>
+<div><label>Δr (bps)</label><br/><input id="rhc-dr" oninput="calcRho()" style="width:70px" type="number" value="100"/></div>
+</div>
+<div id="rhc-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:.8rem;margin:.8rem 0"></div>
+</div>
+<div class="sh2 r">Why Rho is Often Ignored</div>
+<div class="card">
+<table>
+<thead><tr><th class="r">Reason</th><th class="r">Explanation</th></tr></thead>
+<tbody>
+<tr><td><strong>Rates are stable</strong></td><td>IR vol is much lower than spot vol or implied vol. Delta and Vega move every tick; Rho barely moves in a day.</td></tr>
+<tr><td><strong>Short-dated focus</strong></td><td>Most flow is in 0-3 month expiries. Rho for a 1M option is negligible (T is tiny in the formula).</td></tr>
+<tr><td><strong>Hedge priority</strong></td><td>Traders focus on Δ/Γ/ν first. Rho only becomes primary for rate derivatives, LEAPS, or exotic long-dated structures.</td></tr>
+<tr><td><strong>When it matters</strong></td><td>High-rate environments (2022-2023 hiking cycle), LEAPS, FX options (Rho of foreign rate = Phi/Cost of carry), structured products with multi-year horizons.</td></tr>
+</tbody>
+</table>
+</div>
+</div><!-- /rho -->
+<!-- ════════════════════════ TAB 2: RHO HEDGING ══════════════════════════ -->
+<div class="tab-content" id="tab-rhohedge">
+<div class="sh r">Rho Hedging — The Dynamic Cash Problem</div>
+<div class="card r">
+<p>In a delta-hedging procedure, the cash account used to finance share purchases earns or pays the risk-free rate r. This creates two practical problems:</p>
+<div class="grid2" style="margin-top:1rem">
+<div class="kpi"><div class="lbl">Problem 1: Bid-Offer on Rates</div><div class="val" style="color:var(--red);font-size:.88rem">Asymmetric rates</div><div class="sub">Interest received on cash balances is always lower than the rate paid on borrowing. A spread exists even at the "risk-free" rate level.</div></div>
+<div class="kpi"><div class="lbl">Problem 2: Rate Volatility</div><div class="val" style="color:var(--red);font-size:.88rem">Unknown future rates</div><div class="sub">Rates are not constant over the life of a multi-month option. You cannot perfectly lock in your funding cost.</div></div>
+</div>
+</div>
+<div class="sh2 r">Why the Cash Balance is Dynamic</div>
+<div class="card">
+<p style="margin-bottom:.8rem">The key insight: your Rho exposure is not fixed at inception. It changes constantly because:</p>
+<div class="grid3">
+<div class="kpi"><div class="lbl">Delta changes</div><div class="val" style="color:var(--rho);font-size:.88rem">As spot moves</div><div class="sub">More/fewer shares → cash balance changes → rate exposure changes</div></div>
+<div class="kpi"><div class="lbl">Gamma P&amp;L</div><div class="val" style="color:var(--gamma);font-size:.88rem">Rebalancing trades</div><div class="sub">Each rebalance changes the cash account — impossible to lock in a single rate for the full life</div></div>
+<div class="kpi"><div class="lbl">Best practice</div><div class="val" style="color:var(--green);font-size:.88rem">Internal treasury</div><div class="sub">Bank charges/credits the desk at a fixed internal rate. Desk hedges the known part; treasury absorbs residual rate risk.</div></div>
+</div>
+</div>
+<div class="sh2 r">Rho Hedging Strategies</div>
+<div class="grid2">
+<details>
+<summary>Forward-Rate Lock (Known Cash Volumes)</summary>
+<div class="dbody">
+<p>For cash flows that are known in advance (e.g., a certain payment of K at a known future date), traders can enter an interest rate swap or FRA to lock in the rate. This is the cleanest solution — fix the rate, eliminate the uncertainty.</p>
+</div>
+</details>
+<details>
+<summary>Internal Treasury System</summary>
+<div class="dbody">
+<p>Most large banks route Rho to their internal treasury. The desk pays/receives an internal fixed rate; the treasury absorbs the floating rate risk and manages it centrally across the entire bank's balance sheet. This isolates the desk from rate movements.</p>
+</div>
+</details>
+<details>
+<summary>LEAPS &amp; Long-Dated Structures</summary>
+<div class="dbody">
+<p>For 2Y+ options, Rho is too large to ignore. Desks typically enter interest rate derivatives (IR swaps, caps/floors) to hedge the known Rho exposure at inception, and then manage residual Rho dynamically as the delta changes.</p>
+</div>
+</details>
+<details>
+<summary>FX — Dual Rho (Cost of Carry)</summary>
+<div class="dbody">
+<p>FX options have two Rhos — one for the domestic rate and one for the foreign rate. The domestic rate Rho is the standard one; the foreign rate sensitivity is sometimes called "Phi" or "Rho₂." The net cost-of-carry sensitivity to the spot-forward differential is critical for FX options pricing and hedging.</p>
+</div>
+</details>
+</div>
+<div class="sh2 r">Moneyness &amp; Maturity — Sensitivity Profile</div>
+<div class="card">
+<table>
+<thead><tr><th class="r">Dimension</th><th class="r">Low</th><th class="r">High</th><th class="r">Why</th></tr></thead>
+<tbody>
+<tr><td><strong>Moneyness</strong></td><td>OTM → Rho ≈ 0</td><td class="up">ITM → Rho largest</td><td>N(d₂) determines the probability of the cash settlement occurring</td></tr>
+<tr><td><strong>Maturity T</strong></td><td>1M → negligible</td><td class="up">3Y+ → dominant Greek</td><td>Rho ∝ T via the KT·e^(-rT) factor — more time = more compounding</td></tr>
+<tr><td><strong>Rate level r</strong></td><td>r≈0 → small effect</td><td class="up">r=5%+ → significant</td><td>The discounting factor e^(-rT) matters more when both r and T are large</td></tr>
+</tbody>
+</table>
+<div class="alert r">
+<span class="ico">💡</span>
+<span><strong>High-rate environment insight (2022-2023 hike cycle):</strong> When the Fed hiked from 0% to 5.25%, LEAPS Rho became a primary concern. A 2Y LEAPS call on a $100 stock with Rho ≈ 0.7 would gain $0.70 for every 100bps of rate hike — significant for a multi-year position. This is why rate vol and equity derivatives are deeply interconnected.</span>
+</div>
+</div>
+</div><!-- /rhohedge -->
+<!-- ════════════════════════ TAB 3: VOLGA ════════════════════════════════ -->
+<!-- /volga -->
+<!-- ════════════════════════ TAB 4: VANNA ════════════════════════════════ -->
+<!-- /vanna -->
+<!-- ════════════════════════ TAB 5: CHARM ════════════════════════════════ -->
+<!-- /charm -->
+<!-- ════════════════════════ TAB 6: DELTA DRIFT FAMILY ═══════════════════ -->
+<!-- /drift -->
+<!-- ════════════════════════ TAB 7: MASTER TABLE ═══════════════════════════ -->
+<!-- /master -->
+<div class="footer">
+<span>The Greeks Pt.6 — Rho · S&amp;T Interview Guide · Quantitative Finance · 2025-2026</span>
+<span>ρ = ∂V/∂r · Funding Carry · LEAPS Interest Rate Risk · Module 04</span>
+</div>
+</div><!-- /wrapper -->
+<script>
+/* ─── TABS ─────────────────────────────────────────────────────────── */
+function switchTab(id,el,cls){
+  document.querySelectorAll('.nav-tab').forEach(t=>{['ar','ao','ai','at','ag'].forEach(c=>t.classList.remove(c))});
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  el.classList.add('a'+cls);
+  document.getElementById('tab-'+id).classList.add('active');
+  setTimeout(()=>{
+    const fns={rho:()=>{drawRho();calcRho();},rhohedge:()=>{},volga:()=>{drawVolga();calcVolgaPnl();},
+      vanna:drawVanna,charm:()=>{drawCharm();drawCharmTime();},drift:()=>{runDriftSim();},master:calcAllGreeks};
+    if(fns[id]) fns[id]();
+  },40);
+}
+
+/* ─── MATH ──────────────────────────────────────────────────────────── */
+function erf(x){const t=1/(1+.3275911*Math.abs(x));const p=t*(.254829592+t*(-.284496736+t*(1.421413741+t*(-1.453152027+t*1.061405429))));const s=1-p*Math.exp(-x*x);return x>=0?s:-s}
+function normcdf(x){return 0.5*(1+erf(x/Math.SQRT2))}
+function normpdf(x){return Math.exp(-.5*x*x)/Math.sqrt(2*Math.PI)}
+function calcD1(S,K,r,sig,T){return(Math.log(S/K)+(r+.5*sig*sig)*T)/(sig*Math.sqrt(T))}
+function calcD2(S,K,r,sig,T){return calcD1(S,K,r,sig,T)-sig*Math.sqrt(T)}
+function bsGamma(S,K,r,sig,T){if(T<=0||sig<=0) return 0;return normpdf(calcD1(S,K,r,sig,T))/(S*sig*Math.sqrt(T))}
+function bsVega(S,K,r,sig,T){if(T<=0||sig<=0) return 0;return S*Math.sqrt(T)*normpdf(calcD1(S,K,r,sig,T))/100}
+function bsTheta(S,K,r,sig,T,isC=true){
+  if(T<=0||sig<=0) return 0;
+  const d1=calcD1(S,K,r,sig,T),d2=d1-sig*Math.sqrt(T);
+  return(-S*normpdf(d1)*sig/(2*Math.sqrt(T))+(isC?-1:1)*r*K*Math.exp(-r*T)*(isC?normcdf(d2):normcdf(-d2)));
+}
+function bsCallDelta(S,K,r,sig,T){if(T<=0) return S>K?1:0;return normcdf(calcD1(S,K,r,sig,T))}
+function bsCall(S,K,r,sig,T){if(T<=0||sig<=0) return Math.max(S-K,0);const d1=calcD1(S,K,r,sig,T),d2=d1-sig*Math.sqrt(T);return S*normcdf(d1)-K*Math.exp(-r*T)*normcdf(d2)}
+function bsRhoCall(S,K,r,sig,T){if(T<=0||sig<=0) return 0;return K*T*Math.exp(-r*T)*normcdf(calcD2(S,K,r,sig,T))}
+function bsRhoPut(S,K,r,sig,T){if(T<=0||sig<=0) return 0;return -K*T*Math.exp(-r*T)*normcdf(-calcD2(S,K,r,sig,T))}
+function bsVolga(S,K,r,sig,T){
+  if(T<=0||sig<=0) return 0;
+  const d1=calcD1(S,K,r,sig,T),d2=d1-sig*Math.sqrt(T);
+  const vega=S*Math.sqrt(T)*normpdf(d1); // unscaled
+  return vega*d1*d2/sig;
+}
+function bsVanna(S,K,r,sig,T){
+  if(T<=0||sig<=0) return 0;
+  const d1=calcD1(S,K,r,sig,T),d2=d1-sig*Math.sqrt(T);
+  return -normpdf(d1)*d2/sig;
+}
+function bsCharm(S,K,r,sig,T){
+  // numerical derivative of delta w.r.t. T
+  const dT=0.001;
+  return(bsCallDelta(S,K,r,sig,T)-bsCallDelta(S,K,r,sig,T+dT))/dT;
+}
+
+/* ─── CANVAS SETUP ──────────────────────────────────────────────────── */
+function setupCanvas(id,H){
+  const c=document.getElementById(id);if(!c)return null;
+  const dpr=window.devicePixelRatio||1,W=c.parentElement.clientWidth-32;
+  c.width=W*dpr;c.height=H*dpr;c.style.width=W+'px';c.style.height=H+'px';
+  const ctx=c.getContext('2d');ctx.scale(dpr,dpr);return{ctx,W,H};
+}
+function drawAxes(ctx,pad,W,H,xMin,xMax,yMin,yMax,xLbl,yLbl,txX,txY,xFmt,yFmt){
+  ctx.fillStyle='#07070f';ctx.fillRect(0,0,W,H);
+  const cw=W-pad.l-pad.r,ch=H-pad.t-pad.b;
+  const toX=x=>pad.l+(x-xMin)/(xMax-xMin)*cw;
+  const toY=y=>pad.t+(1-(y-yMin)/(yMax-yMin))*ch;
+  ctx.strokeStyle='#0d0d25';ctx.lineWidth=1;
+  (txY||[]).forEach(y=>{ctx.beginPath();ctx.moveTo(pad.l,toY(y));ctx.lineTo(pad.l+cw,toY(y));ctx.stroke()});
+  (txX||[]).forEach(x=>{ctx.beginPath();ctx.moveTo(toX(x),pad.t);ctx.lineTo(toX(x),pad.t+ch);ctx.stroke()});
+  if(yMin<0&&yMax>0){ctx.strokeStyle='#1a1a35';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(pad.l,toY(0));ctx.lineTo(pad.l+cw,toY(0));ctx.stroke();ctx.setLineDash([])}
+  ctx.strokeStyle='#1a1a35';ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t);ctx.lineTo(pad.l,pad.t+ch);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(pad.l,pad.t+ch);ctx.lineTo(pad.l+cw,pad.t+ch);ctx.stroke();
+  ctx.fillStyle='#484868';ctx.font='11px Fira Code,monospace';
+  ctx.textAlign='right';(txY||[]).forEach(y=>ctx.fillText(yFmt?yFmt(y):y.toFixed(2),pad.l-5,toY(y)+4));
+  ctx.textAlign='center';(txX||[]).forEach(x=>ctx.fillText(xFmt?xFmt(x):x.toFixed(0),toX(x),pad.t+ch+16));
+  if(xLbl){ctx.fillText(xLbl,pad.l+cw/2,H-4)}
+  if(yLbl){ctx.save();ctx.translate(12,pad.t+ch/2);ctx.rotate(-Math.PI/2);ctx.fillText(yLbl,0,0);ctx.restore()}
+  return{toX,toY,cw,ch};
+}
+
+/* ─── RHO CHART ─────────────────────────────────────────────────────── */
+function drawRho(){
+  const K=parseFloat(document.getElementById('rh-k').value)||100;
+  const sig=parseFloat(document.getElementById('rh-sig').value)/100||.2;
+  const mode=document.getElementById('rh-mode').value;
+  document.getElementById('rh-k-v').textContent=K;document.getElementById('rh-sig-v').textContent=(sig*100).toFixed(0)+'%';
+  const r=0.04;
+  const Srange=Array.from({length:300},(_,i)=>40+i*160/300);
+  const mats=[[1/12,'1M','#484868'],[3/12,'3M','#fb7185'],[0.5,'6M','#f97316'],[1,'1Y','#fbbf24'],[2,'2Y','#4ade80'],[3,'3Y','#818cf8']];
+  const allR=mats.flatMap(([T])=>Srange.map(S=>bsRhoCall(S,K,r,sig,T)));
+  const yMax=Math.max(...allR)*1.1;
+  const rk=setupCanvas('rhoCanvas',270);if(!rk)return;
+  const{ctx,W,H}=rk;
+  const pad={l:60,r:85,t:20,b:35};
+  const{toX,toY}=drawAxes(ctx,pad,W,H,40,200,0,yMax,'Spot S','Rho (call)',
+    [60,80,100,120,140,160,180],[0,yMax*.25,yMax*.5,yMax*.75,yMax].map(v=>parseFloat(v.toFixed(2))),null,v=>v.toFixed(2));
+  mats.forEach(([T,label,col])=>{
+    const rhos=Srange.map(S=>bsRhoCall(S,K,r,sig,T));
+    ctx.strokeStyle=col;ctx.lineWidth=T>=1?2.5:1.5;ctx.beginPath();
+    Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(rhos[i])):ctx.lineTo(toX(S),toY(rhos[i])));ctx.stroke();
+  });
+  ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
+  ctx.fillStyle='#fb7185';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+  ctx.textAlign='left';ctx.font='10px Fira Code,monospace';
+  mats.forEach(([T,label,col],i)=>{ctx.fillStyle=col;ctx.fillRect(W-80,pad.t+i*16,14,2);ctx.fillStyle=col;ctx.fillText(label,W-62,pad.t+i*16+4)});
+}
+
+function calcRho(){
+  const S=parseFloat(document.getElementById('rhc-s').value)||100;
+  const K=parseFloat(document.getElementById('rhc-k').value)||100;
+  const sig=parseFloat(document.getElementById('rhc-sig').value)/100||.2;
+  const r=parseFloat(document.getElementById('rhc-r').value)/100||.04;
+  const T=parseFloat(document.getElementById('rhc-t').value)||2;
+  const drBps=parseFloat(document.getElementById('rhc-dr').value)||100;
+  const dr=drBps/10000;
+  const rhC=bsRhoCall(S,K,r,sig,T),rhP=bsRhoPut(S,K,r,sig,T);
+  const dC=rhC*dr*100,dP=rhP*dr*100; // P&L for drBps move
+  document.getElementById('rhc-results').innerHTML=`
+    <div class="kpi"><div class="lbl">ρ_call</div><div class="val" style="color:var(--green)">${rhC.toFixed(4)}</div><div class="sub">Per 100bps rise</div></div>
+    <div class="kpi"><div class="lbl">ρ_put</div><div class="val" style="color:var(--red)">${rhP.toFixed(4)}</div><div class="sub">Per 100bps rise</div></div>
+    <div class="kpi"><div class="lbl">P&L call (${drBps}bps)</div><div class="val" style="color:${dC>=0?'var(--green)':'var(--red)'}">${dC.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">P&L put (${drBps}bps)</div><div class="val" style="color:${dP>=0?'var(--green)':'var(--red)'}">${dP.toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl">KT·e^(-rT)</div><div class="val">${(K*T*Math.exp(-r*T)).toFixed(2)}</div></div>
+    <div class="kpi"><div class="lbl">N(d₂)</div><div class="val">${normcdf(calcD2(S,K,r,sig,T)).toFixed(4)}</div><div class="sub">Prob. of exercise</div></div>
+  `;
+}
+
+/* ─── INIT ──────────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded',()=>{
+  renderMathInElement(document.body,{
+    delimiters:[{left:'$$',right:'$$',display:true},{left:'\\[',right:'\\]',display:true},{left:'\\(',right:'\\)',display:false}],
+    throwOnError:false
+  });
+  setTimeout(()=>{
+    drawRho();calcRho();
+  },300);
+});
+</script>
+</body>
+</html>
