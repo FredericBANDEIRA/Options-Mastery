@@ -147,7 +147,9 @@ tr:hover td{background:rgba(74,222,128,.02)}
 .chart-controls{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:.8rem;align-items:center}
 .chart-controls label{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
 .chart-controls input[type=range]{accent-color:var(--accent);width:100px}
-.chart-controls select,.chart-controls input[type=number]{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.74rem;padding:.25rem .5rem;border-radius:5px}
+.chart-controls select,.chart-controls input[type=number],.btn-reset{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.74rem;padding:.25rem .5rem;border-radius:5px}
+.btn-reset{cursor:pointer;transition:all 0.2s;font-weight:600;color:var(--accent);border-color:var(--accent)}
+.btn-reset:hover{background:var(--accent);color:#000;box-shadow:0 0 8px rgba(74, 222, 128, 0.3)}
 .cval{font-family:var(--mono);font-size:.77rem;color:var(--accent);font-weight:700;min-width:2.8rem}
 .cval.e{color:var(--accent2)}.cval.y{color:var(--accent3)}.cval.b{color:var(--accent4)}
 canvas{display:block;width:100%;border-radius:6px}
@@ -424,16 +426,122 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 <label style="margin-left:.8rem">S₀ =</label>
 <input id="tay-s0" max="130" min="70" oninput="drawTaylor()" type="range" value="100"/>
 <span class="cval" id="tay-s0-v">100</span>
+<button class="btn-reset" onclick="resetTaylor()" style="margin-left:auto">Reinit</button>
 </div>
 <canvas height="270" id="taylorCanvas"></canvas>
 <div id="tay-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
 </div>
-<div class="alert key">
-<span class="ico">🔑</span>
-<span><strong>The Gamma P&amp;L formula — core interview insight:</strong><br/>
-    When you delta-hedge continuously, the residual P&amp;L over a small time step dt is:<br/>
-    \(\text{P\&amp;L} = \frac{1}{2}\Gamma S^2(\sigma_R^2 - \sigma_{IV}^2)\,dt\)<br/>
-    where σ_R is realised vol and σ_IV is implied vol at sale. <strong>This is why delta-hedging converts directional risk into a pure vol arbitrage.</strong> You make money if RV &lt; IV, lose if RV &gt; IV — regardless of which way the market moves.</span>
+<details>
+  <summary>How to Interpret this Visualiser</summary>
+  <div class="dbody">
+    <p style="margin-bottom:.6rem">This chart visualizes how a trader uses a Taylor series expansion (using option Greeks) to approximate the change in an option's price (\(V\)) for shifts in the underlying stock price (\(S\)):</p>
+    <ul style="margin-left:1.2rem; margin-bottom:.8rem">
+      <li style="margin:.3rem 0"><strong>The Blue Dot (\(S_0\))</strong>: Represents the "expansion point" or current spot price. All calculations (Delta and Gamma) are evaluated at this specific spot price.</li>
+      <li style="margin:.3rem 0"><strong style="color:var(--red)">Red Line (1st-Order / Linear)</strong>: Approximates the option price using only <strong>Delta</strong> (\(\Delta V \approx \Delta \cdot \Delta S\)). It is a straight line tangent to the curve at \(S_0\). Notice how rapidly it deviates from the true price for large moves—always underestimating the option's value because it ignores convexity.</li>
+      <li style="margin:.3rem 0"><strong style="color:var(--accent3)">Amber Line (2nd-Order / Quadratic)</strong>: Approximates the option price using both <strong>Delta and Gamma</strong> (\(\Delta V \approx \Delta \cdot \Delta S + \frac{1}{2}\Gamma(\Delta S)^2\)). It creates a curved parabola that hugs the true price curve much more closely over a wider range.</li>
+      <li style="margin:.3rem 0"><strong style="color:var(--accent)">Green Line (True BS Price)</strong>: The actual theoretical Black-Scholes price.</li>
+    </ul>
+    <p style="font-weight:700;margin-top:.8rem;margin-bottom:.4rem">Interactive Exercises for Interviews:</p>
+    <ul style="margin-left:1.2rem">
+      <li style="margin:.3rem 0"><strong>Lower Time to Maturity (\(T \to 0.05\))</strong>: Watch the curve develop a sharp "kink" near the strike (\(K\)). As Gamma spikes near \(S_0\), the linear approximation (Red) becomes a poor predictor of price shifts even for very tiny spot moves because local curvature is extremely high.</li>
+      <li style="margin:.3rem 0"><strong>Increase Volatility (\(\sigma\))</strong>: Notice how the true price curve (Green) flattens out, and the gap between the linear (Red) and quadratic (Amber) approximations decreases near \(S_0\). Higher vol spreads out the distribution, lowering Gamma and smoothing out local curvature.</li>
+    </ul>
+  </div>
+</details>
+<div class="alert key" style="flex-direction: column; gap: 0.5rem; align-items: stretch; padding: 1.2rem;">
+  <div style="display: flex; gap: 0.8rem; align-items: flex-start;">
+    <span class="ico" style="font-size: 1.25rem;">🔑</span>
+    <div>
+      <strong style="font-size: 0.95rem; color: #fff;">The Gamma P&amp;L Formula — Core Volatility Arbitrage Insight</strong>
+      <p style="margin-top: 0.4rem; font-size: 0.88rem; line-height: 1.5;">When you delta-hedge an option position continuously, your directional exposure is neutralized. The residual P&amp;L over an infinitesimal time step \(dt\) is purely driven by the variance spread:</p>
+    </div>
+  </div>
+  
+  <div class="fx" style="margin: 0.6rem 0; font-size: 1.15rem; background: #030806; border-color: var(--accent);">
+    \[ d\Pi = \frac{1}{2}\,\Gamma\,S^2\,(\sigma_R^2 - \sigma_{\text{IV}}^2)\,dt \]
+  </div>
+
+  <details style="background: rgba(0,0,0,0.15); border-color: rgba(74,222,128,0.15); margin-top: 0.4rem;">
+    <summary style="font-size: 0.85rem; padding: 0.6rem 1rem; color: var(--accent);">Deep Dive: Decomposing the Formula &amp; Core Concepts</summary>
+    <div class="dbody" style="font-size: 0.84rem; line-height: 1.6; color: var(--text); padding-top: 0.5rem;">
+      <p style="margin-bottom: 0.6rem;">This formula is the core of derivatives market-making. Let's break down why this is a pure volatility arbitrage:</p>
+      
+      <ul style="margin-left: 1.2rem; margin-bottom: 1rem;">
+        <li style="margin: 0.4rem 0;"><strong>No Directional Term (\(\Delta S\))</strong>: By continuously adjusting your shares of the underlying to match Delta (\(\Delta = \partial V/\partial S\)), the linear spot price exposure is entirely removed. There is no \(dS\) term in the P&amp;L.</li>
+        <li style="margin: 0.4rem 0;"><strong>Gamma (\(\Gamma\)) acts as the Leverage</strong>: Gamma determines how quickly your Delta changes. It is the scale of your exposure to spot price acceleration. Higher Gamma means larger hedging P&amp;L.</li>
+        <li style="margin: 0.4rem 0;"><strong>Volatility (Variance) Spread (\(\sigma_R^2 - \sigma_{\text{IV}}^2\))</strong>: The core bet. You are trading **Realized Volatility (\(\sigma_R\))** against the **Implied Volatility (\(\sigma_{\text{IV}}\))** at which you bought or sold the option.</li>
+      </ul>
+
+      <!-- Conceptual Explanations -->
+      <div style="border-top: 1px solid var(--border); margin-top: 1.2rem; padding-top: 1rem; margin-bottom: 1.2rem;">
+        <strong style="color: var(--accent3); font-size: 0.88rem; display: block; margin-bottom: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em;">Conceptual Breakdown of Key Terms:</strong>
+        
+        <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+          <div style="background: rgba(255,255,255,0.01); border-left: 3px solid var(--accent); padding: 0.6rem 0.9rem; border-radius: 0 6px 6px 0;">
+            <strong style="color: var(--accent); font-size: 0.83rem; display: block; margin-bottom: 0.2rem;">1. "Delta-Hedge Continuously" &amp; Neutralized Directional Exposure</strong>
+            <p style="font-size: 0.82rem; color: var(--text); margin: 0; line-height: 1.5;">
+              Delta-hedging involves offsetting the option's directional risk by holding a share position of size \(-\Delta\). For instance, if you are long 1 Call option with \(\Delta = 0.60\), you short \(0.60\) shares of the underlying stock. 
+              As the stock price moves, the gain/loss on the option is offset by the loss/gain on the stock. By continuously rebalancing this share quantity as \(\Delta\) changes, you eliminate all exposure to directional price moves (the first-order derivative term is zero).
+            </p>
+          </div>
+
+          <div style="background: rgba(255,255,255,0.01); border-left: 3px solid var(--accent2); padding: 0.6rem 0.9rem; border-radius: 0 6px 6px 0;">
+            <strong style="color: var(--accent2); font-size: 0.83rem; display: block; margin-bottom: 0.2rem;">2. "Residual P&amp;L" (The Gamma vs. Theta Tug of War)</strong>
+            <p style="font-size: 0.82rem; color: var(--text); margin: 0; line-height: 1.5;">
+              Although direction-neutral, a delta-hedged portfolio's value is not static. It experiences two opposing forces over time:
+            </p>
+            <ul style="margin-left: 1.2rem; margin-top: 0.3rem; font-size: 0.82rem; color: var(--text);">
+              <li><strong>Gamma (\(\Gamma > 0\) for long options)</strong>: Benefits you. As the stock moves, your delta changes in a way that makes you buy low and sell high (known as <em>Gamma Scalping</em>), locking in profits.</li>
+              <li><strong>Theta (\(\Theta < 0\) for long options)</strong>: Costs you. Option value decays as time expires.</li>
+            </ul>
+            <p style="font-size: 0.82rem; color: var(--text); margin-top: 0.3rem; margin-bottom: 0; line-height: 1.5;">
+              The <strong>residual P&amp;L</strong> is the net outcome of these two opposing effects: daily Gamma scalping gains minus daily Theta time decay.
+            </p>
+          </div>
+
+          <div style="background: rgba(255,255,255,0.01); border-left: 3px solid var(--accent3); padding: 0.6rem 0.9rem; border-radius: 0 6px 6px 0;">
+            <strong style="color: var(--accent3); font-size: 0.83rem; display: block; margin-bottom: 0.2rem;">3. "Infinitesimal Time Step" (\(dt\)) &amp; Black-Scholes Relationship</strong>
+            <p style="font-size: 0.82rem; color: var(--text); margin: 0; line-height: 1.5;">
+              In continuous time, the change in the portfolio over a tiny period \(dt\) is:
+              \[ d\Pi = \frac{1}{2}\Gamma\,(dS)^2 + \Theta\,dt \]
+              Under the Black-Scholes framework, the option's theta is theoretically linked to its gamma by \(\Theta = -\frac{1}{2}\Gamma S^2 \sigma_{\text{IV}}^2\). Also, the actual realized stock price variance over \(dt\) is \((dS)^2 = S^2 \sigma_R^2 dt\). 
+              Substituting these into the equation reveals that the net P&amp;L is driven entirely by the difference between realized volatility and implied volatility.
+            </p>
+          </div>
+
+          <div style="background: rgba(255,255,255,0.01); border-left: 3px solid var(--accent4); padding: 0.6rem 0.9rem; border-radius: 0 6px 6px 0;">
+            <strong style="color: var(--accent4); font-size: 0.83rem; display: block; margin-bottom: 0.2rem;">4. "Variance Spread" (\(\sigma_R^2 - \sigma_{\text{IV}}^2\))</strong>
+            <p style="font-size: 0.82rem; color: var(--text); margin: 0; line-height: 1.5;">
+              This spread represents the core volatility bet. Implied variance (\(\sigma_{\text{IV}}^2\)) is the market's priced expectation of future volatility (the "cost" of the hedge through Theta). Realized variance (\(\sigma_R^2\)) is the actual volatility delivered by the stock (the "yield" of the hedge through Gamma scalping). 
+              You are trading the difference between these two variances.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <table style="width: 100%; border-collapse: collapse; margin-top: 0.8rem; font-size: 0.8rem;">
+        <thead>
+          <tr style="border-bottom: 2px solid var(--accent);"><th style="padding: 0.4rem;">Position Type</th><th style="padding: 0.4rem;">Gamma Sign</th><th style="padding: 0.4rem;">P&amp;L Condition</th><th style="padding: 0.4rem;">Market View</th></tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid var(--border);">
+            <td style="padding: 0.4rem; font-weight: 700; color: var(--accent);">Long Option (Buyer)</td>
+            <td style="padding: 0.4rem; color: var(--accent);">\(\Gamma > 0\) (Positive)</td>
+            <td style="padding: 0.4rem;">Makes money if **\(\sigma_R > \sigma_{\text{IV}}\)**</td>
+            <td style="padding: 0.4rem;">The stock moves *more* than the option price implied. Hedging gains exceed Theta decay.</td>
+          </tr>
+          <tr>
+            <td style="padding: 0.4rem; font-weight: 700; color: var(--red);">Short Option (Seller)</td>
+            <td style="padding: 0.4rem; color: var(--red);">\(\Gamma < 0\) (Negative)</td>
+            <td style="padding: 0.4rem;">Makes money if **\(\sigma_R < \sigma_{\text{IV}}\)**</td>
+            <td style="padding: 0.4rem;">The stock moves *less* than the option price implied. Theta decay collected exceeds hedging losses.</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <p style="margin-top: 0.8rem;"><strong>Interview Takeaway:</strong> "Delta-hedging converts a directional bet into a pure variance arbitrage. If I am long Gamma, I make money if realized variance beats the implied variance I purchased, regardless of direction. If I am short Gamma, I am harvesting the premium and betting realized stays below implied."</p>
+    </div>
+  </details>
 </div>
 </div><!-- /taylor -->
 <!-- ══════════════════════ TAB 3: STATIC vs DYNAMIC ══════════════════════ -->
@@ -591,6 +699,20 @@ function drawAxes(ctx,pad,W,H,xMin,xMax,yMin,yMax,xLabel,yLabel,ticksX,ticksY,xF
 }
 
 /* ─── TAYLOR APPROXIMATION ─────────────────────────────────────────── */
+let showTrueBS = true;
+let show1stOrder = true;
+let show2ndOrder = true;
+
+function resetTaylor(){
+  showTrueBS = true;
+  show1stOrder = true;
+  show2ndOrder = true;
+  document.getElementById('tay-k').value = 100;
+  document.getElementById('tay-sig').value = 20;
+  document.getElementById('tay-t').value = 0.5;
+  document.getElementById('tay-s0').value = 100;
+  drawTaylor();
+}
 function drawTaylor(){
   const K=parseFloat(document.getElementById('tay-k').value)||100;
   const sig=parseFloat(document.getElementById('tay-sig').value)/100||.2;
@@ -601,36 +723,87 @@ function drawTaylor(){
   document.getElementById('tay-t-v').textContent=T.toFixed(2);
   document.getElementById('tay-s0-v').textContent=S0;
   const r=0.04;
-  const Srange=Array.from({length:200},(_,i)=>K*.5+i*K/200);
+  // Fixed boundaries for stable visual comparison
+  const xMin = 50;
+  const xMax = 150;
+  const yMin = 0;
+  const yMax = 70;
+
+  const Srange=Array.from({length:200},(_,i)=>xMin+i*(xMax-xMin)/200);
   const truePrices=Srange.map(S=>bsCall(S,K,r,sig,T));
   const dlt=callDelta(S0,K,r,sig,T);
   const gma=bsGamma(S0,K,r,sig,T);
   const C0=bsCall(S0,K,r,sig,T);
   const first=Srange.map(S=>Math.max(0,C0+dlt*(S-S0)));
   const second=Srange.map(S=>Math.max(0,C0+dlt*(S-S0)+.5*gma*(S-S0)*(S-S0)));
-  const yMax=Math.max(...truePrices)*1.1;
+
   const rc=setupCanvas('taylorCanvas',270); if(!rc) return;
   const {ctx,W,H}=rc;
   const pad={l:55,r:15,t:20,b:35};
-  const {toX,toY}=drawAxes(ctx,pad,W,H,K*.5,K*1.5,0,yMax,'Spot Price S','Call Price',
-    [K*.6,K*.8,K,K*1.2,K*1.4],[0,yMax*.25,yMax*.5,yMax*.75,yMax].map(v=>parseFloat(v.toFixed(1))));
+  const {toX,toY}=drawAxes(ctx,pad,W,H,xMin,xMax,yMin,yMax,'Spot Price S','Call Price',
+    [60,80,100,120,140],[0,20,40,60]);
   // true BS
-  ctx.strokeStyle='#4ade80';ctx.lineWidth=2.5;ctx.beginPath();
-  Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(truePrices[i])):ctx.lineTo(toX(S),toY(truePrices[i])));ctx.stroke();
+  if (showTrueBS) {
+    ctx.strokeStyle='#4ade80';ctx.lineWidth=2.5;ctx.beginPath();
+    Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(truePrices[i])):ctx.lineTo(toX(S),toY(truePrices[i])));ctx.stroke();
+  }
   // 1st order
-  ctx.strokeStyle='#f87171';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);ctx.beginPath();
-  Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(first[i])):ctx.lineTo(toX(S),toY(first[i])));ctx.stroke();ctx.setLineDash([]);
+  if (show1stOrder) {
+    ctx.strokeStyle='#f87171';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);ctx.beginPath();
+    Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(first[i])):ctx.lineTo(toX(S),toY(first[i])));ctx.stroke();ctx.setLineDash([]);
+  }
   // 2nd order
-  ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.setLineDash([3,2]);ctx.beginPath();
-  Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(second[i])):ctx.lineTo(toX(S),toY(second[i])));ctx.stroke();ctx.setLineDash([]);
+  if (show2ndOrder) {
+    ctx.strokeStyle='#fbbf24';ctx.lineWidth=2;ctx.setLineDash([3,2]);ctx.beginPath();
+    Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(second[i])):ctx.lineTo(toX(S),toY(second[i])));ctx.stroke();ctx.setLineDash([]);
+  }
   // expansion point
   ctx.fillStyle='#60a5fa';ctx.beginPath();ctx.arc(toX(S0),toY(C0),5,0,Math.PI*2);ctx.fill();
   ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(toX(S0),pad.t);ctx.lineTo(toX(S0),H-35);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#60a5fa';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('S₀='+S0,toX(S0),pad.t-6);
+  
+  // Interactive legend
   ctx.textAlign='left';ctx.font='11px Fira Code,monospace';
-  ctx.fillStyle='#4ade80';ctx.fillText('True BS Price',pad.l+8,pad.t+14);
-  ctx.fillStyle='#f87171';ctx.fillText('1st Order (Δ only)',pad.l+8,pad.t+26);
-  ctx.fillStyle='#fbbf24';ctx.fillText('2nd Order (Δ + ½Γ)',pad.l+8,pad.t+38);
+  
+  // Legend 1: True BS
+  ctx.fillStyle = showTrueBS ? '#4ade80' : 'rgba(74, 222, 128, 0.25)';
+  ctx.beginPath();
+  ctx.arc(pad.l + 12, pad.t + 10, 4, 0, Math.PI * 2);
+  if (showTrueBS) {
+    ctx.fill();
+  } else {
+    ctx.strokeStyle = 'rgba(74, 222, 128, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  ctx.fillText('True BS Price', pad.l + 24, pad.t + 14);
+  
+  // Legend 2: 1st Order
+  ctx.fillStyle = show1stOrder ? '#f87171' : 'rgba(248, 113, 113, 0.25)';
+  ctx.beginPath();
+  ctx.arc(pad.l + 12, pad.t + 22, 4, 0, Math.PI * 2);
+  if (show1stOrder) {
+    ctx.fill();
+  } else {
+    ctx.strokeStyle = 'rgba(248, 113, 113, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  ctx.fillText('1st Order (Δ only)', pad.l + 24, pad.t + 26);
+  
+  // Legend 3: 2nd Order
+  ctx.fillStyle = show2ndOrder ? '#fbbf24' : 'rgba(251, 191, 36, 0.25)';
+  ctx.beginPath();
+  ctx.arc(pad.l + 12, pad.t + 34, 4, 0, Math.PI * 2);
+  if (show2ndOrder) {
+    ctx.fill();
+  } else {
+    ctx.strokeStyle = 'rgba(251, 191, 36, 0.4)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  ctx.fillText('2nd Order (Δ + ½Γ)', pad.l + 24, pad.t + 38);
+
   document.getElementById('tay-stats').innerHTML=`
     <span>Δ(S₀) = <strong style="color:var(--accent)">${dlt.toFixed(4)}</strong></span>
     <span>Γ(S₀) = <strong style="color:var(--accent3)">${gma.toFixed(5)}</strong></span>
@@ -898,6 +1071,38 @@ document.addEventListener('DOMContentLoaded',()=>{
     throwOnError:false
   });
   setTimeout(()=>{
+    const taylorCanvas = document.getElementById('taylorCanvas');
+    if (taylorCanvas) {
+      taylorCanvas.addEventListener('click', (e) => {
+        const rect = taylorCanvas.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
+        const pad = {l: 55, r: 15, t: 20, b: 35};
+        if (clickX >= pad.l && clickX <= pad.l + 160) {
+          if (clickY >= pad.t && clickY <= pad.t + 16) {
+            showTrueBS = !showTrueBS;
+            drawTaylor();
+          } else if (clickY >= pad.t + 17 && clickY <= pad.t + 28) {
+            show1stOrder = !show1stOrder;
+            drawTaylor();
+          } else if (clickY >= pad.t + 29 && clickY <= pad.t + 40) {
+            show2ndOrder = !show2ndOrder;
+            drawTaylor();
+          }
+        }
+      });
+      taylorCanvas.addEventListener('mousemove', (e) => {
+        const rect = taylorCanvas.getBoundingClientRect();
+        const clickX = e.clientX - rect.left;
+        const clickY = e.clientY - rect.top;
+        const pad = {l: 55, r: 15, t: 20, b: 35};
+        if (clickX >= pad.l && clickX <= pad.l + 160 && clickY >= pad.t && clickY <= pad.t + 40) {
+          taylorCanvas.style.cursor = 'pointer';
+        } else {
+          taylorCanvas.style.cursor = '';
+        }
+      });
+    }
     drawTaylor(); drawDelta(); updateLiveDelta(); calcBSDelta();
     drawCharm(); drawVanna(); calcProb(); runSim(true);
   },300);
