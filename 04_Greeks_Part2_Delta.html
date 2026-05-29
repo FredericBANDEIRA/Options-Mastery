@@ -147,7 +147,9 @@ tr:hover td{background:rgba(74,222,128,.02)}
 .chart-controls{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:.8rem;align-items:center}
 .chart-controls label{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
 .chart-controls input[type=range]{accent-color:var(--accent);width:100px}
-.chart-controls select,.chart-controls input[type=number]{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.74rem;padding:.25rem .5rem;border-radius:5px}
+.chart-controls select,.chart-controls input[type=number],.btn-reset{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.74rem;padding:.25rem .5rem;border-radius:5px}
+.btn-reset{cursor:pointer;transition:all 0.2s;font-weight:600;color:var(--accent);border-color:var(--accent)}
+.btn-reset:hover{background:var(--accent);color:#000;box-shadow:0 0 8px rgba(74, 222, 128, 0.3)}
 .cval{font-family:var(--mono);font-size:.77rem;color:var(--accent);font-weight:700;min-width:2.8rem}
 .cval.e{color:var(--accent2)}.cval.y{color:var(--accent3)}.cval.b{color:var(--accent4)}
 canvas{display:block;width:100%;border-radius:6px}
@@ -288,29 +290,28 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 <div class="sh2">Interactive Delta Explorer</div>
 <div class="chart-wrap">
 <div class="chart-controls">
-<label>K =</label>
-<input id="dl-k" max="120" min="80" oninput="drawDelta()" type="range" value="100"/>
-<span class="cval" id="dl-k-v">100</span>
-<label style="margin-left:.8rem">σ (%) =</label>
-<input id="dl-sig" max="80" min="5" oninput="drawDelta()" type="range" value="20"/>
+<label>σ (%) =</label>
+<input id="dl-sig" max="60" min="5" oninput="drawDelta()" type="range" value="20"/>
 <span class="cval e" id="dl-sig-v">20%</span>
 <label style="margin-left:.8rem">T (years) =</label>
-<input id="dl-t" max="3" min="0.02" oninput="drawDelta()" step="0.02" type="range" value="1"/>
+<input id="dl-t" max="2" min="0.02" oninput="drawDelta()" step="0.02" type="range" value="1"/>
 <span class="cval y" id="dl-t-v">1.0</span>
+<label style="margin-left:.8rem">r (%) =</label>
+<input id="dl-r" max="15" min="0" oninput="drawDelta()" type="range" value="4"/>
+<span class="cval b" id="dl-r-v">4%</span>
 <label style="margin-left:.8rem">Type:</label>
 <select id="dl-type" onchange="drawDelta()">
 <option value="call">Call</option>
 <option value="put">Put</option>
 <option value="both">Both</option>
 </select>
+<button class="btn-reset" onclick="resetDelta()" style="margin-left: auto;">Reinit</button>
 </div>
 <canvas height="260" id="deltaCanvas"></canvas>
 <!-- live delta display -->
-<div style="display:flex;gap:1rem;margin-top:.8rem;align-items:center;flex-wrap:wrap">
-<label style="font-family:var(--mono);font-size:.72rem;color:var(--muted)">Current S =</label>
-<input id="dl-s-cur" max="150" min="50" oninput="updateLiveDelta()" style="accent-color:var(--accent);width:130px" type="range" value="100"/>
-<span class="cval" id="dl-s-cur-v">100</span>
-<div id="live-delta-display" style="margin-left:auto;display:flex;gap:1rem;font-family:var(--mono);font-size:.82rem"></div>
+<div style="display:flex;margin-top:.8rem;font-family:var(--mono);font-size:.82rem;align-items:center;min-height:24px;">
+  <span style="color:var(--muted);font-size:.72rem;">Spot S = <strong id="live-s-val" style="color:var(--text)">100.0</strong></span>
+  <div id="live-delta-display" style="margin-left:auto;display:flex;gap:1rem;"></div>
 </div>
 </div>
 <div class="sh2">Delta of Common Strategies</div>
@@ -690,7 +691,7 @@ function switchTab(id,el){
   el.classList.add('active');
   document.getElementById('tab-'+id).classList.add('active');
   setTimeout(()=>{
-    const fns={delta:()=>{drawDelta();updateLiveDelta();},
+    const fns={delta:()=>{drawDelta();},
       bs:()=>{calcBSDelta();},sensitivities:()=>{drawCharm();drawVanna();},
       prob:()=>{calcProb();},hedgepnl:()=>{runSim();}};
     if(fns[id]) fns[id]();
@@ -751,15 +752,18 @@ function drawAxes(ctx,pad,W,H,xMin,xMax,yMin,yMax,xLabel,yLabel,ticksX,ticksY,xF
 }
 
 /* ─── DELTA EXPLORER ────────────────────────────────────────────────── */
+let deltaHoverS = null;
+
 function drawDelta(){
-  const K=parseFloat(document.getElementById('dl-k').value)||100;
+  const K=100;
   const sig=parseFloat(document.getElementById('dl-sig').value)/100||.2;
   const T=parseFloat(document.getElementById('dl-t').value)||1;
+  const rVal=parseFloat(document.getElementById('dl-r').value);
+  const r=isNaN(rVal)?0.04:rVal/100;
   const type=document.getElementById('dl-type').value;
-  document.getElementById('dl-k-v').textContent=K;
   document.getElementById('dl-sig-v').textContent=(sig*100).toFixed(0)+'%';
   document.getElementById('dl-t-v').textContent=T.toFixed(2);
-  const r=0.04;
+  document.getElementById('dl-r-v').textContent=(r*100).toFixed(0)+'%';
   const Srange=Array.from({length:300},(_,i)=>30+i*190/300);
   const rc=setupCanvas('deltaCanvas',260); if(!rc) return;
   const {ctx,W,H}=rc;
@@ -781,17 +785,121 @@ function drawDelta(){
   ctx.fillStyle='#fbbf24';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K='+K,toX(K),pad.t-6);
   if(type==='both'||type==='call'){ctx.fillStyle='#4ade80';ctx.textAlign='left';ctx.fillText('Call Δ',pad.l+8,pad.t+14)}
   if(type==='both'||type==='put'){ctx.fillStyle='#f87171';ctx.textAlign='left';ctx.fillText('Put Δ',pad.l+8,pad.t+(type==='both'?26:14))}
-  updateLiveDelta();
+
+  // Hover Tooltip rendering
+  if (deltaHoverS !== null) {
+    const hx = toX(deltaHoverS);
+    
+    // Draw vertical guide line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hx, pad.t);
+    ctx.lineTo(hx, H - pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw intersection circles and gather values
+    if (type === 'call' || type === 'both') {
+      const cVal = callDelta(deltaHoverS, K, r, sig, T);
+      ctx.fillStyle = '#4ade80';
+      ctx.beginPath();
+      ctx.arc(hx, toY(cVal), 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#060a0a';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+    if (type === 'put' || type === 'both') {
+      const pVal = putDelta(deltaHoverS, K, r, sig, T);
+      ctx.fillStyle = '#f87171';
+      ctx.beginPath();
+      ctx.arc(hx, toY(pVal), 4, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#060a0a';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    }
+
+    // Draw floating tooltip box
+    const boxW = 110;
+    const boxH = (type === 'both') ? 56 : 38;
+    let tx = hx + 12;
+    if (tx + boxW > W) {
+      tx = hx - boxW - 12;
+    }
+    const ty = pad.t + 10;
+
+    ctx.fillStyle = 'rgba(11, 17, 21, 0.9)';
+    ctx.strokeStyle = 'var(--border)';
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(tx, ty, boxW, boxH);
+    ctx.strokeRect(tx, ty, boxW, boxH);
+
+    ctx.font = '10px Fira Code, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'var(--muted)';
+    ctx.fillText(`S = ${deltaHoverS.toFixed(1)}`, tx + 8, ty + 14);
+
+    if (type === 'call' || type === 'both') {
+      const cVal = callDelta(deltaHoverS, K, r, sig, T);
+      ctx.fillStyle = '#4ade80';
+      ctx.fillText(`Call Δ: ${cVal.toFixed(3)}`, tx + 8, ty + 28);
+    }
+    if (type === 'put' || type === 'both') {
+      const pVal = putDelta(deltaHoverS, K, r, sig, T);
+      ctx.fillStyle = '#f87171';
+      const offset = (type === 'both') ? 42 : 28;
+      ctx.fillText(`Put Δ: ${pVal.toFixed(3)}`, tx + 8, ty + offset);
+    }
+  }
+
+  // Setup hover listeners
+  const canvas = document.getElementById('deltaCanvas');
+  if (canvas && !canvas.dataset.hasListeners) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const pad = {l:50, r:15};
+      const cw = rect.width - pad.l - pad.r;
+      if (mouseX >= pad.l && mouseX <= rect.width - pad.r) {
+        // spot range S is 30 to 220
+        deltaHoverS = 30 + (mouseX - pad.l) / cw * 190;
+        drawDelta();
+      } else {
+        deltaHoverS = null;
+        drawDelta();
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      deltaHoverS = null;
+      drawDelta();
+    });
+    canvas.dataset.hasListeners = 'true';
+  }
+
+  updateHoverDisplay(deltaHoverS !== null ? deltaHoverS : 100);
 }
-function updateLiveDelta(){
-  const K=parseFloat(document.getElementById('dl-k').value)||100;
-  const sig=parseFloat(document.getElementById('dl-sig').value)/100||.2;
-  const T=parseFloat(document.getElementById('dl-t').value)||1;
-  const S=parseFloat(document.getElementById('dl-s-cur').value)||100;
-  document.getElementById('dl-s-cur-v').textContent=S;
-  const r=0.04;
-  const dc=callDelta(S,K,r,sig,T),dp=putDelta(S,K,r,sig,T);
-  document.getElementById('live-delta-display').innerHTML=`
+
+function resetDelta(){
+  document.getElementById('dl-sig').value = 20;
+  document.getElementById('dl-t').value = 1.0;
+  document.getElementById('dl-r').value = 4;
+  document.getElementById('dl-type').value = 'call';
+  deltaHoverS = null;
+  drawDelta();
+}
+
+function updateHoverDisplay(S) {
+  const K = 100;
+  const sig = parseFloat(document.getElementById('dl-sig').value)/100||.2;
+  const T = parseFloat(document.getElementById('dl-t').value)||1;
+  const rVal = parseFloat(document.getElementById('dl-r').value);
+  const r = isNaN(rVal) ? 0.04 : rVal / 100;
+  const dc = callDelta(S, K, r, sig, T), dp = putDelta(S, K, r, sig, T);
+  document.getElementById('live-s-val').textContent = S.toFixed(1);
+  document.getElementById('live-delta-display').innerHTML = `
     <span>Δ_call = <strong style="color:var(--accent)">${dc.toFixed(3)}</strong></span>
     <span>Δ_put = <strong style="color:var(--red)">${dp.toFixed(3)}</strong></span>
     <span>Sum = <strong style="color:var(--muted)">${(dc+dp).toFixed(3)}</strong></span>
@@ -1009,7 +1117,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     throwOnError:false
   });
   setTimeout(()=>{
-    drawDelta(); updateLiveDelta(); calcBSDelta();
+    drawDelta(); calcBSDelta();
     drawCharm(); drawVanna(); calcProb(); runSim(true);
   },300);
 });
