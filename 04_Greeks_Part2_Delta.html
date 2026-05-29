@@ -900,8 +900,8 @@ function updateHoverDisplay(S) {
   const dc = callDelta(S, K, r, sig, T), dp = putDelta(S, K, r, sig, T);
   document.getElementById('live-s-val').textContent = S.toFixed(1);
   document.getElementById('live-delta-display').innerHTML = `
-    <span>Δ_call = <strong style="color:var(--accent)">${dc.toFixed(3)}</strong></span>
-    <span>Δ_put = <strong style="color:var(--red)">${dp.toFixed(3)}</strong></span>
+    <span>Δ<sub>call</sub> = <strong style="color:var(--accent)">${dc.toFixed(3)}</strong></span>
+    <span>Δ<sub>put</sub> = <strong style="color:var(--red)">${dp.toFixed(3)}</strong></span>
     <span>Sum = <strong style="color:var(--muted)">${(dc+dp).toFixed(3)}</strong></span>
   `;
 }
