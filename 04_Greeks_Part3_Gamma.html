@@ -120,7 +120,9 @@ tr:hover td{background:rgba(251,191,36,.02)}
 .chart-controls{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:.8rem;align-items:center}
 .chart-controls label{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
 .chart-controls input[type=range]{accent-color:var(--accent);width:100px}
-.chart-controls select,.chart-controls input[type=number]{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.74rem;padding:.25rem .5rem;border-radius:5px}
+.chart-controls select,.chart-controls input[type=number],.btn-reset{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.74rem;padding:.25rem .5rem;border-radius:5px}
+.btn-reset{cursor:pointer;transition:all 0.2s;font-weight:600;color:var(--accent);border-color:var(--accent)}
+.btn-reset:hover{background:var(--accent);color:#000;box-shadow:0 0 8px rgba(251, 191, 36, 0.35)}
 .cval{font-family:var(--mono);font-size:.77rem;color:var(--accent);font-weight:700;min-width:2.8rem}
 .cval.t{color:var(--teal)}.cval.g{color:var(--accent3)}.cval.b{color:var(--accent4)}
 canvas{display:block;width:100%;border-radius:6px}
@@ -298,6 +300,7 @@ code{font-family:var(--mono);font-size:.82em;color:var(--teal);background:rgba(4
 <input id="gs-spread" max="30" min="0" oninput="runScalping()" type="range" value="5"/>
 <span class="cval t" id="gs-spread-v">5</span>
 <button onclick="runScalping(true)" style="background:var(--accent);color:#000;border:none;padding:.3rem .8rem;border-radius:5px;font-family:var(--mono);font-size:.73rem;font-weight:800;cursor:pointer;margin-left:.3rem">↺ NEW PATH</button>
+<button class="btn-reset" onclick="resetScalping()" style="margin-left:.3rem">Reinit</button>
 </div>
 <canvas height="260" id="scalpCanvas"></canvas>
 <div id="scalp-stats" style="display:flex;gap:1rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
@@ -399,11 +402,12 @@ code{font-family:var(--mono);font-size:.82em;color:var(--teal);background:rgba(4
 <div class="sh2">Interactive Gamma Calculator</div>
 <div class="chart-wrap">
 <div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
-<div><label>S₀</label><br/><input id="bg-s" oninput="calcBSGamma()" style="width:70px" type="number" value="100"/></div>
-<div><label>K</label><br/><input id="bg-k" oninput="calcBSGamma()" style="width:70px" type="number" value="100"/></div>
-<div><label>σ (%)</label><br/><input id="bg-sig" oninput="calcBSGamma()" style="width:60px" type="number" value="20"/></div>
-<div><label>r (%)</label><br/><input id="bg-r" oninput="calcBSGamma()" style="width:55px" type="number" value="4"/></div>
-<div><label>T (years)</label><br/><input id="bg-t" oninput="calcBSGamma()" step="0.25" style="width:70px" type="number" value="1"/></div>
+<div><label style="text-transform:none">S₀</label><br/><input id="bg-s" min="0.01" step="any" oninput="calcBSGamma()" style="width:70px" type="number" value="100"/></div>
+<div><label style="text-transform:none">K</label><br/><input id="bg-k" min="0.01" step="any" oninput="calcBSGamma()" style="width:70px" type="number" value="100"/></div>
+<div><label style="text-transform:none">σ (%)</label><br/><input id="bg-sig" min="0.001" step="any" oninput="calcBSGamma()" style="width:60px" type="number" value="20"/></div>
+<div><label style="text-transform:none">r (%)</label><br/><input id="bg-r" step="any" oninput="calcBSGamma()" style="width:55px" type="number" value="4"/></div>
+<div><label style="text-transform:none">T (years)</label><br/><input id="bg-t" min="0.001" step="any" oninput="calcBSGamma()" style="width:70px" type="number" value="1"/></div>
+<div style="display:flex;align-items:flex-end;"><button class="btn-reset" onclick="resetBSGamma()">Reinit</button></div>
 </div>
 <div id="bg-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:.8rem 0"></div>
 <div class="gamma-meter">
@@ -448,6 +452,7 @@ code{font-family:var(--mono);font-size:.82em;color:var(--teal);background:rgba(4
 <label style="margin-left:.8rem">r (%) =</label>
 <input id="gm-r" max="10" min="0" oninput="drawGammaMoneyness()" type="range" value="4"/>
 <span class="cval" id="gm-r-v">4%</span>
+<button class="btn-reset" onclick="resetGammaMoneyness()" style="margin-left:auto;">Reinit</button>
 </div>
 <canvas height="270" id="gammaMoneynessCanvas"></canvas>
 <div id="gm-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
@@ -488,6 +493,7 @@ code{font-family:var(--mono);font-size:.82em;color:var(--teal);background:rgba(4
 <label style="margin-left:.8rem">σ (%) =</label>
 <input id="gt-sig" max="50" min="5" oninput="drawGammaTime()" type="range" value="20"/>
 <span class="cval t" id="gt-sig-v">20%</span>
+<button class="btn-reset" onclick="resetGammaTime()" style="margin-left:auto;">Reinit</button>
 </div>
 <canvas height="280" id="gammaTimeCanvas"></canvas>
 </div>
@@ -510,6 +516,7 @@ code{font-family:var(--mono);font-size:.82em;color:var(--teal);background:rgba(4
 <label style="margin-left:.8rem">T (years) =</label>
 <input id="gv-t" max="2" min="0.1" oninput="drawGammaVol()" step="0.05" type="range" value="0.5"/>
 <span class="cval t" id="gv-t-v">0.5</span>
+<button class="btn-reset" onclick="resetGammaVol()" style="margin-left:auto;">Reinit</button>
 </div>
 <canvas height="280" id="gammaVolCanvas"></canvas>
 </div>
@@ -580,6 +587,7 @@ code{font-family:var(--mono);font-size:.82em;color:var(--teal);background:rgba(4
 <label style="margin-left:.8rem">Days to expiry =</label>
 <input id="pr-days" max="30" min="1" oninput="drawPinRisk()" type="range" value="5"/>
 <span class="cval g" id="pr-days-v">5</span>
+<button class="btn-reset" onclick="resetPinRisk()" style="margin-left:auto;">Reinit</button>
 </div>
 <canvas height="280" id="pinRiskCanvas"></canvas>
 <div id="pr-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
@@ -655,12 +663,13 @@ code{font-family:var(--mono);font-size:.82em;color:var(--teal);background:rgba(4
 <div class="sh2">Gamma P&amp;L Calculator</div>
 <div class="chart-wrap">
 <div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
-<div><label>S₀</label><br/><input id="gp-s" oninput="calcGammaPnl()" style="width:70px" type="number" value="100"/></div>
-<div><label>K</label><br/><input id="gp-k" oninput="calcGammaPnl()" style="width:70px" type="number" value="100"/></div>
-<div><label>σ (%)</label><br/><input id="gp-sig" oninput="calcGammaPnl()" style="width:60px" type="number" value="20"/></div>
-<div><label>r (%)</label><br/><input id="gp-r" oninput="calcGammaPnl()" style="width:55px" type="number" value="4"/></div>
-<div><label>T (years)</label><br/><input id="gp-t" oninput="calcGammaPnl()" step="0.1" style="width:70px" type="number" value="0.5"/></div>
-<div><label>Move dS (%)</label><br/><input id="gp-ds" oninput="calcGammaPnl()" step="0.5" style="width:65px" type="number" value="2"/></div>
+<div><label style="text-transform:none">S₀</label><br/><input id="gp-s" min="0.01" step="any" oninput="calcGammaPnl()" style="width:70px" type="number" value="100"/></div>
+<div><label style="text-transform:none">K</label><br/><input id="gp-k" min="0.01" step="any" oninput="calcGammaPnl()" style="width:70px" type="number" value="100"/></div>
+<div><label style="text-transform:none">σ (%)</label><br/><input id="gp-sig" min="0.001" step="any" oninput="calcGammaPnl()" style="width:60px" type="number" value="20"/></div>
+<div><label style="text-transform:none">r (%)</label><br/><input id="gp-r" step="any" oninput="calcGammaPnl()" style="width:55px" type="number" value="4"/></div>
+<div><label style="text-transform:none">T (years)</label><br/><input id="gp-t" min="0.001" step="any" oninput="calcGammaPnl()" style="width:70px" type="number" value="0.5"/></div>
+<div><label style="text-transform:none">Move dS (%)</label><br/><input id="gp-ds" min="0" step="any" oninput="calcGammaPnl()" style="width:65px" type="number" value="2"/></div>
+<div style="display:flex;align-items:flex-end;"><button class="btn-reset" onclick="resetGammaPnl()">Reinit</button></div>
 </div>
 <div id="gp-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.8rem;margin:.8rem 0"></div>
 <canvas height="240" id="gammaPnlCanvas" style="margin-top:.5rem"></canvas>
@@ -743,12 +752,13 @@ code{font-family:var(--mono);font-size:.82em;color:var(--teal);background:rgba(4
 <div class="sh2">Dollar Gamma Calculator &amp; P&amp;L Sensitivity</div>
 <div class="chart-wrap">
 <div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
-<div><label>S₀</label><br/><input id="dg-s" oninput="calcDollarGamma()" style="width:70px" type="number" value="100"/></div>
-<div><label>K</label><br/><input id="dg-k" oninput="calcDollarGamma()" style="width:70px" type="number" value="100"/></div>
-<div><label>σ (%)</label><br/><input id="dg-sig" oninput="calcDollarGamma()" style="width:60px" type="number" value="20"/></div>
-<div><label>r (%)</label><br/><input id="dg-r" oninput="calcDollarGamma()" style="width:55px" type="number" value="4"/></div>
-<div><label>T (years)</label><br/><input id="dg-t" oninput="calcDollarGamma()" step="0.1" style="width:70px" type="number" value="0.5"/></div>
-<div><label>Contracts (# of options)</label><br/><input id="dg-n" oninput="calcDollarGamma()" style="width:70px" type="number" value="100"/></div>
+<div><label style="text-transform:none">S₀</label><br/><input id="dg-s" min="0.01" step="any" oninput="calcDollarGamma()" style="width:70px" type="number" value="100"/></div>
+<div><label style="text-transform:none">K</label><br/><input id="dg-k" min="0.01" step="any" oninput="calcDollarGamma()" style="width:70px" type="number" value="100"/></div>
+<div><label style="text-transform:none">σ (%)</label><br/><input id="dg-sig" min="0.001" step="any" oninput="calcDollarGamma()" style="width:60px" type="number" value="20"/></div>
+<div><label style="text-transform:none">r (%)</label><br/><input id="dg-r" step="any" oninput="calcDollarGamma()" style="width:55px" type="number" value="4"/></div>
+<div><label style="text-transform:none">T (years)</label><br/><input id="dg-t" min="0.001" step="any" oninput="calcDollarGamma()" style="width:70px" type="number" value="0.5"/></div>
+<div><label style="text-transform:none">Contracts (# of options)</label><br/><input id="dg-n" min="0" oninput="calcDollarGamma()" style="width:70px" type="number" value="100"/></div>
+<div style="display:flex;align-items:flex-end;"><button class="btn-reset" onclick="resetDollarGamma()">Reinit</button></div>
 </div>
 <div id="dg-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.8rem;margin:.8rem 0"></div>
 <canvas height="240" id="dollarGammaCanvas" style="margin-top:.5rem"></canvas>
@@ -898,6 +908,16 @@ function drawConvex(){
 
 /* ─── GAMMA SCALPING SIMULATOR ─────────────────────────────────────── */
 let scalpPrices=[];
+let scalpHoverDay = null;
+
+function resetScalping(){
+  document.getElementById('gs-pos').value = 'long';
+  document.getElementById('gs-vol').value = 20;
+  document.getElementById('gs-spread').value = 5;
+  scalpHoverDay = null;
+  runScalping(true);
+}
+
 function runScalping(newPath=false){
   const pos=document.getElementById('gs-pos').value;
   const vol=parseFloat(document.getElementById('gs-vol').value)/100;
@@ -945,6 +965,82 @@ function runScalping(newPath=false){
   const col=pos==='long'?(cumPnL[N]>=0?'#4ade80':'#f87171'):(cumPnL[N]>=0?'#4ade80':'#f87171');
   ctx.strokeStyle=col;ctx.lineWidth=2;
   ctx.beginPath();cumPnL.forEach((p,i)=>i===0?ctx.moveTo(toX(0),toY(0)):ctx.lineTo(toX(i),toY(p)));ctx.stroke();
+
+  // Setup hover listeners for scalpCanvas
+  const canvas = document.getElementById('scalpCanvas');
+  if (canvas && !canvas.dataset.hasListeners) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const cw = canvas.width - pad.l - pad.r;
+      if (mouseX >= pad.l && mouseX <= canvas.width - pad.r) {
+        scalpHoverDay = Math.round((mouseX - pad.l) / cw * N);
+        scalpHoverDay = Math.max(0, Math.min(N, scalpHoverDay));
+        runScalping();
+      } else {
+        scalpHoverDay = null;
+        runScalping();
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      scalpHoverDay = null;
+      runScalping();
+    });
+    canvas.dataset.hasListeners = 'true';
+  }
+
+  // Hover Tooltip rendering for scalpCanvas
+  if (scalpHoverDay !== null && scalpHoverDay >= 0 && scalpHoverDay <= N) {
+    const hx = toX(scalpHoverDay);
+    const hy = toY(cumPnL[scalpHoverDay]);
+    
+    // Draw vertical guide line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hx, pad.t);
+    ctx.lineTo(hx, H - pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw intersection circle
+    ctx.fillStyle = cumPnL[scalpHoverDay] >= 0 ? 'var(--green)' : 'var(--red)';
+    ctx.beginPath();
+    ctx.arc(hx, hy, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#05080a';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Draw floating tooltip box next to cursor
+    const boxW = 125;
+    const boxH = 56;
+    let tx = hx + 12;
+    if (tx + boxW > W - 10) {
+      tx = hx - boxW - 12;
+    }
+    const ty = pad.t + 10;
+
+    ctx.fillStyle = 'rgba(9, 14, 18, 0.9)';
+    ctx.strokeStyle = 'var(--border)';
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(tx, ty, boxW, boxH);
+    ctx.strokeRect(tx, ty, boxW, boxH);
+
+    ctx.font = '10px Fira Code, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'var(--muted)';
+    ctx.fillText(`Day ${scalpHoverDay}`, tx + 8, ty + 14);
+
+    ctx.fillStyle = 'var(--text)';
+    ctx.fillText(`Stock: $${scalpPrices[scalpHoverDay].toFixed(2)}`, tx + 8, ty + 28);
+
+    ctx.fillStyle = cumPnL[scalpHoverDay] >= 0 ? 'var(--green)' : 'var(--red)';
+    ctx.fillText(`Net P&L: ${cumPnL[scalpHoverDay] >= 0 ? '+' : ''}${cumPnL[scalpHoverDay].toFixed(4)}`, tx + 8, ty + 42);
+  }
+
   document.getElementById('scalp-stats').innerHTML=`
     <span>Final P&L: <strong style="color:${cumPnL[N]>=0?'var(--green)':'var(--red)'}">${cumPnL[N]>0?'+':''}${cumPnL[N].toFixed(4)}</strong></span>
     <span>Gross Gamma P&L: <strong style="color:var(--accent)">${(gammaPnL*sign).toFixed(4)}</strong></span>
@@ -954,24 +1050,42 @@ function runScalping(newPath=false){
 }
 
 /* ─── BS GAMMA CALCULATOR ───────────────────────────────────────────── */
+let bsgammaHoverS = null;
+
+function resetBSGamma(){
+  document.getElementById('bg-s').value = 100;
+  document.getElementById('bg-k').value = 100;
+  document.getElementById('bg-sig').value = 20;
+  document.getElementById('bg-r').value = 4;
+  document.getElementById('bg-t').value = 1;
+  bsgammaHoverS = null;
+  calcBSGamma();
+}
+
 function calcBSGamma(){
-  const S=parseFloat(document.getElementById('bg-s').value)||100;
-  const K=parseFloat(document.getElementById('bg-k').value)||100;
-  const sig=parseFloat(document.getElementById('bg-sig').value)/100||.2;
-  const r=parseFloat(document.getElementById('bg-r').value)/100||.04;
-  const T=parseFloat(document.getElementById('bg-t').value)||1;
+  const sVal = parseFloat(document.getElementById('bg-s').value);
+  const S = isNaN(sVal) || sVal <= 0 ? 100 : sVal;
+  const kVal = parseFloat(document.getElementById('bg-k').value);
+  const K = isNaN(kVal) || kVal <= 0 ? 100 : kVal;
+  const sigVal = parseFloat(document.getElementById('bg-sig').value);
+  const sig = isNaN(sigVal) || sigVal <= 0 ? 0.2 : sigVal / 100;
+  const rVal = parseFloat(document.getElementById('bg-r').value);
+  const r = isNaN(rVal) ? 0.04 : rVal / 100;
+  const tVal = parseFloat(document.getElementById('bg-t').value);
+  const T = isNaN(tVal) || tVal <= 0 ? 1.0 : tVal;
+
   const gma=bsGamma(S,K,r,sig,T);
   const d1=bsD1(S,K,r,sig,T);
   const th=bsTheta(S,K,r,sig,T);
   const C=bsCall(S,K,r,sig,T);
   const dollarGamma=gma*S*S/100;
   document.getElementById('bg-results').innerHTML=`
-    <div class="kpi"><div class="lbl">Gamma Γ</div><div class="val" style="color:var(--accent)">${gma.toFixed(5)}</div><div class="sub">Δ change per $1 in S</div></div>
-    <div class="kpi"><div class="lbl">d₁</div><div class="val">${d1.toFixed(4)}</div><div class="sub">N'(d₁) = ${normpdf(d1).toFixed(4)}</div></div>
-    <div class="kpi"><div class="lbl">Dollar Gamma $Γ</div><div class="val" style="color:var(--teal)">${dollarGamma.toFixed(3)}</div><div class="sub">ΓS²/100</div></div>
-    <div class="kpi"><div class="lbl">Theta Θ (daily)</div><div class="val" style="color:var(--red)">${th.toFixed(4)}</div><div class="sub">Daily rent</div></div>
-    <div class="kpi"><div class="lbl">Γ/Θ ratio</div><div class="val" style="color:var(--accent3)">${(gma/Math.abs(th)).toFixed(3)}</div><div class="sub">Convexity per unit decay</div></div>
-    <div class="kpi"><div class="lbl">S·σ·√T</div><div class="val">${(S*sig*Math.sqrt(T)).toFixed(2)}</div><div class="sub">Denominator of Γ</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Gamma Γ</div><div class="val" style="color:var(--accent)">${gma.toFixed(5)}</div><div class="sub">Δ change per $1 in S</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">d₁</div><div class="val">${d1.toFixed(4)}</div><div class="sub" style="text-transform:none">N'(d₁) = ${normpdf(d1).toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Dollar Gamma $Γ</div><div class="val" style="color:var(--teal)">${dollarGamma.toFixed(3)}</div><div class="sub">ΓS²/100</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Theta Θ (daily)</div><div class="val" style="color:var(--red)">${th.toFixed(4)}</div><div class="sub">Daily rent</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Γ/Θ ratio</div><div class="val" style="color:var(--accent3)">${(gma/Math.abs(th)).toFixed(3)}</div><div class="sub">Convexity per unit decay</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">S·σ·√T</div><div class="val">${(S*sig*Math.sqrt(T)).toFixed(2)}</div><div class="sub">Denominator of Γ</div></div>
   `;
   const pct=Math.min(gma/0.05,1);
   document.getElementById('gamma-gauge-num').textContent=gma.toFixed(5);
@@ -997,14 +1111,100 @@ function calcBSGamma(){
   // strike line
   ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#fbbf24';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K='+K,toX(K),pad.t-5);
+
+  // Setup hover listeners for bsgammaCanvas
+  const canvas = document.getElementById('bsgammaCanvas');
+  if (canvas && !canvas.dataset.hasListeners) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const cw = canvas.width - pad.l - pad.r;
+      if (mouseX >= pad.l && mouseX <= canvas.width - pad.r) {
+        bsgammaHoverS = K * 0.5 + (mouseX - pad.l) / cw * K;
+        calcBSGamma();
+      } else {
+        bsgammaHoverS = null;
+        calcBSGamma();
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      bsgammaHoverS = null;
+      calcBSGamma();
+    });
+    canvas.dataset.hasListeners = 'true';
+  }
+
+  // Hover Tooltip rendering for bsgammaCanvas
+  if (bsgammaHoverS !== null) {
+    const hx = toX(bsgammaHoverS);
+    const hGma = bsGamma(bsgammaHoverS, K, r, sig, T);
+    const hy = toY(hGma);
+
+    // Draw vertical guide line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hx, pad.t);
+    ctx.lineTo(hx, H - pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw intersection circle
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(hx, hy, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#05080a';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Draw floating tooltip box next to cursor
+    const boxW = 110;
+    const boxH = 40;
+    let tx = hx + 12;
+    if (tx + boxW > W - 10) {
+      tx = hx - boxW - 12;
+    }
+    let ty = hy - boxH / 2;
+    if (ty < pad.t) ty = pad.t;
+    if (ty + boxH > H - pad.b) ty = H - pad.b - boxH;
+
+    ctx.fillStyle = 'rgba(9, 14, 18, 0.9)';
+    ctx.strokeStyle = 'var(--border)';
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(tx, ty, boxW, boxH);
+    ctx.strokeRect(tx, ty, boxW, boxH);
+
+    ctx.font = '10px Fira Code, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'var(--muted)';
+    ctx.fillText(`S = ${bsgammaHoverS.toFixed(1)}`, tx + 8, ty + 14);
+
+    ctx.fillStyle = 'var(--accent)';
+    ctx.fillText(`Γ = ${hGma.toFixed(5)}`, tx + 8, ty + 28);
+  }
 }
 
 /* ─── GAMMA vs MONEYNESS ────────────────────────────────────────────── */
+let gammaMoneynessHoverS = null;
+
+function resetGammaMoneyness(){
+  document.getElementById('gm-k').value = 100;
+  document.getElementById('gm-sig').value = 20;
+  document.getElementById('gm-t').value = 1;
+  document.getElementById('gm-r').value = 4;
+  gammaMoneynessHoverS = null;
+  drawGammaMoneyness();
+}
+
 function drawGammaMoneyness(){
   const K=parseFloat(document.getElementById('gm-k').value)||100;
   const sig=parseFloat(document.getElementById('gm-sig').value)/100||.2;
   const T=parseFloat(document.getElementById('gm-t').value)||1;
-  const r=parseFloat(document.getElementById('gm-r').value)/100||.04;
+  const rVal=parseFloat(document.getElementById('gm-r').value);
+  const r=isNaN(rVal)?0.04:rVal/100;
   document.getElementById('gm-k-v').textContent=K;
   document.getElementById('gm-sig-v').textContent=(sig*100).toFixed(0)+'%';
   document.getElementById('gm-t-v').textContent=T.toFixed(2);
@@ -1034,6 +1234,81 @@ function drawGammaMoneyness(){
   ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#fbbf24';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
   const gmaAtm=bsGamma(K,K,r,sig,T);
+
+  // Setup hover listeners for gammaMoneynessCanvas
+  const canvas = document.getElementById('gammaMoneynessCanvas');
+  if (canvas && !canvas.dataset.hasListeners) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const cw = canvas.width - pad.l - pad.r;
+      if (mouseX >= pad.l && mouseX <= canvas.width - pad.r) {
+        gammaMoneynessHoverS = 50 + (mouseX - pad.l) / cw * 100;
+        drawGammaMoneyness();
+      } else {
+        gammaMoneynessHoverS = null;
+        drawGammaMoneyness();
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      gammaMoneynessHoverS = null;
+      drawGammaMoneyness();
+    });
+    canvas.dataset.hasListeners = 'true';
+  }
+
+  // Hover Tooltip rendering for gammaMoneynessCanvas
+  if (gammaMoneynessHoverS !== null) {
+    const hx = toX(gammaMoneynessHoverS);
+    const hGma = bsGamma(gammaMoneynessHoverS, K, r, sig, T);
+    const hy = toY(hGma);
+
+    // Draw vertical guide line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hx, pad.t);
+    ctx.lineTo(hx, H - pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw intersection circle
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(hx, hy, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#05080a';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Draw floating tooltip box next to cursor
+    const boxW = 110;
+    const boxH = 40;
+    let tx = hx + 12;
+    if (tx + boxW > W - 10) {
+      tx = hx - boxW - 12;
+    }
+    let ty = hy - boxH / 2;
+    if (ty < pad.t) ty = pad.t;
+    if (ty + boxH > H - pad.b) ty = H - pad.b - boxH;
+
+    ctx.fillStyle = 'rgba(9, 14, 18, 0.9)';
+    ctx.strokeStyle = 'var(--border)';
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(tx, ty, boxW, boxH);
+    ctx.strokeRect(tx, ty, boxW, boxH);
+
+    ctx.font = '10px Fira Code, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'var(--muted)';
+    ctx.fillText(`S = ${gammaMoneynessHoverS.toFixed(1)}`, tx + 8, ty + 14);
+
+    ctx.fillStyle = 'var(--accent)';
+    ctx.fillText(`Γ = ${hGma.toFixed(5)}`, tx + 8, ty + 28);
+  }
+
   document.getElementById('gm-stats').innerHTML=`
     <span>Γ(ATM) = <strong style="color:var(--accent)">${gmaAtm.toFixed(5)}</strong></span>
     <span>Γ(ATMF) = <strong style="color:var(--teal)">${bsGamma(ATMF,K,r,sig,T).toFixed(5)}</strong></span>
@@ -1043,6 +1318,16 @@ function drawGammaMoneyness(){
 }
 
 /* ─── GAMMA vs TIME ──────────────────────────────────────────────────── */
+let gammaTimeHoverS = null, gammaTimeHoverY = null;
+
+function resetGammaTime(){
+  document.getElementById('gt-k').value = 100;
+  document.getElementById('gt-sig').value = 20;
+  gammaTimeHoverS = null;
+  gammaTimeHoverY = null;
+  drawGammaTime();
+}
+
 function drawGammaTime(){
   const K=parseFloat(document.getElementById('gt-k').value)||100;
   const sig=parseFloat(document.getElementById('gt-sig').value)/100||.2;
@@ -1055,7 +1340,7 @@ function drawGammaTime(){
   const yMax=Math.min(Math.max(...allG),.5)*1.1;
   const rk=setupCanvas('gammaTimeCanvas',280);if(!rk)return;
   const{ctx,W,H}=rk;
-  const pad={l:60,r:85,t:20,b:35};
+  const pad={l:60,r:100,t:20,b:35};
   const{toX,toY}=drawAxes(ctx,pad,W,H,50,150,0,yMax,'Spot S','Gamma',
     [60,75,100,125,140],[0,yMax*.25,yMax*.5,yMax*.75,yMax].map(v=>parseFloat(v.toFixed(4))),
     null,v=>v.toFixed(4));
@@ -1066,11 +1351,133 @@ function drawGammaTime(){
   });
   ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#fbbf24';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+
+  // legend
   ctx.textAlign='left';ctx.font='10px Fira Code,monospace';
-  mats.forEach(([T,label,col],i)=>{ctx.fillStyle=col;ctx.fillRect(W-80,pad.t+i*16,14,2);ctx.fillStyle=col;ctx.fillText(label,W-62,pad.t+i*16+4)});
+  mats.forEach(([T,label,col],i)=>{
+    let text = label;
+    if (gammaTimeHoverS !== null) {
+      const val = bsGamma(gammaTimeHoverS, K, r, sig, T);
+      text += `: ${val.toFixed(4)}`;
+    }
+    ctx.fillStyle=col;ctx.fillRect(W-95,pad.t+i*16,14,2);
+    ctx.fillStyle=col;ctx.fillText(text,W-77,pad.t+i*16+4);
+  });
+
+  // Setup hover listeners for gammaTimeCanvas
+  const canvas = document.getElementById('gammaTimeCanvas');
+  if (canvas && !canvas.dataset.hasListeners) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const mouseY = (e.clientY - rect.top) * scaleY;
+      const cw = canvas.width - pad.l - pad.r;
+      if (mouseX >= pad.l && mouseX <= canvas.width - pad.r) {
+        gammaTimeHoverS = 50 + (mouseX - pad.l) / cw * 100;
+        gammaTimeHoverY = mouseY;
+        drawGammaTime();
+      } else {
+        gammaTimeHoverS = null;
+        gammaTimeHoverY = null;
+        drawGammaTime();
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      gammaTimeHoverS = null;
+      gammaTimeHoverY = null;
+      drawGammaTime();
+    });
+    canvas.dataset.hasListeners = 'true';
+  }
+
+  // Hover Tooltip rendering for gammaTimeCanvas
+  if (gammaTimeHoverS !== null && gammaTimeHoverY !== null) {
+    const hx = toX(gammaTimeHoverS);
+    
+    // Find closest curve in canvas space
+    let closestMat = null;
+    let minDistance = Infinity;
+    let closestY = 0;
+    let closestGamma = 0;
+    
+    mats.forEach(([T, label, col]) => {
+      const gVal = Math.min(bsGamma(gammaTimeHoverS, K, r, sig, T), yMax);
+      const cy = toY(gVal);
+      const dist = Math.abs(gammaTimeHoverY - cy);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestMat = { T, label, col };
+        closestY = cy;
+        closestGamma = gVal;
+      }
+    });
+
+    // Draw vertical guide line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hx, pad.t);
+    ctx.lineTo(hx, H - pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw circles at all curve intersections
+    mats.forEach(([T, label, col]) => {
+      const gVal = Math.min(bsGamma(gammaTimeHoverS, K, r, sig, T), yMax);
+      const cy = toY(gVal);
+      const isClosest = (closestMat && T === closestMat.T);
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(hx, cy, isClosest ? 5.5 : 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = isClosest ? '#fff' : '#05080a';
+      ctx.lineWidth = isClosest ? 1.5 : 1;
+      ctx.stroke();
+    });
+
+    // Draw floating tooltip box next to closest intersection point
+    if (closestMat) {
+      const boxW = 110;
+      const boxH = 40;
+      let tx = hx + 12;
+      if (tx + boxW > W - 100) {
+        tx = hx - boxW - 12;
+      }
+      let ty = closestY - boxH / 2;
+      if (ty < pad.t) ty = pad.t;
+      if (ty + boxH > H - pad.b) ty = H - pad.b - boxH;
+
+      ctx.fillStyle = 'rgba(9, 14, 18, 0.9)';
+      ctx.strokeStyle = closestMat.col;
+      ctx.lineWidth = 1.5;
+      ctx.fillRect(tx, ty, boxW, boxH);
+      ctx.strokeRect(tx, ty, boxW, boxH);
+
+      ctx.font = '10px Fira Code, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillStyle = 'var(--muted)';
+      ctx.fillText(`S = ${gammaTimeHoverS.toFixed(1)}`, tx + 8, ty + 14);
+
+      ctx.fillStyle = closestMat.col;
+      ctx.fillText(`Γ = ${closestGamma.toFixed(5)}`, tx + 8, ty + 28);
+    }
+  }
 }
 
 /* ─── GAMMA vs VOL ───────────────────────────────────────────────────── */
+let gammaVolHoverS = null, gammaVolHoverY = null;
+
+function resetGammaVol(){
+  document.getElementById('gv-k').value = 100;
+  document.getElementById('gv-t').value = 0.5;
+  gammaVolHoverS = null;
+  gammaVolHoverY = null;
+  drawGammaVol();
+}
+
 function drawGammaVol(){
   const K=parseFloat(document.getElementById('gv-k').value)||100;
   const T=parseFloat(document.getElementById('gv-t').value)||.5;
@@ -1083,7 +1490,7 @@ function drawGammaVol(){
   const yMax=Math.min(Math.max(...allG),.15)*1.1;
   const rv=setupCanvas('gammaVolCanvas',280);if(!rv)return;
   const{ctx,W,H}=rv;
-  const pad={l:60,r:90,t:20,b:35};
+  const pad={l:60,r:105,t:20,b:35};
   const{toX,toY}=drawAxes(ctx,pad,W,H,50,150,0,yMax,'Spot S','Gamma',
     [60,75,100,125,140],[0,yMax*.25,yMax*.5,yMax*.75,yMax].map(v=>parseFloat(v.toFixed(4))),
     null,v=>v.toFixed(4));
@@ -1094,11 +1501,134 @@ function drawGammaVol(){
   });
   ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#fbbf24';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+
+  // legend
   ctx.textAlign='left';ctx.font='10px Fira Code,monospace';
-  vols.forEach(([v,label,col],i)=>{ctx.fillStyle=col;ctx.fillRect(W-85,pad.t+i*16,14,2);ctx.fillStyle=col;ctx.fillText(label,W-67,pad.t+i*16+4)});
+  vols.forEach(([v,label,col],i)=>{
+    let text = label;
+    if (gammaVolHoverS !== null) {
+      const val = bsGamma(gammaVolHoverS, K, r, v, T);
+      text += `: ${val.toFixed(4)}`;
+    }
+    ctx.fillStyle=col;ctx.fillRect(W-100,pad.t+i*16,14,2);
+    ctx.fillStyle=col;ctx.fillText(text,W-82,pad.t+i*16+4);
+  });
+
+  // Setup hover listeners for gammaVolCanvas
+  const canvas = document.getElementById('gammaVolCanvas');
+  if (canvas && !canvas.dataset.hasListeners) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const mouseY = (e.clientY - rect.top) * scaleY;
+      const cw = canvas.width - pad.l - pad.r;
+      if (mouseX >= pad.l && mouseX <= canvas.width - pad.r) {
+        gammaVolHoverS = 50 + (mouseX - pad.l) / cw * 100;
+        gammaVolHoverY = mouseY;
+        drawGammaVol();
+      } else {
+        gammaVolHoverS = null;
+        gammaVolHoverY = null;
+        drawGammaVol();
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      gammaVolHoverS = null;
+      gammaVolHoverY = null;
+      drawGammaVol();
+    });
+    canvas.dataset.hasListeners = 'true';
+  }
+
+  // Hover Tooltip rendering for gammaVolCanvas
+  if (gammaVolHoverS !== null && gammaVolHoverY !== null) {
+    const hx = toX(gammaVolHoverS);
+    
+    // Find closest curve in canvas space
+    let closestVol = null;
+    let minDistance = Infinity;
+    let closestY = 0;
+    let closestGamma = 0;
+    
+    vols.forEach(([sig, label, col]) => {
+      const gVal = Math.min(bsGamma(gammaVolHoverS, K, r, sig, T), yMax);
+      const cy = toY(gVal);
+      const dist = Math.abs(gammaVolHoverY - cy);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestVol = { sig, label, col };
+        closestY = cy;
+        closestGamma = gVal;
+      }
+    });
+
+    // Draw vertical guide line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hx, pad.t);
+    ctx.lineTo(hx, H - pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw circles at all curve intersections
+    vols.forEach(([sig, label, col]) => {
+      const gVal = Math.min(bsGamma(gammaVolHoverS, K, r, sig, T), yMax);
+      const cy = toY(gVal);
+      const isClosest = (closestVol && sig === closestVol.sig);
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(hx, cy, isClosest ? 5.5 : 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = isClosest ? '#fff' : '#05080a';
+      ctx.lineWidth = isClosest ? 1.5 : 1;
+      ctx.stroke();
+    });
+
+    // Draw floating tooltip box next to closest intersection point
+    if (closestVol) {
+      const boxW = 110;
+      const boxH = 40;
+      let tx = hx + 12;
+      if (tx + boxW > W - 105) {
+        tx = hx - boxW - 12;
+      }
+      let ty = closestY - boxH / 2;
+      if (ty < pad.t) ty = pad.t;
+      if (ty + boxH > H - pad.b) ty = H - pad.b - boxH;
+
+      ctx.fillStyle = 'rgba(9, 14, 18, 0.9)';
+      ctx.strokeStyle = closestVol.col;
+      ctx.lineWidth = 1.5;
+      ctx.fillRect(tx, ty, boxW, boxH);
+      ctx.strokeRect(tx, ty, boxW, boxH);
+
+      ctx.font = '10px Fira Code, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillStyle = 'var(--muted)';
+      ctx.fillText(`S = ${gammaVolHoverS.toFixed(1)}`, tx + 8, ty + 14);
+
+      ctx.fillStyle = closestVol.col;
+      ctx.fillText(`Γ = ${closestGamma.toFixed(5)}`, tx + 8, ty + 28);
+    }
+  }
 }
 
 /* ─── PIN RISK ───────────────────────────────────────────────────────── */
+let pinRiskHoverS = null, pinRiskHoverY = null;
+
+function resetPinRisk(){
+  document.getElementById('pr-k').value = 100;
+  document.getElementById('pr-sig').value = 20;
+  document.getElementById('pr-days').value = 5;
+  pinRiskHoverS = null;
+  pinRiskHoverY = null;
+  drawPinRisk();
+}
+
 function drawPinRisk(){
   const K=parseFloat(document.getElementById('pr-k').value)||100;
   const sig=parseFloat(document.getElementById('pr-sig').value)/100||.2;
@@ -1131,6 +1661,109 @@ function drawPinRisk(){
   ctx.strokeStyle='rgba(255,255,255,.2)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#fbbf24';ctx.textAlign='center';ctx.fillText('K='+K,toX(K),H-20);
   const gAtm=bsGamma(K,K,r,sig,T);
+
+  // Setup hover listeners for pinRiskCanvas
+  const canvas = document.getElementById('pinRiskCanvas');
+  if (canvas && !canvas.dataset.hasListeners) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const mouseY = (e.clientY - rect.top) * scaleY;
+      const cw = canvas.width - pad.l - pad.r;
+      if (mouseX >= pad.l && mouseX <= canvas.width - pad.r) {
+        pinRiskHoverS = K * 0.8 + (mouseX - pad.l) / cw * K * 0.4;
+        pinRiskHoverY = mouseY;
+        drawPinRisk();
+      } else {
+        pinRiskHoverS = null;
+        pinRiskHoverY = null;
+        drawPinRisk();
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      pinRiskHoverS = null;
+      pinRiskHoverY = null;
+      drawPinRisk();
+    });
+    canvas.dataset.hasListeners = 'true';
+  }
+
+  // Hover Tooltip rendering for pinRiskCanvas
+  if (pinRiskHoverS !== null && pinRiskHoverY !== null) {
+    const hx = toX(pinRiskHoverS);
+    
+    // Find closest curve in canvas space
+    let closestMat = null;
+    let minDistance = Infinity;
+    let closestY = 0;
+    let closestGamma = 0;
+    
+    mats.forEach(([t, label, col]) => {
+      const gVal = Math.min(bsGamma(pinRiskHoverS, K, r, sig, t), yMax);
+      const cy = toY(gVal);
+      const dist = Math.abs(pinRiskHoverY - cy);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestMat = { t, label, col };
+        closestY = cy;
+        closestGamma = gVal;
+      }
+    });
+
+    // Draw vertical guide line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hx, pad.t);
+    ctx.lineTo(hx, H - pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw circles at all curve intersections
+    mats.forEach(([t, label, col]) => {
+      const gVal = Math.min(bsGamma(pinRiskHoverS, K, r, sig, t), yMax);
+      const cy = toY(gVal);
+      const isClosest = (closestMat && t === closestMat.t);
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(hx, cy, isClosest ? 5.5 : 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = isClosest ? '#fff' : '#05080a';
+      ctx.lineWidth = isClosest ? 1.5 : 1;
+      ctx.stroke();
+    });
+
+    // Draw floating tooltip box next to closest intersection point
+    if (closestMat) {
+      const boxW = 120;
+      const boxH = 40;
+      let tx = hx + 12;
+      if (tx + boxW > W - 10) {
+        tx = hx - boxW - 12;
+      }
+      let ty = closestY - boxH / 2;
+      if (ty < pad.t) ty = pad.t;
+      if (ty + boxH > H - pad.b) ty = H - pad.b - boxH;
+
+      ctx.fillStyle = 'rgba(9, 14, 18, 0.9)';
+      ctx.strokeStyle = closestMat.col;
+      ctx.lineWidth = 1.5;
+      ctx.fillRect(tx, ty, boxW, boxH);
+      ctx.strokeRect(tx, ty, boxW, boxH);
+
+      ctx.font = '10px Fira Code, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillStyle = 'var(--muted)';
+      ctx.fillText(`S = ${pinRiskHoverS.toFixed(1)}`, tx + 8, ty + 14);
+
+      ctx.fillStyle = closestMat.col;
+      ctx.fillText(`${closestMat.label} Γ: ${closestGamma.toFixed(5)}`, tx + 8, ty + 28);
+    }
+  }
+
   document.getElementById('pr-stats').innerHTML=`
     <span>ATM Gamma now (${days}d): <strong style="color:var(--red)">${gAtm.toFixed(5)}</strong></span>
     <span>$Γ(ATM): <strong style="color:var(--accent)">${(gAtm*K*K/100).toFixed(3)}</strong></span>
@@ -1140,23 +1773,39 @@ function drawPinRisk(){
 }
 
 /* ─── GAMMA P&L CALCULATOR ──────────────────────────────────────────── */
+let gammaPnlHoverX = null;
+
+function resetGammaPnl(){
+  document.getElementById('gp-s').value = 100;
+  document.getElementById('gp-k').value = 100;
+  document.getElementById('gp-sig').value = 20;
+  document.getElementById('gp-r').value = 4;
+  document.getElementById('gp-t').value = 0.5;
+  document.getElementById('gp-ds').value = 2;
+  gammaPnlHoverX = null;
+  calcGammaPnl();
+}
+
 function calcGammaPnl(){
-  const S=parseFloat(document.getElementById('gp-s').value)||100;
-  const K=parseFloat(document.getElementById('gp-k').value)||100;
-  const sig=parseFloat(document.getElementById('gp-sig').value)/100||.2;
-  const r=parseFloat(document.getElementById('gp-r').value)/100||.04;
-  const T=parseFloat(document.getElementById('gp-t').value)||.5;
-  const dsPct=parseFloat(document.getElementById('gp-ds').value)/100||.02;
+  const S = Math.max(0.01, parseFloat(document.getElementById('gp-s').value) || 100);
+  const K = Math.max(0.01, parseFloat(document.getElementById('gp-k').value) || 100);
+  const sig = Math.max(0.001, parseFloat(document.getElementById('gp-sig').value) || 20) / 100;
+  const rVal = parseFloat(document.getElementById('gp-r').value);
+  const r = isNaN(rVal) ? 0.04 : rVal / 100;
+  const T = Math.max(0.001, parseFloat(document.getElementById('gp-t').value) || 0.5);
+  const dsVal = parseFloat(document.getElementById('gp-ds').value);
+  const dsPct = isNaN(dsVal) ? 0.02 : dsVal / 100;
+
   const gma=bsGamma(S,K,r,sig,T),dS=S*dsPct;
   const gpnl=.5*gma*dS*dS,th=bsTheta(S,K,r,sig,T);
   const breakeven=Math.sqrt(2*Math.abs(th)/(gma*S*S))*Math.sqrt(252)*100;
   document.getElementById('gp-results').innerHTML=`
-    <div class="kpi"><div class="lbl">Gamma Γ</div><div class="val" style="color:var(--accent)">${gma.toFixed(5)}</div></div>
-    <div class="kpi"><div class="lbl">Gamma P&L (½Γ·dS²)</div><div class="val" style="color:var(--green)">${gpnl.toFixed(4)}</div><div class="sub">For a ${(dsPct*100).toFixed(1)}% move</div></div>
-    <div class="kpi"><div class="lbl">Daily Theta</div><div class="val" style="color:var(--red)">${th.toFixed(4)}</div></div>
-    <div class="kpi"><div class="lbl">Break-even vol</div><div class="val" style="color:var(--teal)">${breakeven.toFixed(1)}%</div><div class="sub">RV needed to offset Θ daily</div></div>
-    <div class="kpi"><div class="lbl">2× move P&L</div><div class="val" style="color:var(--accent3)">${(.5*gma*(dS*2)*(dS*2)).toFixed(4)}</div><div class="sub">4× larger (square law)</div></div>
-    <div class="kpi"><div class="lbl">Dollar Gamma $Γ</div><div class="val" style="color:var(--pink)">${(gma*S*S/100).toFixed(3)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Gamma Γ</div><div class="val" style="color:var(--accent)">${gma.toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Gamma P&L (½Γ·dS²)</div><div class="val" style="color:var(--green)">${gpnl.toFixed(4)}</div><div class="sub">For a ${(dsPct*100).toFixed(1)}% move</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Daily Theta</div><div class="val" style="color:var(--red)">${th.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Break-even Vol</div><div class="val" style="color:var(--teal)">${breakeven.toFixed(1)}%</div><div class="sub">RV needed to offset Θ daily</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">2× Move P&L</div><div class="val" style="color:var(--accent3)">${(.5*gma*(dS*2)*(dS*2)).toFixed(4)}</div><div class="sub">4× larger (square law)</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Dollar Gamma $Γ</div><div class="val" style="color:var(--pink)">${(gma*S*S/100).toFixed(3)}</div></div>
   `;
   // Gamma P&L vs move size
   const moves=Array.from({length:200},(_,i)=>-10+i*20/200);
@@ -1181,13 +1830,93 @@ function calcGammaPnl(){
   // mark current move
   ctx.fillStyle='#4ade80';ctx.beginPath();ctx.arc(toX(dsPct*100),toY(gpnl),5,0,Math.PI*2);ctx.fill();
   ctx.fillStyle='#4ade80';ctx.fillText('→ '+gpnl.toFixed(4),toX(dsPct*100)+8,toY(gpnl));
+
+  // Setup hover listeners for gammaPnlCanvas
+  const canvas = document.getElementById('gammaPnlCanvas');
+  if (canvas && !canvas.dataset.hasListeners) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const cw = canvas.width - pad.l - pad.r;
+      if (mouseX >= pad.l && mouseX <= canvas.width - pad.r) {
+        gammaPnlHoverX = -10 + (mouseX - pad.l) / cw * 20;
+        calcGammaPnl();
+      } else {
+        gammaPnlHoverX = null;
+        calcGammaPnl();
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      gammaPnlHoverX = null;
+      calcGammaPnl();
+    });
+    canvas.dataset.hasListeners = 'true';
+  }
+
+  // Hover Tooltip rendering for gammaPnlCanvas
+  if (gammaPnlHoverX !== null) {
+    const hx = toX(gammaPnlHoverX);
+    const hPnl = 0.5 * gma * (S * gammaPnlHoverX / 100) * (S * gammaPnlHoverX / 100);
+    const hy = toY(hPnl);
+
+    // Draw vertical guide line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hx, pad.t);
+    ctx.lineTo(hx, H - pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw intersection circle
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(hx, hy, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#05080a';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Draw floating tooltip box next to cursor
+    const boxW = 120;
+    const boxH = 40;
+    let tx = hx + 12;
+    if (tx + boxW > W - 10) {
+      tx = hx - boxW - 12;
+    }
+    let ty = hy - boxH / 2;
+    if (ty < pad.t) ty = pad.t;
+    if (ty + boxH > H - pad.b) ty = H - pad.b - boxH;
+
+    ctx.fillStyle = 'rgba(9, 14, 18, 0.9)';
+    ctx.strokeStyle = 'var(--border)';
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(tx, ty, boxW, boxH);
+    ctx.strokeRect(tx, ty, boxW, boxH);
+
+    ctx.font = '10px Fira Code, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'var(--muted)';
+    ctx.fillText(`Move = ${gammaPnlHoverX.toFixed(1)}%`, tx + 8, ty + 14);
+
+    ctx.fillStyle = 'var(--green)';
+    ctx.fillText(`P&L: +${hPnl.toFixed(4)}`, tx + 8, ty + 28);
+  }
 }
 
 /* ─── PATH DEPENDENCY ───────────────────────────────────────────────── */
+let pathDepHoverDay = null;
+
 function drawPathDep(mode){
   ['path-btn-1','path-btn-2','path-btn-3','path-btn-4'].forEach(id=>document.getElementById(id).classList.remove('active'));
   const map={zigzag:'path-btn-1',jump:'path-btn-2',pinned:'path-btn-3',faraway:'path-btn-4'};
   if(map[mode]) document.getElementById(map[mode]).classList.add('active');
+
+  const canvas = document.getElementById('pathDepCanvas');
+  if (canvas) canvas.dataset.mode = mode;
+
   const K=100,S0=100,sig=.2,r=.04,N=30;
   const paths={
     zigzag: Array.from({length:N+1},(_,i)=>S0+(i%2===0?0:5)*(i<15?1:-1)),
@@ -1225,6 +1954,81 @@ function drawPathDep(mode){
   const finalPnl=cumPnl[N];
   ctx.strokeStyle=finalPnl>=0?'#4ade80':'#f87171';ctx.lineWidth=2;
   ctx.beginPath();cumPnl.forEach((p,i)=>i===0?ctx.moveTo(toX(0),toY(0)):ctx.lineTo(toX(i),toY(p)));ctx.stroke();
+
+  // Setup hover listeners for pathDepCanvas
+  if (canvas && !canvas.dataset.hasListeners) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const cw = canvas.width - pad.l - pad.r;
+      if (mouseX >= pad.l && mouseX <= canvas.width - pad.r) {
+        pathDepHoverDay = Math.round((mouseX - pad.l) / cw * N);
+        pathDepHoverDay = Math.max(0, Math.min(N, pathDepHoverDay));
+        drawPathDep(canvas.dataset.mode || 'zigzag');
+      } else {
+        pathDepHoverDay = null;
+        drawPathDep(canvas.dataset.mode || 'zigzag');
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      pathDepHoverDay = null;
+      drawPathDep(canvas.dataset.mode || 'zigzag');
+    });
+    canvas.dataset.hasListeners = 'true';
+  }
+
+  // Hover Tooltip rendering for pathDepCanvas
+  if (pathDepHoverDay !== null && pathDepHoverDay >= 0 && pathDepHoverDay <= N) {
+    const hx = toX(pathDepHoverDay);
+    const hy = toY(cumPnl[pathDepHoverDay]);
+
+    // Draw vertical guide line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hx, pad.t);
+    ctx.lineTo(hx, H - pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw intersection circle
+    ctx.fillStyle = cumPnl[pathDepHoverDay] >= 0 ? 'var(--green)' : 'var(--red)';
+    ctx.beginPath();
+    ctx.arc(hx, hy, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#05080a';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Draw floating tooltip box next to cursor
+    const boxW = 120;
+    const boxH = 56;
+    let tx = hx + 12;
+    if (tx + boxW > W - 10) {
+      tx = hx - boxW - 12;
+    }
+    const ty = pad.t + 20;
+
+    ctx.fillStyle = 'rgba(9, 14, 18, 0.9)';
+    ctx.strokeStyle = 'var(--border)';
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(tx, ty, boxW, boxH);
+    ctx.strokeRect(tx, ty, boxW, boxH);
+
+    ctx.font = '10px Fira Code, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'var(--muted)';
+    ctx.fillText(`Day ${pathDepHoverDay}`, tx + 8, ty + 14);
+
+    ctx.fillStyle = 'var(--text)';
+    ctx.fillText(`Stock: $${prices[pathDepHoverDay].toFixed(2)}`, tx + 8, ty + 28);
+
+    ctx.fillStyle = cumPnl[pathDepHoverDay] >= 0 ? 'var(--green)' : 'var(--red)';
+    ctx.fillText(`Net P&L: ${cumPnl[pathDepHoverDay] >= 0 ? '+' : ''}${cumPnl[pathDepHoverDay].toFixed(4)}`, tx + 8, ty + 42);
+  }
+
   const labels={zigzag:'Zigzag: many re-hedges → max Gamma P&L',jump:'One big jump: single re-hedge → less P&L',pinned:'Pinned at K: no moves → zero Gamma, all Theta',faraway:'Far from K: low Gamma → vol harvested inefficiently'};
   document.getElementById('path-stats').innerHTML=`
     <span>Mode: <strong style="color:var(--accent)">${labels[mode]||mode}</strong></span>
@@ -1234,25 +2038,41 @@ function drawPathDep(mode){
 }
 
 /* ─── DOLLAR GAMMA CALCULATOR ───────────────────────────────────────── */
+let dollarGammaHoverX = null;
+
+function resetDollarGamma(){
+  document.getElementById('dg-s').value = 100;
+  document.getElementById('dg-k').value = 100;
+  document.getElementById('dg-sig').value = 20;
+  document.getElementById('dg-r').value = 4;
+  document.getElementById('dg-t').value = 0.5;
+  document.getElementById('dg-n').value = 100;
+  dollarGammaHoverX = null;
+  calcDollarGamma();
+}
+
 function calcDollarGamma(){
-  const S=parseFloat(document.getElementById('dg-s').value)||100;
-  const K=parseFloat(document.getElementById('dg-k').value)||100;
-  const sig=parseFloat(document.getElementById('dg-sig').value)/100||.2;
-  const r=parseFloat(document.getElementById('dg-r').value)/100||.04;
-  const T=parseFloat(document.getElementById('dg-t').value)||.5;
-  const N=parseInt(document.getElementById('dg-n').value)||100;
+  const S = Math.max(0.01, parseFloat(document.getElementById('dg-s').value) || 100);
+  const K = Math.max(0.01, parseFloat(document.getElementById('dg-k').value) || 100);
+  const sig = Math.max(0.001, parseFloat(document.getElementById('dg-sig').value) || 20) / 100;
+  const rVal = parseFloat(document.getElementById('dg-r').value);
+  const r = isNaN(rVal) ? 0.04 : rVal / 100;
+  const T = Math.max(0.001, parseFloat(document.getElementById('dg-t').value) || 0.5);
+  const nVal = parseInt(document.getElementById('dg-n').value);
+  const N = isNaN(nVal) || nVal < 0 ? 100 : nVal;
+
   const gma=bsGamma(S,K,r,sig,T);
   const dollarGamma=gma*S*S/100;
   const totalDG=dollarGamma*N;
   const pnl1=50*totalDG*.01*.01,pnl2=50*totalDG*.02*.02,pnl3=50*totalDG*.03*.03,pnl5=50*totalDG*.05*.05;
   document.getElementById('dg-results').innerHTML=`
-    <div class="kpi"><div class="lbl">Gamma Γ (1 option)</div><div class="val" style="color:var(--accent)">${gma.toFixed(5)}</div></div>
-    <div class="kpi"><div class="lbl">$Γ (1 option)</div><div class="val" style="color:var(--teal)">${dollarGamma.toFixed(3)}</div><div class="sub">ΓS²/100</div></div>
-    <div class="kpi"><div class="lbl">Total $Γ (${N} contracts)</div><div class="val" style="color:var(--accent)">${totalDG.toFixed(2)}</div></div>
-    <div class="kpi"><div class="lbl">P&L on 1% move</div><div class="val" style="color:var(--green)">${pnl1.toFixed(2)}</div><div class="sub">50 × $Γ × 0.01²</div></div>
-    <div class="kpi"><div class="lbl">P&L on 2% move</div><div class="val" style="color:var(--green)">${pnl2.toFixed(2)}</div><div class="sub">4× the 1% P&L</div></div>
-    <div class="kpi"><div class="lbl">P&L on 3% move</div><div class="val" style="color:var(--green)">${pnl3.toFixed(2)}</div></div>
-    <div class="kpi"><div class="lbl">P&L on 5% move</div><div class="val" style="color:var(--accent3)">${pnl5.toFixed(2)}</div><div class="sub">25× the 1% P&L</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Gamma Γ (1 option)</div><div class="val" style="color:var(--accent)">${gma.toFixed(5)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">$Γ (1 option)</div><div class="val" style="color:var(--teal)">${dollarGamma.toFixed(3)}</div><div class="sub">ΓS²/100</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Total $Γ (${N} contracts)</div><div class="val" style="color:var(--accent)">${totalDG.toFixed(2)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">P&L on 1% move</div><div class="val" style="color:var(--green)">${pnl1.toFixed(2)}</div><div class="sub">50 × $Γ × 0.01²</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">P&L on 2% move</div><div class="val" style="color:var(--green)">${pnl2.toFixed(2)}</div><div class="sub">4× the 1% P&L</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">P&L on 3% move</div><div class="val" style="color:var(--green)">${pnl3.toFixed(2)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">P&L on 5% move</div><div class="val" style="color:var(--accent3)">${pnl5.toFixed(2)}</div><div class="sub">25× the 1% P&L</div></div>
   `;
   // P&L vs move % chart
   const moves=Array.from({length:200},(_,i)=>-8+i*16/200);
@@ -1276,6 +2096,80 @@ function calcDollarGamma(){
     ctx.fillStyle=c;ctx.beginPath();ctx.arc(toX(m),toY(p),4,0,Math.PI*2);ctx.fill();
     ctx.fillStyle=c;ctx.font='10px Fira Code,monospace';ctx.textAlign='left';ctx.fillText('+'+m+'%: $'+p.toFixed(0),toX(m)+6,toY(p)-4);
   });
+
+  // Setup hover listeners for dollarGammaCanvas
+  const canvas = document.getElementById('dollarGammaCanvas');
+  if (canvas && !canvas.dataset.hasListeners) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const cw = canvas.width - pad.l - pad.r;
+      if (mouseX >= pad.l && mouseX <= canvas.width - pad.r) {
+        dollarGammaHoverX = -8 + (mouseX - pad.l) / cw * 16;
+        calcDollarGamma();
+      } else {
+        dollarGammaHoverX = null;
+        calcDollarGamma();
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      dollarGammaHoverX = null;
+      calcDollarGamma();
+    });
+    canvas.dataset.hasListeners = 'true';
+  }
+
+  // Hover Tooltip rendering for dollarGammaCanvas
+  if (dollarGammaHoverX !== null) {
+    const hx = toX(dollarGammaHoverX);
+    const hPnl = 50 * totalDG * (dollarGammaHoverX / 100) * (dollarGammaHoverX / 100);
+    const hy = toY(hPnl);
+
+    // Draw vertical guide line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hx, pad.t);
+    ctx.lineTo(hx, H - pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw intersection circle
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(hx, hy, 5, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#05080a';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Draw floating tooltip box next to cursor
+    const boxW = 120;
+    const boxH = 40;
+    let tx = hx + 12;
+    if (tx + boxW > W - 10) {
+      tx = hx - boxW - 12;
+    }
+    let ty = hy - boxH / 2;
+    if (ty < pad.t) ty = pad.t;
+    if (ty + boxH > H - pad.b) ty = H - pad.b - boxH;
+
+    ctx.fillStyle = 'rgba(9, 14, 18, 0.9)';
+    ctx.strokeStyle = 'var(--border)';
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(tx, ty, boxW, boxH);
+    ctx.strokeRect(tx, ty, boxW, boxH);
+
+    ctx.font = '10px Fira Code, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'var(--muted)';
+    ctx.fillText(`Move = ${dollarGammaHoverX.toFixed(1)}%`, tx + 8, ty + 14);
+
+    ctx.fillStyle = 'var(--green)';
+    ctx.fillText(`P&L: $${hPnl.toFixed(0)}`, tx + 8, ty + 28);
+  }
 }
 
 /* ─── INIT ──────────────────────────────────────────────────────────── */

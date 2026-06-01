@@ -240,13 +240,7 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 </div>
 <!-- TABS -->
 <div class="nav-tabs"><div class="nav-tab active" onclick="switchTab('delta',this)">Delta — Core</div><div class="nav-tab" onclick="switchTab('bs',this)">Delta under BS</div><div class="nav-tab" onclick="switchTab('sensitivities',this)">Sensitivities</div><div class="nav-tab" onclick="switchTab('prob',this)">Δ vs P(ITM)</div><div class="nav-tab" onclick="switchTab('hedgepnl',this)">Delta Hedging P&amp;L</div></div>
-<!-- ═══════════════════ TAB 1: GREEK TAXONOMY ══════════════════════════ -->
-<!-- /taxonomy -->
-<!-- ═══════════════════════ TAB 2: TAYLOR SERIES ════════════════════════ -->
-<!-- /taylor -->
-<!-- ══════════════════════ TAB 3: STATIC vs DYNAMIC ══════════════════════ -->
-<!-- /hedging -->
-<!-- ═══════════════════════ TAB 4: DELTA CORE ════════════════════════════ -->
+<!-- ═══════════════════════ TAB 1: DELTA CORE ════════════════════════════ -->
 <div class="tab-content active" id="tab-delta">
 <div class="sh">Delta — Definition &amp; Intuition</div>
 <div class="card">
@@ -360,7 +354,7 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 </div>
 </div>
 </div><!-- /delta -->
-<!-- ══════════════════════ TAB 5: DELTA UNDER BS ═════════════════════════ -->
+<!-- ══════════════════════ TAB 2: DELTA UNDER BS ═════════════════════════ -->
 <div class="tab-content" id="tab-bs">
 <div class="sh">Delta under Black-Scholes</div>
 <div class="card">
@@ -379,14 +373,32 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
     </div>
 <div class="alert tip">
 <span class="ico">💡</span>
-<span><strong>Put-Call Parity check:</strong> Δ_C − Δ_P = N(d₁) − (N(d₁) − 1) = 1. This equals the delta of a long forward — consistent with C − P = Forward, which is exactly put-call parity. The relationship is self-consistent.</span>
+<span><strong>Put-Call Parity check:</strong> \(\Delta_C - \Delta_P = N(d_1) - (N(d_1) - 1) = 1\). This equals the delta of a long forward — consistent with \(C - P = \text{Forward}\), which is exactly put-call parity. The relationship is self-consistent.</span>
 </div>
+
+<details style="margin-top: 0.5rem; background: rgba(255,255,255,0.02); border-color: var(--border);">
+  <summary style="font-size: 0.85rem; padding: 0.5rem 1rem; color: var(--accent2);">BS Formulas with Dividend Yield (q)</summary>
+  <div class="dbody" style="font-size: 0.84rem; line-height: 1.6; color: var(--text); padding-top: 0.4rem;">
+    <p style="margin-bottom: 0.5rem;">For an underlying paying a continuous dividend yield \(q\) (or foreign interest rate for FX options, or storage cost with a negative sign for commodities), the \(d_1\) term incorporates \(q\) as a deduction from the interest rate drift:</p>
+    <div class="fx e" style="margin: 0.6rem 0; font-size: 1.05rem;">
+      \[ d_1 = \frac{\ln(S/K) + (r - q + \frac{\sigma^2}{2})T}{\sigma\sqrt{T}} \]
+    </div>
+    <p style="margin-top: 0.6rem; margin-bottom: 0.4rem;">The resulting Call and Put Deltas are discounted by the dividend factor \(e^{-qT}\):</p>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin: 0.6rem 0;">
+      <div class="fx" style="margin: 0; font-size: 1rem; padding: 0.6rem;">\[ \Delta_C = e^{-qT}N(d_1) \]</div>
+      <div class="fx r" style="margin: 0; font-size: 1rem; padding: 0.6rem; border-color: var(--red);">\[ \Delta_P = e^{-qT}\left(N(d_1) - 1\right) \]</div>
+    </div>
+    <p style="margin-top: 0.5rem; font-size: 0.82rem; color: var(--muted);">
+      <strong>Put-Call Parity with Dividends check:</strong> \(\Delta_C - \Delta_P = e^{-qT} N(d_1) - e^{-qT}(N(d_1) - 1) = e^{-qT}\). This equals the delta of a dividend-paying forward contract, preserving parity consistency.
+    </p>
+  </div>
+</details>
 </div>
 <div class="sh2">Three Drivers of Delta</div>
 <details open="">
 <summary>1. Moneyness (S/K) — The Dominant Driver</summary>
 <div class="dbody">
-<p>As spot rises relative to strike, d₁ increases, and N(d₁) → 1. The call becomes more likely to expire ITM, so you need more shares to hedge it. As S falls, d₁ → −∞, N(d₁) → 0, call delta → 0.</p>
+<p>As spot rises relative to strike, \(d_1\) increases, and \(N(d_1) \to 1\). The call becomes more likely to expire ITM, so you need more shares to hedge it. As \(S\) falls, \(d_1 \to -\infty\), \(N(d_1) \to 0\), call delta \(\to 0\).</p>
 <div class="fx e">\[\frac{S}{K} \uparrow \implies d_1 \uparrow \implies N(d_1) \uparrow \implies \Delta_C \uparrow\]</div>
 </div>
 </details>
@@ -401,7 +413,7 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 <details>
 <summary>3. Time to Expiry (T) — The "Steepening" Effect</summary>
 <div class="dbody">
-<p>As T → 0 (expiry approaches), the delta S-curve becomes <strong>steeper</strong>. With one day to go, a stock at K+$1 has Δ ≈ 1 and at K−$1 has Δ ≈ 0. The ATM delta remains ≈ 0.5 but the transition becomes nearly a step function. This is why <strong>pin risk</strong> is so dangerous at expiry.</p>
+<p>As \(T \to 0\) (expiry approaches), the delta S-curve becomes <strong>steeper</strong>. With one day to go, a stock at \(K + \$1\) has \(\Delta \approx 1\) and at \(K - \$1\) has \(\Delta \approx 0\). The ATM delta remains \(\approx 0.5\) but the transition becomes nearly a step function. This is why <strong>pin risk</strong> is so dangerous at expiry.</p>
 <div class="fx e">\[T \to 0 \implies \Delta \to \mathbf{1}_{S &gt; K} \quad \text{(Heaviside step function at expiry)}\]</div>
 </div>
 </details>
@@ -409,12 +421,13 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 <div class="sh2">Black-Scholes Delta Calculator</div>
 <div class="chart-wrap">
 <div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
-<div><label>S₀</label><br/><input id="bsd-s" oninput="calcBSDelta()" style="width:70px" type="number" value="100"/></div>
-<div><label>K</label><br/><input id="bsd-k" oninput="calcBSDelta()" style="width:70px" type="number" value="100"/></div>
-<div><label>σ (%)</label><br/><input id="bsd-sig" oninput="calcBSDelta()" style="width:60px" type="number" value="20"/></div>
-<div><label>r (%)</label><br/><input id="bsd-r" oninput="calcBSDelta()" style="width:55px" type="number" value="4"/></div>
-<div><label>T (years)</label><br/><input id="bsd-t" oninput="calcBSDelta()" step="0.25" style="width:70px" type="number" value="1"/></div>
-<div><label>q (%)</label><br/><input id="bsd-q" oninput="calcBSDelta()" style="width:55px" type="number" value="0"/></div>
+<div><label>S₀</label><br/><input id="bsd-s" min="0.01" step="any" oninput="calcBSDelta()" style="width:70px" type="number" value="100"/></div>
+<div><label>K</label><br/><input id="bsd-k" min="0.01" step="any" oninput="calcBSDelta()" style="width:70px" type="number" value="100"/></div>
+<div><label>σ (%)</label><br/><input id="bsd-sig" min="0.001" step="any" oninput="calcBSDelta()" style="width:60px" type="number" value="20"/></div>
+<div><label>r (%)</label><br/><input id="bsd-r" step="any" oninput="calcBSDelta()" style="width:55px" type="number" value="4"/></div>
+<div><label>T (years)</label><br/><input id="bsd-t" min="0.001" step="any" oninput="calcBSDelta()" style="width:70px" type="number" value="1"/></div>
+<div><label>q (%)</label><br/><input id="bsd-q" min="0" step="any" oninput="calcBSDelta()" style="width:55px" type="number" value="0"/></div>
+<div style="display:flex;align-items:flex-end;"><button class="btn-reset" onclick="resetBSDelta()">Reinit</button></div>
 </div>
 <div id="bsd-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:.8rem;margin:.8rem 0"></div>
 <!-- live delta gauge -->
@@ -432,12 +445,12 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 <div class="sh2">Additional Factors (Beyond the BS Formula)</div>
 <div class="grid3">
 <div class="card">
-<div class="flabel">Dividends (q)</div>
+<div class="flabel" style="text-transform: none">Dividends (q)</div>
 <p style="font-size:.86rem;color:var(--muted)">Dividends reduce the forward price. Higher q lowers call delta and raises put delta. For dividend futures, the forward (not spot) is the relevant price process.</p>
 <div class="fx e" style="font-size:.88rem;margin-top:.6rem">\[\Delta_C^{\text{div}} = e^{-qT}N(d_1)\]</div>
 </div>
 <div class="card y">
-<div class="flabel y">Interest Rates (r)</div>
+<div class="flabel y" style="text-transform: none">Interest Rates (r)</div>
 <p style="font-size:.86rem;color:var(--muted)">Higher r increases the forward (cost of carry). Raises call delta slightly, lowers put delta. For short-dated equity options, this effect is usually tiny — but it matters for long-dated or high-rate environments.</p>
 </div>
 <div class="card b">
@@ -446,7 +459,7 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 </div>
 </div>
 </div><!-- /bs -->
-<!-- ══════════════════════ TAB 6: DELTA SENSITIVITIES ═════════════════════ -->
+<!-- ══════════════════════ TAB 3: DELTA SENSITIVITIES ═════════════════════ -->
 <div class="tab-content" id="tab-sensitivities">
 <div class="sh">How Delta Changes — Charm &amp; Vanna</div>
 <!-- CHARM: Delta vs Time -->
@@ -457,12 +470,10 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 <p style="margin:.8rem 0;font-size:.88rem">Even if the stock doesn't move, your hedge ratio changes as time passes. This is the <strong>Charm effect</strong> — delta bleed. Managing it means re-hedging even on flat days.</p>
 </div>
 <div class="chart-wrap">
+<div style="font-family:var(--mono);font-size:.74rem;font-weight:700;color:var(--accent);margin-bottom:.8rem;letter-spacing:.05em;text-transform:uppercase">Charm Visualiser — Call Delta vs Spot across Maturities</div>
 <div class="chart-controls">
-<label>K =</label>
-<input id="ch-k" max="120" min="80" oninput="drawCharm()" type="range" value="100"/>
-<span class="cval" id="ch-k-v">100</span>
-<label style="margin-left:.8rem">σ (%) =</label>
-<input id="ch-sig" max="60" min="5" oninput="drawCharm()" type="range" value="20"/>
+<label style="margin-left:0">σ (%) =</label>
+<input id="ch-sig" max="60" min="1" oninput="drawCharm()" type="range" value="20"/>
 <span class="cval e" id="ch-sig-v">20%</span>
 <label style="margin-left:.8rem">r (%) =</label>
 <input id="ch-r" max="10" min="0" oninput="drawCharm()" type="range" value="4"/>
@@ -492,11 +503,9 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 <p style="margin:.7rem 0;font-size:.88rem">Vanna measures how delta changes when vol changes (or equivalently, how vega changes when spot changes). It's the key Greek for managing the <strong>volatility smile's impact on your hedge ratio</strong>.</p>
 </div>
 <div class="chart-wrap">
+<div style="font-family:var(--mono);font-size:.74rem;font-weight:700;color:var(--accent);margin-bottom:.8rem;letter-spacing:.05em;text-transform:uppercase">Vanna Visualiser — Call Delta vs Spot across Volatilities</div>
 <div class="chart-controls">
-<label>K =</label>
-<input id="vn-k" max="120" min="80" oninput="drawVanna()" type="range" value="100"/>
-<span class="cval" id="vn-k-v">100</span>
-<label style="margin-left:.8rem">T (years) =</label>
+<label style="margin-left:0">T (years) =</label>
 <input id="vn-t" max="2" min="0.05" oninput="drawVanna()" step="0.05" type="range" value="1"/>
 <span class="cval y" id="vn-t-v">1.0</span>
 <label style="margin-left:.8rem">r (%) =</label>
@@ -520,7 +529,7 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 <span><strong>Vanna for risk managers (VIX spike scenario):</strong> You're delta-hedged and the VIX spikes 10 points. Your book's delta changes — not because spot moved, but because vol moved. If you're long vanna, your call deltas increased, so you now need to buy more shares even though the stock went nowhere. This forced buying from vol-driven delta changes is a significant source of short-term momentum in crash scenarios.</span>
 </div>
 </div><!-- /sensitivities -->
-<!-- ══════════════════════ TAB 7: DELTA vs P(ITM) ════════════════════════ -->
+<!-- ══════════════════════ TAB 4: DELTA vs P(ITM) ════════════════════════ -->
 <div class="tab-content" id="tab-prob">
 <div class="sh">Delta ≠ P(ITM) — A Critical Distinction</div>
 <div class="card">
@@ -540,17 +549,25 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 <div class="kpi">
 <div class="lbl">Scenario</div>
 <div class="val" style="font-size:.88rem;color:var(--text)">Stock at €10 — binary outcome tomorrow</div>
-<div class="sub">10% chance: goes to €100  |  90% chance: goes to €0</div>
+<div class="sub">10% chance: goes to €100 &nbsp;|&nbsp; 90% chance: goes to €0</div>
 </div>
 <div class="kpi">
 <div class="lbl">50-strike call</div>
-<div class="val" style="font-size:.88rem;color:var(--accent3)">Price = €5 → Δ = 0.5</div>
-<div class="sub">P(ITM) = only 10%! Delta is 5× the actual probability.</div>
+<div class="val" style="font-size:.88rem;color:var(--accent3)">Price = €5 &rarr; &Delta; = 0.5</div>
+<div class="sub">P(ITM) = only 10%! Delta is 5&times; the actual probability.</div>
 </div>
 </div>
 <div class="alert warn" style="margin-top:.9rem">
-<span class="ico">⚡</span>
-<span><strong>The math:</strong> The option costs €5 = 10% × (€100 − €50) = 10% × €50. Delta = ∂C/∂S. A $1 move in the stock shifts the €10 price by enough to change the call value by ~$0.5. Hence Δ = 0.5. But P(ITM) = 10%. In a positively skewed distribution (rare but large upmoves), delta diverges massively from P(ITM).</span>
+<span class="ico">💡</span>
+<span><strong>The math made simple:</strong>
+  Let \(p\) be the probability of the stock jumping to €100. In a risk-neutral world, the expected terminal stock price must equal the current spot price \(S\):
+  \[ p \times 100 + (1-p) \times 0 = S \implies p = \frac{S}{100} \]
+  For the €50-strike call, it pays €50 if the stock goes to €100, and €0 otherwise. Its price \(C\) is:
+  \[ C = p \times (100 - 50) = \frac{S}{100} \times 50 = 0.5 S \]
+  Delta is the option's sensitivity to spot, which is the derivative:
+  \[ \Delta = \frac{\partial C}{\partial S} = 0.5 \]
+  Hence, <strong>\(\Delta = 50\%\)</strong>, even though the probability of finishing ITM is only <strong>\(p = 10\%\)</strong>! In skewed distributions, delta diverges from \(P(\text{ITM})\) because it accounts for the "size of the win" rather than just the probability.
+</span>
 </div>
 </div>
 <div class="sh2">The BS Relationship: N(d₁) vs N(d₂)</div>
@@ -558,24 +575,27 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 <div class="fx">\[d_2 = d_1 - \sigma\sqrt{T} \implies N(d_2) &lt; N(d_1) \text{ always (since } \sigma\sqrt{T} &gt; 0\text{)}\]</div>
 <div class="grid2" style="margin-top:1rem">
 <div>
-<div class="flabel">N(d₁) = Delta</div>
-<p style="font-size:.87rem;color:var(--muted)">The hedge ratio — how many shares to hold. Adjusted <em>upward</em> by σ²/2 in d₁ to account for the option's convexity and the lognormal distribution's right skew. Always ≥ N(d₂).</p>
+<div class="flabel" style="text-transform: none">N(d₁) = Delta</div>
+<p style="font-size:.87rem;color:var(--muted)">The hedge ratio (shares to hold). Mathematically, it is the probability of expiring ITM <strong>weighted by the stock price in those winning states</strong>: \(N(d_1) = \mathbb{E}[\frac{S_T}{S_0 e^{rT}} \mathbf{1}_{\{S_T &gt; K\}}]\). Because the stock price is higher in winning states, this weighted probability is always higher than the simple probability \(N(d_2)\).</p>
 </div>
 <div>
-<div class="flabel e">N(d₂) = Risk-Neutral P(ITM)</div>
+<div class="flabel e" style="text-transform: none">N(d₂) = Risk-Neutral P(ITM)</div>
 <p style="font-size:.87rem;color:var(--muted)">The probability the option finishes ITM under the risk-neutral measure ℚ. Lower than delta because it does NOT account for the "size of the win" when it does finish ITM — it just counts the probability.</p>
 </div>
 </div>
 </div>
 <!-- INTERACTIVE N(d1) vs N(d2) -->
-<div class="sh2">N(d₁) vs N(d₂) Calculator</div>
+<div class="sh2">N(d₁ vs N(d₂) Calculator</div>
 <div class="chart-wrap">
 <div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
-<div><label>S₀</label><br/><input id="p-s" oninput="calcProb()" style="width:70px" type="number" value="100"/></div>
-<div><label>K</label><br/><input id="p-k" oninput="calcProb()" style="width:70px" type="number" value="100"/></div>
-<div><label>σ (%)</label><br/><input id="p-sig" oninput="calcProb()" style="width:60px" type="number" value="20"/></div>
+<div><label>S₀</label><br/><input id="p-s" min="0.01" oninput="calcProb()" style="width:70px" type="number" value="100"/></div>
+<div><label>K</label><br/><input id="p-k" min="0.01" oninput="calcProb()" style="width:70px" type="number" value="100"/></div>
+<div><label>σ (%)</label><br/><input id="p-sig" min="0.01" oninput="calcProb()" style="width:60px" type="number" value="20"/></div>
 <div><label>r (%)</label><br/><input id="p-r" oninput="calcProb()" style="width:55px" type="number" value="4"/></div>
-<div><label>T (years)</label><br/><input id="p-t" oninput="calcProb()" step="0.25" style="width:70px" type="number" value="1"/></div>
+<div><label>T (years)</label><br/><input id="p-t" min="0.01" oninput="calcProb()" step="0.25" style="width:70px" type="number" value="1"/></div>
+<div style="display:flex;align-items:flex-end;margin-left:auto;">
+  <button class="btn-reset" onclick="resetProb()">Reinit</button>
+</div>
 </div>
 <div id="prob-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:.8rem;margin:.8rem 0"></div>
 <canvas height="240" id="probCanvas" style="margin-top:.5rem"></canvas>
@@ -585,11 +605,11 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 <span><strong>When does it matter most?</strong> The gap N(d₁) − N(d₂) = σ√T. For a 1Y option at 20% vol: gap ≈ 0.20. For a 2Y at 40% vol: gap ≈ 0.57. For deep OTM options and high-vol environments, using delta as a probability proxy can be massively misleading. <strong>Always use N(d₂) when you want a probability; always use N(d₁) when you want a hedge ratio.</strong></span>
 </div>
 </div><!-- /prob -->
-<!-- ══════════════════════ TAB 8: DELTA HEDGING PNL ════════════════════════ -->
+<!-- ══════════════════════ TAB 5: DELTA HEDGING PNL ════════════════════════ -->
 <div class="tab-content" id="tab-hedgepnl">
 <div class="sh">Delta Hedging P&amp;L — The Game of Volatility Arbitrage</div>
 <div class="card">
-<p>A trader sells a call, collects the premium (priced at IV), and delta-hedges daily. In BS theory, the hedge perfectly replicates the option and P&amp;L = 0. In practice, there are two sources of deviation:</p>
+<p>A trader <strong>buys</strong> a call, pays the premium (priced at IV), and delta-hedges daily. In BS theory, the hedge perfectly replicates the option and P&amp;L = 0. In practice, there are two sources of deviation:</p>
 <div class="grid2" style="margin-top:1rem">
 <div class="kpi">
 <div class="lbl">Source 1: Discrete Hedging</div>
@@ -599,36 +619,37 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 <div class="kpi">
 <div class="lbl">Source 2: RV vs IV</div>
 <div class="val" style="font-size:.88rem;color:var(--accent)">Vol Arbitrage P&amp;L</div>
-<div class="sub">The core driver. If stock moves less than priced in (RV &lt; IV), the short option makes money. If it moves more (RV &gt; IV), it loses. This is a pure vol bet.</div>
+<div class="sub">The core driver. If the stock moves more than priced in (RV &gt; IV), the long option makes money (Gamma gains exceed Theta decay). If it moves less (RV &lt; IV), it loses. This is a pure vol bet.</div>
 </div>
 </div>
 </div>
 <div class="sh2">The Daily P&amp;L Formula</div>
 <div class="card">
-<div class="flabel">Delta-Hedged P&amp;L per time step dt</div>
+<div class="flabel" style="text-transform: none">Delta-Hedged P&amp;L per time step dt (Long Option)</div>
 <div class="fx" style="font-size:1.1rem">
-      \[ \text{P\&amp;L} = \frac{1}{2}\Gamma S^2\!\left(\sigma_R^2 - \sigma_{IV}^2\right)dt \]
+      \[ \text{P\&amp;L}_{\text{long}} = \frac{1}{2}\Gamma S^2\!\left(\sigma_{RV}^2 - \sigma_{IV}^2\right)dt \]
     </div>
+<p style="font-size:.8rem;color:var(--muted);text-align:center;margin-top:.4rem">For a short option position, the signs are reversed: \(\text{P\&amp;L}_{\text{short}} = \frac{1}{2}\Gamma S^2\!\left(\sigma_{IV}^2 - \sigma_{RV}^2\right)dt\).</p>
 <div class="grid3" style="margin-top:1rem">
 <div class="kpi">
-<div class="lbl">If RV &lt; IV</div>
+<div class="lbl">If RV &gt; IV</div>
 <div class="val" style="color:var(--accent)">Profit ✓</div>
-<div class="sub">Stock moved less than priced. Short option wins. The hedge cost less than the premium.</div>
+<div class="sub">Stock moved more than priced. Long option wins. The realized volatility gains exceeded the implied volatility premium paid.</div>
 </div>
 <div class="kpi">
 <div class="lbl">If RV = IV</div>
 <div class="val" style="color:var(--accent3)">Break-even</div>
-<div class="sub">Hedge costs exactly match option premium received. Zero edge.</div>
+<div class="sub">Hedge costs exactly match option premium paid. Zero edge.</div>
 </div>
 <div class="kpi">
-<div class="lbl">If RV &gt; IV</div>
+<div class="lbl">If RV &lt; IV</div>
 <div class="val" style="color:var(--red)">Loss ✗</div>
-<div class="sub">Stock moved more than priced. Short option loses. The hedge cost more than the premium received.</div>
+<div class="sub">Stock moved less than priced. Long option loses. The realized moves did not cover the premium paid.</div>
 </div>
 </div>
 <div class="alert key">
 <span class="ico">🔑</span>
-<span><strong>The key insight:</strong> After delta-hedging, your P&amp;L depends not on the <em>direction</em> the stock moves — only on the <em>magnitude</em> of daily moves vs the IV you sold. You've converted a directional bet into a <strong>pure volatility bet</strong>. This is the foundational principle of volatility trading.</span>
+<span><strong>The key insight:</strong> After delta-hedging, your P&amp;L depends not on the <em>direction</em> the stock moves — only on the <em>magnitude</em> of daily moves vs the IV you bought. You've converted a directional bet into a <strong>pure volatility bet</strong>. This is the foundational principle of volatility trading.</span>
 </div>
 </div>
 <!-- INTERACTIVE PNL SIMULATOR -->
@@ -636,7 +657,7 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 <div class="chart-wrap">
 <div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
 <div>
-<label>IV sold (%)</label>
+<label>IV bought (%)</label>
 <input id="sim-iv" max="60" min="5" oninput="runSim()" type="range" value="20"/>
 <span class="cval" id="sim-iv-v">20%</span>
 </div>
@@ -652,12 +673,30 @@ code{font-family:var(--mono);font-size:.82em;color:var(--accent2);background:rgb
 </div>
 <div>
 <label>K</label>
-<input id="sim-k" oninput="runSim()" style="width:65px" type="number" value="100"/>
+<input id="sim-k" min="0.01" oninput="runSim()" style="width:65px" type="number" value="100"/>
 </div>
 <button onclick="runSim(true)" style="background:var(--accent);color:#000;border:none;padding:.35rem .9rem;border-radius:5px;font-family:var(--mono);font-size:.75rem;font-weight:800;cursor:pointer;margin-left:.3rem">RE-RUN ↺</button>
+<button class="btn-reset" onclick="resetSim()" style="margin-left:.3rem">Reinit</button>
 </div>
 <canvas height="260" id="simCanvas"></canvas>
 <div id="sim-stats" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:.8rem;margin-top:.8rem"></div>
+<div class="grid2" style="margin-top:1.2rem;">
+  <div class="card" style="margin-bottom:0;">
+    <div class="flabel">How to Read the Chart</div>
+    <ul style="margin-top:0.6rem; padding-left:1.1rem; font-size:0.84rem; color:var(--muted); line-height:1.6;">
+      <li style="margin-bottom:0.4rem;"><strong style="color:var(--text)">Solid Line (Green/Red):</strong> The simulated actual cumulative P&amp;L from daily delta-hedging. It fluctuates as the stock path realizes returns.</li>
+      <li style="margin-bottom:0.4rem;"><strong style="color:var(--accent4)">Dashed Blue Line:</strong> The theoretical expectation curve, computed as \(BS(RV) - BS(IV)\). It represents the expected option value drift over time under continuous hedging.</li>
+      <li><strong style="color:var(--text)">Shaded Areas:</strong> Visualize whether the cumulative P&amp;L is currently in positive territory (green) or negative territory (red).</li>
+    </ul>
+  </div>
+  <div class="card y" style="margin-bottom:0;">
+    <div class="flabel y">Key Phenomena to Observe</div>
+    <ul style="margin-top:0.6rem; padding-left:1.1rem; font-size:0.84rem; color:var(--muted); line-height:1.6;">
+      <li style="margin-bottom:0.4rem;"><strong style="color:var(--text)">Gamma Capping (Flat P&amp;L):</strong> If Implied Volatility is low (e.g., \(5\%\)) relative to Realized Volatility, the option's Gamma is highly concentrated. If the stock makes large moves, the option goes deep ITM or OTM. Gamma (\(\Gamma\)) drops to \(0\) and Delta becomes static (\(1.0\) or \(0.0\)), stopping all hedging P&amp;L fluctuations (hence the flat line).</li>
+      <li><strong style="color:var(--text)">Daily Tracking Error:</strong> Because hedging occurs at discrete daily intervals rather than continuously, the final P&amp;L will deviate around the theoretical expectation (dashed line) depending on path-dependent timing.</li>
+    </ul>
+  </div>
+</div>
 </div>
 <div class="sh2">The IV Drop Scenario</div>
 <div class="card y">
@@ -705,6 +744,7 @@ function normpdf(x){return Math.exp(-.5*x*x)/Math.sqrt(2*Math.PI)}
 function d1(S,K,r,sig,T){return(Math.log(S/K)+(r+.5*sig*sig)*T)/(sig*Math.sqrt(T))}
 function callDelta(S,K,r,sig,T,q=0){
   if(T<=0) return S>K?1:0;
+  if(S<=0) return 0;
   const dd=(Math.log(S/K)+(r-q+.5*sig*sig)*T)/(sig*Math.sqrt(T));
   return Math.exp(-q*T)*normcdf(dd);
 }
@@ -908,13 +948,25 @@ function updateHoverDisplay(S) {
 
 /* ─── BS DELTA CALCULATOR ───────────────────────────────────────────── */
 function calcBSDelta(){
-  const S=parseFloat(document.getElementById('bsd-s').value)||100;
-  const K=parseFloat(document.getElementById('bsd-k').value)||100;
-  const sig=parseFloat(document.getElementById('bsd-sig').value)/100||.2;
-  const r=parseFloat(document.getElementById('bsd-r').value)/100||.04;
-  const T=parseFloat(document.getElementById('bsd-t').value)||1;
-  const q=parseFloat(document.getElementById('bsd-q').value)/100||0;
-  if(T<=0||sig<=0) return;
+  const sVal = parseFloat(document.getElementById('bsd-s').value);
+  const S = isNaN(sVal) || sVal <= 0 ? 100 : sVal;
+  
+  const kVal = parseFloat(document.getElementById('bsd-k').value);
+  const K = isNaN(kVal) || kVal <= 0 ? 100 : kVal;
+  
+  const sigVal = parseFloat(document.getElementById('bsd-sig').value);
+  const sig = isNaN(sigVal) || sigVal <= 0 ? 0.2 : sigVal / 100;
+  
+  const rVal = parseFloat(document.getElementById('bsd-r').value);
+  const r = isNaN(rVal) ? 0.04 : rVal / 100;
+  
+  const tVal = parseFloat(document.getElementById('bsd-t').value);
+  const T = isNaN(tVal) || tVal <= 0 ? 1.0 : tVal;
+  
+  const qVal = parseFloat(document.getElementById('bsd-q').value);
+  const q = isNaN(qVal) || qVal < 0 ? 0.0 : qVal / 100;
+
+  if (T <= 0 || sig <= 0) return;
   const dd1=(Math.log(S/K)+(r-q+.5*sig*sig)*T)/(sig*Math.sqrt(T));
   const dd2=dd1-sig*Math.sqrt(T);
   const dc=Math.exp(-q*T)*normcdf(dd1);
@@ -922,11 +974,11 @@ function calcBSDelta(){
   const gma=bsGamma(S,K,r,sig,T,q);
   const C=bsCall(S,K,r,sig,T,q);
   document.getElementById('bsd-results').innerHTML=`
-    <div class="kpi"><div class="lbl">d₁</div><div class="val" style="color:var(--accent)">${dd1.toFixed(4)}</div></div>
-    <div class="kpi"><div class="lbl">d₂</div><div class="val" style="color:var(--accent2)">${dd2.toFixed(4)}</div></div>
-    <div class="kpi"><div class="lbl">Δ_call = N(d₁)</div><div class="val" style="color:var(--accent)">${dc.toFixed(4)}</div></div>
-    <div class="kpi"><div class="lbl">Δ_put = N(d₁)−1</div><div class="val" style="color:var(--red)">${dp.toFixed(4)}</div></div>
-    <div class="kpi"><div class="lbl">N(d₂) = P(ITM)</div><div class="val" style="color:var(--accent3)">${normcdf(dd2).toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">d₁</div><div class="val" style="color:var(--accent)">${dd1.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">d₂</div><div class="val" style="color:var(--accent2)">${dd2.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Δ<sub>call</sub> = N(d₁)</div><div class="val" style="color:var(--accent)">${dc.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Δ<sub>put</sub> = N(d₁)−1</div><div class="val" style="color:var(--red)">${dp.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">N(d₂) = P(ITM)</div><div class="val" style="color:var(--accent3)">${normcdf(dd2).toFixed(4)}</div></div>
     <div class="kpi"><div class="lbl">Gamma Γ</div><div class="val" style="color:var(--accent3)">${gma.toFixed(5)}</div></div>
     <div class="kpi"><div class="lbl">Call Price</div><div class="val" style="color:var(--accent4)">${C.toFixed(3)}</div></div>
     <div class="kpi"><div class="lbl">Moneyness S/K</div><div class="val">${(S/K).toFixed(3)}</div></div>
@@ -939,21 +991,33 @@ function calcBSDelta(){
   document.getElementById('delta-gauge-fill').style.background=col;
 }
 
+function resetBSDelta() {
+  document.getElementById('bsd-s').value = 100;
+  document.getElementById('bsd-k').value = 100;
+  document.getElementById('bsd-sig').value = 20;
+  document.getElementById('bsd-r').value = 4;
+  document.getElementById('bsd-t').value = 1;
+  document.getElementById('bsd-q').value = 0;
+  calcBSDelta();
+}
+
 /* ─── CHARM (Delta vs Time) ─────────────────────────────────────────── */
+let charmHoverS = null, charmHoverY = null;
+
 function drawCharm(){
-  const K=parseFloat(document.getElementById('ch-k').value)||100;
+  const K = 100;
   const sig=parseFloat(document.getElementById('ch-sig').value)/100||.2;
-  const r=parseFloat(document.getElementById('ch-r').value)/100||.04;
-  document.getElementById('ch-k-v').textContent=K;
+  const rVal=parseFloat(document.getElementById('ch-r').value);
+  const r=isNaN(rVal)?0.04:rVal/100;
   document.getElementById('ch-sig-v').textContent=(sig*100).toFixed(0)+'%';
   document.getElementById('ch-r-v').textContent=(r*100).toFixed(0)+'%';
-  const Srange=Array.from({length:300},(_,i)=>30+i*190/300);
+  const Srange=Array.from({length:301},(_,i)=>i*200/300);
   const maturities=[[1/252,'1 Day','#f87171'],[7/252,'1 Week','#fb923c'],[1/12,'1 Month','#fbbf24'],[3/12,'3 Months','#a3e635'],[0.5,'6 Months','#34d399'],[1,'1 Year','#22d3ee'],[3,'3 Years','#818cf8']];
   const rc=setupCanvas('charmCanvas',270); if(!rc) return;
   const {ctx,W,H}=rc;
-  const pad={l:50,r:90,t:20,b:35};
-  const {toX,toY}=drawAxes(ctx,pad,W,H,30,220,0,1,'Spot Price S','Call Delta',
-    [50,75,100,125,150,175,200],[0,.25,.5,.75,1],null,v=>v.toFixed(2));
+  const pad={l:50,r:110,t:20,b:35};
+  const {toX,toY}=drawAxes(ctx,pad,W,H,0,200,0,1,'Spot Price S','Call Delta',
+    [25,50,75,100,125,150,175],[0,.25,.5,.75,1],null,v=>v.toFixed(2));
   maturities.forEach(([T,label,col])=>{
     ctx.strokeStyle=col;ctx.lineWidth=T<.1?2.5:1.8;
     ctx.beginPath();
@@ -961,62 +1025,295 @@ function drawCharm(){
   });
   // strike
   ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle='#fbbf24';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+  ctx.fillStyle='#fbbf24';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K='+K,toX(K),pad.t-5);
   // legend
   ctx.textAlign='left';ctx.font='10px Fira Code,monospace';
   maturities.forEach(([T,label,col],i)=>{
-    ctx.fillStyle=col;ctx.fillRect(W-85,pad.t+i*16,14,2);
-    ctx.fillStyle=col;ctx.fillText(label,W-67,pad.t+i*16+4);
+    let text = label;
+    if (charmHoverS !== null) {
+      const val = callDelta(charmHoverS, K, r, sig, T);
+      text += `: ${val.toFixed(3)}`;
+    }
+    ctx.fillStyle=col;ctx.fillRect(W-105,pad.t+i*16,14,2);
+    ctx.fillStyle=col;ctx.fillText(text,W-87,pad.t+i*16+4);
   });
+
+  // Setup hover listeners for charmCanvas
+  const canvas = document.getElementById('charmCanvas');
+  if (canvas && !canvas.dataset.hasListeners) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const mouseY = (e.clientY - rect.top) * scaleY;
+      const cw = canvas.width - pad.l - pad.r;
+      if (mouseX >= pad.l && mouseX <= canvas.width - pad.r) {
+        charmHoverS = (mouseX - pad.l) / cw * 200;
+        charmHoverY = mouseY;
+        drawCharm();
+      } else {
+        charmHoverS = null;
+        charmHoverY = null;
+        drawCharm();
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      charmHoverS = null;
+      charmHoverY = null;
+      drawCharm();
+    });
+    canvas.dataset.hasListeners = 'true';
+  }
+
+  // Hover Tooltip rendering for Charm Canvas
+  if (charmHoverS !== null && charmHoverY !== null) {
+    const hx = toX(charmHoverS);
+    
+    // Find the closest maturity curve in canvas space
+    let closestMat = null;
+    let minDistance = Infinity;
+    let closestY = 0;
+    let closestDelta = 0;
+    
+    maturities.forEach(([T, label, col]) => {
+      const dVal = callDelta(charmHoverS, K, r, sig, T);
+      const cy = toY(dVal);
+      const dist = Math.abs(charmHoverY - cy);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestMat = { T, label, col };
+        closestY = cy;
+        closestDelta = dVal;
+      }
+    });
+
+    // Draw vertical guide line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hx, pad.t);
+    ctx.lineTo(hx, H - pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw circles at all curve intersections (semi-transparent)
+    maturities.forEach(([T, label, col]) => {
+      const dVal = callDelta(charmHoverS, K, r, sig, T);
+      const cy = toY(dVal);
+      const isClosest = (closestMat && T === closestMat.T);
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(hx, cy, isClosest ? 5.5 : 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = isClosest ? '#fff' : '#060a0a';
+      ctx.lineWidth = isClosest ? 1.5 : 1;
+      ctx.stroke();
+    });
+
+    // Draw floating tooltip box next to the closest intersection point
+    if (closestMat) {
+      const boxW = 125;
+      const boxH = 40;
+      let tx = hx + 12;
+      if (tx + boxW > W - 10) { // Keep it inside the canvas right bound
+        tx = hx - boxW - 12;
+      }
+      let ty = closestY - boxH / 2;
+      // Keep tooltip within vertical bounds
+      if (ty < pad.t) ty = pad.t;
+      if (ty + boxH > H - pad.b) ty = H - pad.b - boxH;
+
+      ctx.fillStyle = 'rgba(11, 17, 21, 0.9)';
+      ctx.strokeStyle = closestMat.col;
+      ctx.lineWidth = 1.5;
+      ctx.fillRect(tx, ty, boxW, boxH);
+      ctx.strokeRect(tx, ty, boxW, boxH);
+
+      ctx.font = '10px Fira Code, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillStyle = 'var(--muted)';
+      ctx.fillText(`S = ${charmHoverS.toFixed(1)}`, tx + 8, ty + 14);
+
+      ctx.fillStyle = closestMat.col;
+      ctx.font = '10px Fira Code, monospace';
+      ctx.fillText(`${closestMat.label}: ${closestDelta.toFixed(3)}`, tx + 8, ty + 28);
+    }
+  }
 }
 
 /* ─── VANNA (Delta vs Vol) ──────────────────────────────────────────── */
+let vannaHoverS = null, vannaHoverY = null;
+
 function drawVanna(){
-  const K=parseFloat(document.getElementById('vn-k').value)||100;
+  const K = 100;
   const T=parseFloat(document.getElementById('vn-t').value)||1;
-  const r=parseFloat(document.getElementById('vn-r').value)/100||.04;
-  document.getElementById('vn-k-v').textContent=K;
+  const rVal=parseFloat(document.getElementById('vn-r').value);
+  const r=isNaN(rVal)?0.04:rVal/100;
   document.getElementById('vn-t-v').textContent=T.toFixed(2);
   document.getElementById('vn-r-v').textContent=(r*100).toFixed(0)+'%';
-  const Srange=Array.from({length:300},(_,i)=>30+i*190/300);
+  const Srange=Array.from({length:301},(_,i)=>i*200/300);
   const vols=[[.10,'IV 10%','#f87171'],[.20,'IV 20%','#fb923c'],[.30,'IV 30%','#fbbf24'],[.50,'IV 50%','#34d399'],[.80,'IV 80%','#818cf8']];
   const rc=setupCanvas('vannaCanvas',270); if(!rc) return;
   const {ctx,W,H}=rc;
-  const pad={l:50,r:90,t:20,b:35};
-  const {toX,toY}=drawAxes(ctx,pad,W,H,30,220,0,1,'Spot Price S','Call Delta',
-    [50,75,100,125,150,175,200],[0,.25,.5,.75,1],null,v=>v.toFixed(2));
+  const pad={l:50,r:110,t:20,b:35};
+  const {toX,toY}=drawAxes(ctx,pad,W,H,0,200,0,1,'Spot Price S','Call Delta',
+    [0,25,50,75,100,125,150,175,200],[0,.25,.5,.75,1],null,v=>v.toFixed(2));
   vols.forEach(([sig,label,col])=>{
     ctx.strokeStyle=col;ctx.lineWidth=sig<.2?2.5:1.8;
     ctx.beginPath();
     Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(callDelta(S,K,r,sig,T))):ctx.lineTo(toX(S),toY(callDelta(S,K,r,sig,T))));ctx.stroke();
   });
   ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
-  ctx.fillStyle='#fbbf24';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
+  ctx.fillStyle='#fbbf24';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K='+K,toX(K),pad.t-5);
+  // legend
   ctx.textAlign='left';ctx.font='10px Fira Code,monospace';
   vols.forEach(([sig,label,col],i)=>{
-    ctx.fillStyle=col;ctx.fillRect(W-85,pad.t+i*16,14,2);
-    ctx.fillStyle=col;ctx.fillText(label,W-67,pad.t+i*16+4);
+    let text = label;
+    if (vannaHoverS !== null) {
+      const val = callDelta(vannaHoverS, K, r, sig, T);
+      text += `: ${val.toFixed(3)}`;
+    }
+    ctx.fillStyle=col;ctx.fillRect(W-105,pad.t+i*16,14,2);
+    ctx.fillStyle=col;ctx.fillText(text,W-87,pad.t+i*16+4);
   });
+
+  // Setup hover listeners for vannaCanvas
+  const canvas = document.getElementById('vannaCanvas');
+  if (canvas && !canvas.dataset.hasListeners) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const mouseY = (e.clientY - rect.top) * scaleY;
+      const cw = canvas.width - pad.l - pad.r;
+      if (mouseX >= pad.l && mouseX <= canvas.width - pad.r) {
+        vannaHoverS = (mouseX - pad.l) / cw * 200;
+        vannaHoverY = mouseY;
+        drawVanna();
+      } else {
+        vannaHoverS = null;
+        vannaHoverY = null;
+        drawVanna();
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      vannaHoverS = null;
+      vannaHoverY = null;
+      drawVanna();
+    });
+    canvas.dataset.hasListeners = 'true';
+  }
+
+  // Hover Tooltip rendering for Vanna Canvas
+  if (vannaHoverS !== null && vannaHoverY !== null) {
+    const hx = toX(vannaHoverS);
+    
+    // Find the closest vol curve in canvas space
+    let closestVol = null;
+    let minDistance = Infinity;
+    let closestY = 0;
+    let closestDelta = 0;
+    
+    vols.forEach(([sig, label, col]) => {
+      const dVal = callDelta(vannaHoverS, K, r, sig, T);
+      const cy = toY(dVal);
+      const dist = Math.abs(vannaHoverY - cy);
+      if (dist < minDistance) {
+        minDistance = dist;
+        closestVol = { sig, label, col };
+        closestY = cy;
+        closestDelta = dVal;
+      }
+    });
+
+    // Draw vertical guide line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hx, pad.t);
+    ctx.lineTo(hx, H - pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw circles at all curve intersections (semi-transparent)
+    vols.forEach(([sig, label, col]) => {
+      const dVal = callDelta(vannaHoverS, K, r, sig, T);
+      const cy = toY(dVal);
+      const isClosest = (closestVol && sig === closestVol.sig);
+      ctx.fillStyle = col;
+      ctx.beginPath();
+      ctx.arc(hx, cy, isClosest ? 5.5 : 3.5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = isClosest ? '#fff' : '#060a0a';
+      ctx.lineWidth = isClosest ? 1.5 : 1;
+      ctx.stroke();
+    });
+
+    // Draw floating tooltip box next to the closest intersection point
+    if (closestVol) {
+      const boxW = 125;
+      const boxH = 40;
+      let tx = hx + 12;
+      if (tx + boxW > W - 10) { // Keep it inside the canvas right bound
+        tx = hx - boxW - 12;
+      }
+      let ty = closestY - boxH / 2;
+      // Keep tooltip within vertical bounds
+      if (ty < pad.t) ty = pad.t;
+      if (ty + boxH > H - pad.b) ty = H - pad.b - boxH;
+
+      ctx.fillStyle = 'rgba(11, 17, 21, 0.9)';
+      ctx.strokeStyle = closestVol.col;
+      ctx.lineWidth = 1.5;
+      ctx.fillRect(tx, ty, boxW, boxH);
+      ctx.strokeRect(tx, ty, boxW, boxH);
+
+      ctx.font = '10px Fira Code, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillStyle = 'var(--muted)';
+      ctx.fillText(`S = ${vannaHoverS.toFixed(1)}`, tx + 8, ty + 14);
+
+      ctx.fillStyle = closestVol.col;
+      ctx.font = '10px Fira Code, monospace';
+      ctx.fillText(`${closestVol.label}: ${closestDelta.toFixed(3)}`, tx + 8, ty + 28);
+    }
+  }
 }
 
 /* ─── N(d1) vs N(d2) ────────────────────────────────────────────────── */
+let probHoverS = null;
+
+function resetProb(){
+  document.getElementById('p-s').value = 100;
+  document.getElementById('p-k').value = 100;
+  document.getElementById('p-sig').value = 20;
+  document.getElementById('p-r').value = 4;
+  document.getElementById('p-t').value = 1;
+  probHoverS = null;
+  calcProb();
+}
+
 function calcProb(){
-  const S=parseFloat(document.getElementById('p-s').value)||100;
-  const K=parseFloat(document.getElementById('p-k').value)||100;
-  const sig=parseFloat(document.getElementById('p-sig').value)/100||.2;
-  const r=parseFloat(document.getElementById('p-r').value)/100||.04;
-  const T=parseFloat(document.getElementById('p-t').value)||1;
-  if(T<=0||sig<=0) return;
+  const S=Math.max(0.01,parseFloat(document.getElementById('p-s').value)||100);
+  const K=Math.max(0.01,parseFloat(document.getElementById('p-k').value)||100);
+  const sig=Math.max(0.01,parseFloat(document.getElementById('p-sig').value)||20)/100;
+  const rVal=parseFloat(document.getElementById('p-r').value);
+  const r=isNaN(rVal)?0.04:rVal/100;
+  const T=Math.max(0.01,parseFloat(document.getElementById('p-t').value)||1);
   const dd1=(Math.log(S/K)+(r+.5*sig*sig)*T)/(sig*Math.sqrt(T));
   const dd2=dd1-sig*Math.sqrt(T);
   const nd1=normcdf(dd1),nd2=normcdf(dd2);
   const gap=nd1-nd2;
   const C=bsCall(S,K,r,sig,T);
   document.getElementById('prob-results').innerHTML=`
-    <div class="kpi"><div class="lbl">d₁</div><div class="val" style="color:var(--accent)">${dd1.toFixed(4)}</div></div>
-    <div class="kpi"><div class="lbl">d₂</div><div class="val" style="color:var(--accent2)">${dd2.toFixed(4)}</div></div>
-    <div class="kpi"><div class="lbl">Δ = N(d₁)</div><div class="val" style="color:var(--accent)">${nd1.toFixed(4)}</div><div class="sub">Hedge ratio</div></div>
-    <div class="kpi"><div class="lbl">P(ITM) = N(d₂)</div><div class="val" style="color:var(--accent2)">${nd2.toFixed(4)}</div><div class="sub">Risk-neutral probability ITM</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">d₁</div><div class="val" style="color:var(--accent)">${dd1.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">d₂</div><div class="val" style="color:var(--accent2)">${dd2.toFixed(4)}</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">Δ = N(d₁)</div><div class="val" style="color:var(--accent)">${nd1.toFixed(4)}</div><div class="sub">Hedge ratio</div></div>
+    <div class="kpi"><div class="lbl" style="text-transform:none">P(ITM) = N(d₂)</div><div class="val" style="color:var(--accent2)">${nd2.toFixed(4)}</div><div class="sub">Risk-neutral probability ITM</div></div>
     <div class="kpi"><div class="lbl">Gap = σ√T</div><div class="val" style="color:${gap>0.15?'var(--red)':'var(--accent3)'}">${gap.toFixed(4)}</div><div class="sub">${gap>0.1?'⚠️ Significant':'Small gap'}</div></div>
     <div class="kpi"><div class="lbl">Call Price</div><div class="val" style="color:var(--accent4)">${C.toFixed(3)}</div></div>
   `;
@@ -1048,15 +1345,109 @@ function calcProb(){
   ctx.fillStyle='#4ade80';ctx.fillText('N(d₁) = Δ (hedge ratio)',pad.l+8,pad.t+14);
   ctx.fillStyle='#60a5fa';ctx.fillText('N(d₂) = P(ITM)',pad.l+8,pad.t+26);
   ctx.fillStyle='#fbbf24';ctx.fillText('Gap = σ√T (orange fill)',pad.l+8,pad.t+38);
+
+  // Setup hover listeners for probCanvas
+  const canvas = document.getElementById('probCanvas');
+  if (canvas && !canvas.dataset.hasListeners) {
+    canvas.addEventListener('mousemove', (e) => {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const mouseX = (e.clientX - rect.left) * scaleX;
+      const cw = canvas.width - pad.l - pad.r;
+      if (mouseX >= pad.l && mouseX <= canvas.width - pad.r) {
+        probHoverS = K * 0.5 + (mouseX - pad.l) / cw * K;
+        calcProb();
+      } else {
+        probHoverS = null;
+        calcProb();
+      }
+    });
+    canvas.addEventListener('mouseleave', () => {
+      probHoverS = null;
+      calcProb();
+    });
+    canvas.dataset.hasListeners = 'true';
+  }
+
+  // Hover Tooltip rendering for Probability Canvas
+  if (probHoverS !== null) {
+    const hx = toX(probHoverS);
+    const d1Hover = (Math.log(probHoverS/K)+(r+.5*sig*sig)*T)/(sig*Math.sqrt(T));
+    const d2Hover = d1Hover - sig*Math.sqrt(T);
+    const nd1Hover = normcdf(d1Hover);
+    const nd2Hover = normcdf(d2Hover);
+
+    // Draw vertical guide line
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.22)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 3]);
+    ctx.beginPath();
+    ctx.moveTo(hx, pad.t);
+    ctx.lineTo(hx, H - pad.b);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Draw intersection circles
+    ctx.fillStyle = '#4ade80';
+    ctx.beginPath();
+    ctx.arc(hx, toY(nd1Hover), 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#060a0a';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    ctx.fillStyle = '#60a5fa';
+    ctx.beginPath();
+    ctx.arc(hx, toY(nd2Hover), 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#060a0a';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // Draw floating tooltip box
+    const boxW = 120;
+    const boxH = 56;
+    let tx = hx + 12;
+    if (tx + boxW > W - 10) {
+      tx = hx - boxW - 12;
+    }
+    const ty = pad.t + 10;
+
+    ctx.fillStyle = 'rgba(11, 17, 21, 0.9)';
+    ctx.strokeStyle = 'var(--border)';
+    ctx.lineWidth = 1.5;
+    ctx.fillRect(tx, ty, boxW, boxH);
+    ctx.strokeRect(tx, ty, boxW, boxH);
+
+    ctx.font = '10px Fira Code, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'var(--muted)';
+    ctx.fillText(`S = ${probHoverS.toFixed(1)}`, tx + 8, ty + 14);
+
+    ctx.fillStyle = '#4ade80';
+    ctx.fillText(`N(d₁): ${nd1Hover.toFixed(3)}`, tx + 8, ty + 28);
+
+    ctx.fillStyle = '#60a5fa';
+    ctx.fillText(`N(d₂): ${nd2Hover.toFixed(3)}`, tx + 8, ty + 42);
+  }
 }
 
 /* ─── PNL SIMULATOR ─────────────────────────────────────────────────── */
+/* ─── PNL SIMULATOR ─────────────────────────────────────────────────── */
 let simPrices=[];
+function resetSim(){
+  document.getElementById('sim-iv').value = 20;
+  document.getElementById('sim-rv').value = 15;
+  document.getElementById('sim-days').value = 63;
+  document.getElementById('sim-k').value = 100;
+  runSim(true);
+}
+
 function runSim(newPath=false){
   const IV=parseFloat(document.getElementById('sim-iv').value)/100||.2;
   const RV=parseFloat(document.getElementById('sim-rv').value)/100||.15;
   const days=parseInt(document.getElementById('sim-days').value)||63;
-  const K=parseFloat(document.getElementById('sim-k').value)||100;
+  const K=Math.max(0.01,parseFloat(document.getElementById('sim-k').value)||100);
   document.getElementById('sim-iv-v').textContent=(IV*100).toFixed(0)+'%';
   document.getElementById('sim-rv-v').textContent=(RV*100).toFixed(0)+'%';
   document.getElementById('sim-days-v').textContent=days;
@@ -1076,7 +1467,7 @@ function runSim(newPath=false){
     const T=Math.max(0.001,(days-i)/252);
     const S=simPrices[i],Sp=simPrices[i-1];
     const gamma=bsGamma(Sp,K,r,IV,Math.max(.001,(days-i+1)/252));
-    const dailyPnL=0.5*gamma*Sp*Sp*(Math.pow((S-Sp)/Sp,2)*252-IV*IV)/252;
+    const dailyPnL=0.5*gamma*Sp*Sp*(Math.pow((S-Sp)/Sp,2)*252 - IV*IV)/252;
     cumPnL.push(cumPnL[cumPnL.length-1]+dailyPnL);
     shares=callDelta(S,K,r,IV,T);
   }
@@ -1084,11 +1475,12 @@ function runSim(newPath=false){
   const maxDD=Math.min(...cumPnL);
   const rs=setupCanvas('simCanvas',260); if(!rs) return;
   const {ctx,W,H}=rs;
-  const yMin=Math.min(...cumPnL,-.5),yMax=Math.max(...cumPnL,.5);
+  const yLim=Math.max(0.5, 15 * (K / 100) * (days / 252));
+  const yMin=-yLim, yMax=yLim;
   const pad={l:55,r:15,t:20,b:35};
   const {toX,toY}=drawAxes(ctx,pad,W,H,0,days,yMin,yMax,'Trading Day','Cumulative P&L',
     [0,Math.round(days/4),Math.round(days/2),Math.round(3*days/4),days],
-    [yMin,(yMin+yMax)/2,0,yMax].map(v=>parseFloat(v.toFixed(2))));
+    [yMin,yMin/2,0,yMax/2,yMax].map(v=>parseFloat(v.toFixed(2))));
   // fill positive / negative
   for(let i=1;i<cumPnL.length;i++){
     const x0=toX(i-1),x1=toX(i),y0=toY(cumPnL[i-1]),y1=toY(cumPnL[i]);
@@ -1099,14 +1491,17 @@ function runSim(newPath=false){
   ctx.strokeStyle=finalPnL>0?'#4ade80':'#f87171';ctx.lineWidth=2;ctx.beginPath();
   cumPnL.forEach((p,i)=>i===0?ctx.moveTo(toX(0),toY(0)):ctx.lineTo(toX(i),toY(p)));ctx.stroke();
   // theoretical expectation line
-  const tPnL=Array.from({length:days+1},(_,i)=>0.5*bsGamma(S0,K,r,IV,Math.max(.001,(days-i)/252))*S0*S0*(IV*IV-RV*RV)*i/252);
+  const tPnL=Array.from({length:days+1},(_,i)=>{
+    if(i===0) return 0;
+    return bsCall(S0,K,r,RV,i/252) - bsCall(S0,K,r,IV,i/252);
+  });
   ctx.strokeStyle='#818cf8';ctx.lineWidth=1.5;ctx.setLineDash([5,4]);ctx.beginPath();
   tPnL.forEach((p,i)=>i===0?ctx.moveTo(toX(0),toY(0)):ctx.lineTo(toX(i),toY(p)));ctx.stroke();ctx.setLineDash([]);
   document.getElementById('sim-stats').innerHTML=`
     <div class="kpi"><div class="lbl">Final P&L</div><div class="val" style="color:${finalPnL>0?'var(--accent)':'var(--red)'}">${finalPnL>0?'+':''}${finalPnL.toFixed(3)}</div></div>
     <div class="kpi"><div class="lbl">Max Drawdown</div><div class="val" style="color:var(--red)">${maxDD.toFixed(3)}</div></div>
-    <div class="kpi"><div class="lbl">IV − RV</div><div class="val" style="color:${IV>RV?'var(--accent)':'var(--red)'}">${((IV-RV)*100).toFixed(1)}%</div><div class="sub">${IV>RV?'Positive edge (short vol)':'Negative edge'}</div></div>
-    <div class="kpi"><div class="lbl">Expected P&L</div><div class="val" style="color:var(--accent2)">${tPnL[tPnL.length-1].toFixed(3)}</div><div class="sub">½·Γ·S²·(IV²−RV²)·T</div></div>
+    <div class="kpi"><div class="lbl">RV − IV</div><div class="val" style="color:${RV>IV?'var(--accent)':'var(--red)'}">${((RV-IV)*100).toFixed(1)}%</div><div class="sub">${RV>IV?'Positive edge (long vol)':'Negative edge'}</div></div>
+    <div class="kpi"><div class="lbl">Expected P&L</div><div class="val" style="color:var(--accent2)">${tPnL[tPnL.length-1].toFixed(3)}</div><div class="sub">BS(RV) − BS(IV)</div></div>
   `;
 }
 
