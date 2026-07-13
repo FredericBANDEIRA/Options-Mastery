@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Options & Derivatives interview questions for finance interviews — Call/Put, Black-Scholes, strategies, forwards, futures, exotic options.">
+  <title>Options & Derivatives — FMI Interview Prep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+  <div class="bg-glow-2"></div>
+
+  <nav class="navbar">
+    <div class="container">
+      <a href="../index.html" class="navbar-brand"><span class="logo-icon">📊</span> FMI Prep</a>
+      <div class="navbar-links"><a href="../index.html">Categories</a></div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <header class="page-header">
+      <div class="breadcrumb">
+        <a href="../index.html">Home</a><span>›</span><span>Options & Derivatives</span>
+      </div>
+      <h1>🎯 Options & Derivatives</h1>
+      <p class="page-desc">Call/Put fundamentals, payoffs, pricing, Black-Scholes, put-call parity, forwards vs futures, option strategies, and exotic options. Present in ~90% of all interviews.</p>
+    </header>
+
+    <div class="page-stats">
+      <div class="stat"><span class="stat-num">45</span> questions</div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num">8</span> answered</div>
+      <div class="stat-divider"></div>
+      <div class="stat"><span class="stat-num">37</span> remaining</div>
+    </div>
+
+    <!-- ==================== SECTION 1: Call/Put Basics ==================== -->
+    <div class="question-section">
+      <h2><span class="section-icon">📌</span> Call & Put Fundamentals</h2>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-01</span></div>
+          <span class="q-flag answered">Answered</span>
+        </div>
+        <div class="q-text">What is a European call option? What is a European put option? What is the difference with an American option?</div>
+        
+        <details class="answer-details">
+          <summary class="answer-summary">💡 View Answer & Interview Tips</summary>
+          <div class="answer-content">
+            <h4>📌 The Elevator Pitch</h4>
+            <p>A <strong>Call option</strong> gives the buyer the <em>right, but not the obligation</em>, to buy an underlying asset at a pre-specified strike price (<i>K</i>) on or before a specific maturity date (<i>T</i>). In exchange for this right, the buyer pays an upfront cost called the <strong>premium</strong> (<i>C</i>).</p>
+            <p>A <strong>Put option</strong> gives the buyer the right, but not the obligation, to <em>sell</em> the underlying asset at the strike price (<i>K</i>) on or before maturity (<i>T</i>) for an upfront premium (<i>P</i>).</p>
+            
+            <h4>📐 Payoff at Maturity (<i>T</i>)</h4>
+            <div class="formula-box">Call Payoff = max(0, S<sub>T</sub> − K)<br>Put Payoff  = max(0, K − S<sub>T</sub>)</div>
+            <p>Where <i>S<sub>T</sub></i> is the spot price of the underlying at maturity <i>T</i>, and <i>K</i> is the strike price.</p>
+
+            <h4>🌍 European vs. American Distinction</h4>
+            <ul>
+              <li><strong>European Option:</strong> Can only be exercised precisely at maturity (<i>T</i>).</li>
+              <li><strong>American Option:</strong> Can be exercised at any time between today and maturity (<i>t</i> ∈ [0, <i>T</i>]).</li>
+            </ul>
+
+            <div class="pro-tip-box">
+              <strong>💡 Interview Trap & Follow-Up:</strong><br>
+              Interviewer: <em>"Which option is more expensive, American or European? And when would you actually exercise an American option early?"</em><br>
+              <strong>Answer:</strong> An American option is always worth at least as much as a European option (<i>C<sub>Am</sub></i> ≥ <i>C<sub>Eur</sub></i>) because it gives extra optionality. However, on a <strong>non-dividend paying stock</strong>, you should <strong>never</strong> early exercise an American Call (you forfeit the time value and pay cash early, losing interest on <i>K</i>). For an American Put, early exercise can be optimal if deeply in-the-money and interest rates are high (to collect <i>K</i> immediately and earn interest on cash). If the stock pays dividends, an American Call may be exercised right before the ex-dividend date to capture the dividend!
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-02</span></div>
+          <span class="q-flag answered">Answered</span>
+        </div>
+        <div class="q-text">Draw the P&L (payoff at maturity) of a long call, short call, long put, and short put. Specify the key points on the x-axis and y-axis (breakeven, max profit, max loss).</div>
+        
+        <details class="answer-details">
+          <summary class="answer-summary">💡 View Answer & Interview Tips</summary>
+          <div class="answer-content">
+            <h4>📌 Comparative Payoff & Net P&L Summary Table</h4>
+            <p>At maturity (<i>T</i>), let <i>S<sub>T</sub></i> be the spot price, <i>K</i> the strike price, and <i>C</i> / <i>P</i> the initial premiums paid/received.</p>
+            <div style="overflow-x: auto; margin: 12px 0;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left; background: rgba(15, 23, 42, 0.5); border: 1px solid var(--border-glass);">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--border-glass); color: var(--text-primary); background: rgba(59, 130, 246, 0.1);">
+                    <th style="padding: 10px;">Position</th>
+                    <th style="padding: 10px;">Gross Payoff</th>
+                    <th style="padding: 10px;">Net P&L (with Premium)</th>
+                    <th style="padding: 10px;">Max Profit</th>
+                    <th style="padding: 10px;">Max Loss</th>
+                    <th style="padding: 10px;">Breakeven Spot (<i>S<sub>BE</sub></i>)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom: 1px solid var(--border-glass);">
+                    <td style="padding: 10px; font-weight: 700; color: #60A5FA;">Long Call</td>
+                    <td style="padding: 10px; font-family: monospace;">max(0, S<sub>T</sub> − K)</td>
+                    <td style="padding: 10px; font-family: monospace;">max(0, S<sub>T</sub> − K) − C</td>
+                    <td style="padding: 10px; color: var(--accent-emerald); font-weight: 700;">+∞ (Unlimited)</td>
+                    <td style="padding: 10px; color: var(--accent-rose); font-weight: 700;">−C (Premium paid)</td>
+                    <td style="padding: 10px; font-family: monospace; font-weight: 700;">K + C</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid var(--border-glass);">
+                    <td style="padding: 10px; font-weight: 700; color: #F87171;">Short Call</td>
+                    <td style="padding: 10px; font-family: monospace;">−max(0, S<sub>T</sub> − K)</td>
+                    <td style="padding: 10px; font-family: monospace;">C − max(0, S<sub>T</sub> − K)</td>
+                    <td style="padding: 10px; color: var(--accent-emerald); font-weight: 700;">+C (Premium received)</td>
+                    <td style="padding: 10px; color: var(--accent-rose); font-weight: 700;">−∞ (Unlimited)</td>
+                    <td style="padding: 10px; font-family: monospace; font-weight: 700;">K + C</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid var(--border-glass);">
+                    <td style="padding: 10px; font-weight: 700; color: #34D399;">Long Put</td>
+                    <td style="padding: 10px; font-family: monospace;">max(0, K − S<sub>T</sub>)</td>
+                    <td style="padding: 10px; font-family: monospace;">max(0, K − S<sub>T</sub>) − P</td>
+                    <td style="padding: 10px; color: var(--accent-emerald); font-weight: 700;">K − P (when S<sub>T</sub> = 0)</td>
+                    <td style="padding: 10px; color: var(--accent-rose); font-weight: 700;">−P (Premium paid)</td>
+                    <td style="padding: 10px; font-family: monospace; font-weight: 700;">K − P</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 10px; font-weight: 700; color: #FBBF24;">Short Put</td>
+                    <td style="padding: 10px; font-family: monospace;">−max(0, K − S<sub>T</sub>)</td>
+                    <td style="padding: 10px; font-family: monospace;">P − max(0, K − S<sub>T</sub>)</td>
+                    <td style="padding: 10px; color: var(--accent-emerald); font-weight: 700;">+P (Premium received)</td>
+                    <td style="padding: 10px; color: var(--accent-rose); font-weight: 700;">−(K − P) (when S<sub>T</sub> = 0)</td>
+                    <td style="padding: 10px; font-family: monospace; font-weight: 700;">K − P</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h4>📈 Visual Payoff & P&L Diagrams (Whiteboard Ready)</h4>
+            <p>When drawing on a whiteboard during an interview, clearly mark the <strong>y-axis intercept</strong> (±Premium), the <strong>kink at Strike <i>K</i></strong>, and the <strong>x-axis intersection (Breakeven)</strong>.</p>
+            
+            <div class="chart-grid">
+              <!-- 1. LONG CALL -->
+              <div class="chart-card">
+                <div class="chart-title" style="color: #60A5FA;">📈 1. Long Call (Bullish)</div>
+                <svg viewBox="0 0 300 200" class="chart-svg" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Axes -->
+                  <line x1="50" y1="130" x2="280" y2="130" stroke="#64748B" stroke-width="1.5"/>
+                  <line x1="50" y1="185" x2="50" y2="15" stroke="#64748B" stroke-width="1.5"/>
+                  <polygon points="280,127 287,130 280,133" fill="#64748B"/>
+                  <polygon points="47,15 50,8 53,15" fill="#64748B"/>
+                  <!-- Axis labels -->
+                  <text x="268" y="148" fill="#94A3B8" font-size="12" font-family="sans-serif">S<tspan font-size="9" dy="3">T</tspan></text>
+                  <text x="18" y="20" fill="#94A3B8" font-size="12" font-family="sans-serif">P&amp;L</text>
+                  <!-- Zero line (x-axis) dashed -->
+                  <line x1="50" y1="130" x2="280" y2="130" stroke="#475569" stroke-width="0.5" stroke-dasharray="2,4"/>
+                  <!-- Strike K tick -->
+                  <line x1="140" y1="127" x2="140" y2="133" stroke="#94A3B8" stroke-width="1.5"/>
+                  <text x="136" y="148" fill="#CBD5E1" font-size="11" font-weight="bold" font-family="sans-serif">K</text>
+                  <!-- Breakeven K+C tick -->
+                  <circle cx="165" cy="130" r="4" fill="none" stroke="#10B981" stroke-width="2"/>
+                  <text x="152" y="165" fill="#10B981" font-size="10" font-weight="bold" font-family="sans-serif">K+C</text>
+                  <!-- Premium -C on y-axis -->
+                  <line x1="47" y1="155" x2="53" y2="155" stroke="#F43F5E" stroke-width="1.5"/>
+                  <text x="22" y="159" fill="#F43F5E" font-size="10" font-weight="bold" font-family="sans-serif">−C</text>
+                  <!-- Loss zone (red shaded) -->
+                  <polygon points="50,155 140,155 165,130 50,130" fill="#F43F5E" fill-opacity="0.12"/>
+                  <!-- Profit zone (green shaded) -->
+                  <polygon points="165,130 260,35 260,130" fill="#10B981" fill-opacity="0.15"/>
+                  <!-- P&L Line -->
+                  <polyline points="50,155 140,155 260,35" fill="none" stroke="#60A5FA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                  <!-- Slope label -->
+                  <text x="210" y="55" fill="#60A5FA" font-size="11" font-weight="bold" font-family="sans-serif">slope = +1</text>
+                </svg>
+              </div>
+
+              <!-- 2. SHORT CALL -->
+              <div class="chart-card">
+                <div class="chart-title" style="color: #F87171;">📉 2. Short Call (Bearish)</div>
+                <svg viewBox="0 0 300 200" class="chart-svg" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Axes -->
+                  <line x1="50" y1="90" x2="280" y2="90" stroke="#64748B" stroke-width="1.5"/>
+                  <line x1="50" y1="185" x2="50" y2="15" stroke="#64748B" stroke-width="1.5"/>
+                  <polygon points="280,87 287,90 280,93" fill="#64748B"/>
+                  <polygon points="47,15 50,8 53,15" fill="#64748B"/>
+                  <!-- Axis labels -->
+                  <text x="268" y="108" fill="#94A3B8" font-size="12" font-family="sans-serif">S<tspan font-size="9" dy="3">T</tspan></text>
+                  <text x="18" y="20" fill="#94A3B8" font-size="12" font-family="sans-serif">P&amp;L</text>
+                  <!-- Strike K tick -->
+                  <line x1="140" y1="87" x2="140" y2="93" stroke="#94A3B8" stroke-width="1.5"/>
+                  <text x="136" y="108" fill="#CBD5E1" font-size="11" font-weight="bold" font-family="sans-serif">K</text>
+                  <!-- Breakeven K+C tick -->
+                  <circle cx="165" cy="90" r="4" fill="none" stroke="#10B981" stroke-width="2"/>
+                  <text x="152" y="82" fill="#10B981" font-size="10" font-weight="bold" font-family="sans-serif">K+C</text>
+                  <!-- Premium +C on y-axis -->
+                  <line x1="47" y1="65" x2="53" y2="65" stroke="#10B981" stroke-width="1.5"/>
+                  <text x="22" y="69" fill="#10B981" font-size="10" font-weight="bold" font-family="sans-serif">+C</text>
+                  <!-- Profit zone (green shaded) -->
+                  <polygon points="50,65 140,65 165,90 50,90" fill="#10B981" fill-opacity="0.15"/>
+                  <!-- Loss zone (red shaded) -->
+                  <polygon points="165,90 255,180 255,90" fill="#F43F5E" fill-opacity="0.12"/>
+                  <!-- P&L Line -->
+                  <polyline points="50,65 140,65 255,180" fill="none" stroke="#F87171" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                  <!-- Slope label -->
+                  <text x="205" y="155" fill="#F87171" font-size="11" font-weight="bold" font-family="sans-serif">slope = −1</text>
+                </svg>
+              </div>
+
+              <!-- 3. LONG PUT -->
+              <div class="chart-card">
+                <div class="chart-title" style="color: #34D399;">📉 3. Long Put (Bearish)</div>
+                <svg viewBox="0 0 300 200" class="chart-svg" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Axes -->
+                  <line x1="50" y1="130" x2="280" y2="130" stroke="#64748B" stroke-width="1.5"/>
+                  <line x1="50" y1="185" x2="50" y2="15" stroke="#64748B" stroke-width="1.5"/>
+                  <polygon points="280,127 287,130 280,133" fill="#64748B"/>
+                  <polygon points="47,15 50,8 53,15" fill="#64748B"/>
+                  <!-- Axis labels -->
+                  <text x="268" y="148" fill="#94A3B8" font-size="12" font-family="sans-serif">S<tspan font-size="9" dy="3">T</tspan></text>
+                  <text x="18" y="20" fill="#94A3B8" font-size="12" font-family="sans-serif">P&amp;L</text>
+                  <!-- Strike K tick -->
+                  <line x1="170" y1="127" x2="170" y2="133" stroke="#94A3B8" stroke-width="1.5"/>
+                  <text x="166" y="148" fill="#CBD5E1" font-size="11" font-weight="bold" font-family="sans-serif">K</text>
+                  <!-- Breakeven K-P tick -->
+                  <circle cx="145" cy="130" r="4" fill="none" stroke="#10B981" stroke-width="2"/>
+                  <text x="130" y="165" fill="#10B981" font-size="10" font-weight="bold" font-family="sans-serif">K−P</text>
+                  <!-- Premium -P on y-axis -->
+                  <line x1="47" y1="155" x2="53" y2="155" stroke="#F43F5E" stroke-width="1.5"/>
+                  <text x="22" y="159" fill="#F43F5E" font-size="10" font-weight="bold" font-family="sans-serif">−P</text>
+                  <!-- Max profit K-P on y-axis -->
+                  <line x1="47" y1="35" x2="53" y2="35" stroke="#10B981" stroke-width="1.5"/>
+                  <text x="14" y="39" fill="#10B981" font-size="10" font-weight="bold" font-family="sans-serif">K−P</text>
+                  <!-- Profit zone (green shaded) -->
+                  <polygon points="50,35 145,130 50,130" fill="#10B981" fill-opacity="0.15"/>
+                  <!-- Loss zone (red shaded) -->
+                  <polygon points="145,130 170,155 260,155 260,130" fill="#F43F5E" fill-opacity="0.12"/>
+                  <!-- P&L Line -->
+                  <polyline points="50,35 170,155 260,155" fill="none" stroke="#34D399" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                  <!-- Slope label -->
+                  <text x="70" y="70" fill="#34D399" font-size="11" font-weight="bold" font-family="sans-serif">slope = −1</text>
+                </svg>
+              </div>
+
+              <!-- 4. SHORT PUT -->
+              <div class="chart-card">
+                <div class="chart-title" style="color: #FBBF24;">📈 4. Short Put (Bullish)</div>
+                <svg viewBox="0 0 300 200" class="chart-svg" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Axes -->
+                  <line x1="50" y1="90" x2="280" y2="90" stroke="#64748B" stroke-width="1.5"/>
+                  <line x1="50" y1="185" x2="50" y2="15" stroke="#64748B" stroke-width="1.5"/>
+                  <polygon points="280,87 287,90 280,93" fill="#64748B"/>
+                  <polygon points="47,15 50,8 53,15" fill="#64748B"/>
+                  <!-- Axis labels -->
+                  <text x="268" y="108" fill="#94A3B8" font-size="12" font-family="sans-serif">S<tspan font-size="9" dy="3">T</tspan></text>
+                  <text x="18" y="20" fill="#94A3B8" font-size="12" font-family="sans-serif">P&amp;L</text>
+                  <!-- Strike K tick -->
+                  <line x1="170" y1="87" x2="170" y2="93" stroke="#94A3B8" stroke-width="1.5"/>
+                  <text x="166" y="108" fill="#CBD5E1" font-size="11" font-weight="bold" font-family="sans-serif">K</text>
+                  <!-- Breakeven K-P tick -->
+                  <circle cx="145" cy="90" r="4" fill="none" stroke="#10B981" stroke-width="2"/>
+                  <text x="130" y="82" fill="#10B981" font-size="10" font-weight="bold" font-family="sans-serif">K−P</text>
+                  <!-- Premium +P on y-axis -->
+                  <line x1="47" y1="65" x2="53" y2="65" stroke="#10B981" stroke-width="1.5"/>
+                  <text x="22" y="69" fill="#10B981" font-size="10" font-weight="bold" font-family="sans-serif">+P</text>
+                  <!-- Max loss -(K-P) on y-axis -->
+                  <line x1="47" y1="175" x2="53" y2="175" stroke="#F43F5E" stroke-width="1.5"/>
+                  <text x="5" y="180" fill="#F43F5E" font-size="9" font-weight="bold" font-family="sans-serif">−(K−P)</text>
+                  <!-- Profit zone (green shaded) -->
+                  <polygon points="145,90 170,65 260,65 260,90" fill="#10B981" fill-opacity="0.15"/>
+                  <!-- Loss zone (red shaded) -->
+                  <polygon points="50,175 145,90 50,90" fill="#F43F5E" fill-opacity="0.12"/>
+                  <!-- P&L Line -->
+                  <polyline points="50,175 170,65 260,65" fill="none" stroke="#FBBF24" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                  <!-- Slope label -->
+                  <text x="70" y="150" fill="#FBBF24" font-size="11" font-weight="bold" font-family="sans-serif">slope = +1</text>
+                </svg>
+              </div>
+            </div>
+
+            <div class="pro-tip-box">
+              <strong>💡 Interview Pro-Tip & Whiteboard Etiquette:</strong><br>
+              1. <strong>Always draw two lines or clearly state the difference between Gross Payoff vs. Net P&L:</strong> Gross Payoff starts exactly at 0 on the y-axis and kinks at <i>K</i>. Net P&L shifts the entire graph down by <i>C</i> (or <i>P</i>) for long positions, and up by <i>C</i> (or <i>P</i>) for short positions.<br>
+              2. <strong>Zero-Bound Trap for Puts:</strong> Interviewers love to ask: <em>"Is the max profit on a long call and long put both unlimited?"</em><br>
+              <strong>Answer:</strong> No! Long Call has +∞ profit potential because a stock can theoretically rise forever (<i>S<sub>T</sub></i> → +∞). But for a Long Put, the stock price cannot fall below $0 (<i>S<sub>T</sub></i> ≥ 0), so the maximum gross payoff is bounded at <i>K</i>, making the net maximum profit exactly <strong><i>K − P</i></strong>.
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-03</span></div>
+          <span class="q-flag answered">Answered</span>
+        </div>
+        <div class="q-text">What is the breakeven of an option?</div>
+        
+        <details class="answer-details">
+          <summary class="answer-summary">💡 View Answer & Interview Tips</summary>
+          <div class="answer-content">
+            <h4>📌 The Elevator Pitch & Standard Formula</h4>
+            <p>The <strong>breakeven price (<i>S<sub>BE</sub></i>)</strong> of an option is the underlying spot price at which the net P&L of the position is exactly zero (<strong>Net P&L = 0</strong>).</p>
+            <ul>
+              <li><strong>Call Breakeven (Long or Short):</strong> <i>S<sub>BE</sub> = K + C</i></li>
+              <li><strong>Put Breakeven (Long or Short):</strong> <i>S<sub>BE</sub> = K − P</i></li>
+            </ul>
+
+            <div class="pro-tip-box">
+              <strong>🎯 Quant / Trading Desk Distinction (How to score 10/10 in an interview):</strong><br>
+              While <i>K + C</i> is the textbook formula at expiration, a top-tier candidate must point out two critical nuances:<br>
+              1. <strong>Time Value of Money (Continuous Capitalization):</strong> Because the premium <i>C</i> is paid upfront at time <i>t = 0</i> and the option expires at maturity <i>T</i>, the exact economic breakeven taking into account the opportunity cost of cash at risk-free rate <i>r</i> is:<br>
+              <div style="font-family: monospace; color: var(--accent-blue); margin: 6px 0;">S<sub>BE</sub> (Call) = K + C · e<sup>rT</sup> &nbsp;&nbsp;|&nbsp;&nbsp; S<sub>BE</sub> (Put) = K − P · e<sup>rT</sup></div>
+              2. <strong>Mid-Life Breakeven (t &lt; T):</strong> Prior to expiration, options hold positive <strong>Time Value</strong>. Therefore, if you hold a long call, you can sell it back to the market at a net profit/breakeven at an underlying spot price <i>significantly lower</i> than <i>K + C</i>!
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-04</span></div>
+          <span class="q-flag answered">Answered</span>
+        </div>
+        <div class="q-text">If you make money when the underlying goes down both when you are long put and short call, what is the difference between the two positions?</div>
+        
+        <details class="answer-details">
+          <summary class="answer-summary">💡 View Answer & Interview Tips</summary>
+          <div class="answer-content">
+            <h4>📌 The Core Distinction: Payoff Profile & Downside Capture</h4>
+            <p>While both positions are <strong>bearish</strong> (positive P&L when the underlying drops), their payoff structures, risk profiles, and Greeks differ fundamentally:</p>
+            <ul>
+              <li><strong>Long Put (Directional Downside Capture):</strong> When the stock drops further below <i>K</i>, your profit grows <strong>linearly</strong> up to a maximum of <strong><i>K − P</i></strong> (as <i>S<sub>T</sub> → 0</i>). You capture 100% of the ongoing downward move.</li>
+              <li><strong>Short Call (Income / Yield Strategy):</strong> When the stock drops below <i>K</i>, the option expires worthless and your profit is <strong>strictly capped / constant at the premium received (+C)</strong>. No matter how deep the market crashes, you can never earn more than $+C$.</li>
+            </ul>
+
+            <h4>⚖️ Comprehensive Comparison Table for Interviewers</h4>
+            <div style="overflow-x: auto; margin: var(--space-sm) 0;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--border-glass); color: var(--accent-blue);">
+                    <th style="padding: 8px;">Feature / Metric</th>
+                    <th style="padding: 8px;">Long Put (Buy Put)</th>
+                    <th style="padding: 8px;">Short Call (Sell Call)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 8px; font-weight: bold;">Max Profit (if S drops to 0)</td>
+                    <td style="padding: 8px; color: #10B981;">Substantial (K − P)</td>
+                    <td style="padding: 8px; color: #FBBF24;">Capped at Premium (+C)</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 8px; font-weight: bold;">Max Loss (if S rallies to +∞)</td>
+                    <td style="padding: 8px; color: #10B981;">Capped at Premium Paid (−P)</td>
+                    <td style="padding: 8px; color: #F43F5E; font-weight: bold;">Infinite (−∞) ⚠️</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 8px; font-weight: bold;">Delta (Directional Bias)</td>
+                    <td style="padding: 8px;">Negative (−Δ approaching −1)</td>
+                    <td style="padding: 8px;">Negative (−Δ approaching 0 OTM)</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 8px; font-weight: bold;">Gamma &amp; Volatility (Vega)</td>
+                    <td style="padding: 8px;">Long Gamma (+Γ), Long Vega (+V)</td>
+                    <td style="padding: 8px;">Short Gamma (−Γ), Short Vega (−V)</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px; font-weight: bold;">Upfront Cashflow</td>
+                    <td style="padding: 8px;">Cash Outflow (Debit / pay P)</td>
+                    <td style="padding: 8px;">Cash Inflow (Credit / receive C)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pro-tip-box">
+              <strong>💡 Interview Pro-Tip (When to trade which):</strong><br>
+              • Buy a <strong>Long Put</strong> when you anticipate a <em>violent market crash or high-volatility sell-off</em> (you want long Gamma and long Vega to amplify gains).<br>
+              • Sell a <strong>Short Call</strong> when you have a <em>neutral-to-moderately bearish view</em> in a stagnant market where implied volatility is overpriced (you want positive Theta / time decay and short Vega to harvest premium).
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-05</span></div>
+          <span class="q-flag answered">Answered</span>
+        </div>
+        <div class="q-text">When and why would you exercise an American option before its expiry? Is the reasoning different for calls vs puts?</div>
+        
+        <details class="answer-details">
+          <summary class="answer-summary">💡 View Answer & Interview Tips</summary>
+          <div class="answer-content">
+            <h4>📌 The Golden Rule: Why Early Exercise is Normally Optimal to Avoid</h4>
+            <p>An option's market price is composed of <strong>Intrinsic Value + Time Value (TV &gt; 0)</strong>. If you early exercise, you only capture the Intrinsic Value and <strong>destroy 100% of the remaining Time Value</strong>. Therefore, if you wish to exit or monetize an option position prior to maturity, it is almost always mathematically superior to <strong>sell the option in the market</strong> rather than exercising it.</p>
+            <p>However, early exercise becomes optimal under specific boundary conditions, and the reasoning differs completely between Calls and Puts:</p>
+
+            <h4>1. American CALL Options (Trigger: Dividends)</h4>
+            <ul>
+              <li><strong>Non-Dividend Paying Stocks:</strong> You should <strong>NEVER early exercise</strong> an American call on a non-dividend stock (Merton's Theorem). Why pay cash (<i>K</i>) early when you can keep your cash earning risk-free interest in the bank until maturity?</li>
+              <li><strong>Dividend-Paying Stocks (D):</strong> When a stock goes ex-dividend, its share price drops by <i>D</i>. Call option holders <strong>do not receive cash dividends</strong>, so the call loses value when the stock drops across the ex-dividend date!</li>
+              <li><strong>Mathematical Trigger:</strong> You early exercise a call <strong>just before the ex-dividend date</strong> (last cum-dividend day) if the upcoming dividend <i>D</i> exceeds the remaining time value plus the interest lost on paying strike <i>K</i> early:<br>
+                <div style="font-family: monospace; color: #10B981; margin: 6px 0;">Exercise Call if: D &gt; Time Value + K · (1 − e<sup>−r·Δt</sup>)</div>
+              </li>
+            </ul>
+
+            <h4>2. American PUT Options (Trigger: Deep ITM + Interest Rates)</h4>
+            <ul>
+              <li><strong>Does it require dividends? NO!</strong> It can be optimal to early exercise an American put even on non-dividend paying stocks!</li>
+              <li><strong>The Time Value of Money Logic:</strong> Suppose you own a Put with Strike <i>K = $100</i>, and the company goes bankrupt (<i>S ≈ $1</i>). Your intrinsic value is <i>$99</i>. Since stock prices cannot drop below $0, your intrinsic value <strong>cannot grow any larger than $100</strong>! If you wait until maturity <i>T</i> to receive that cash, your funds sit dead earning zero interest. If you <strong>exercise early today</strong>, you receive $99 cash immediately and deposit it to earn risk-free interest <i>r</i> until maturity!</li>
+              <li><strong>Mathematical Trigger:</strong> Exercise when the put is <strong>Deep In-The-Money (ITM)</strong> and the interest earned on cash received exceeds the remaining time value of the put.</li>
+            </ul>
+
+            <div class="pro-tip-box">
+              <strong>🎯 Quick Summary for Whiteboard:</strong><br>
+              • <strong>American Call:</strong> Early exercise is driven purely by <strong>Dividends</strong> (avoiding the ex-dividend stock drop).<br>
+              • <strong>American Put:</strong> Early exercise is driven purely by <strong>Time Value of Money / Interest Rates</strong> (monetizing deep ITM cash immediately to earn interest).
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-06</span></div>
+          <span class="q-flag answered">Answered</span>
+        </div>
+        <div class="q-text">What is a call with strike K = 0? What is the difference between holding such a call and holding the underlying stock directly?</div>
+        
+        <details class="answer-details">
+          <summary class="answer-summary">💡 View Answer & Interview Tips</summary>
+          <div class="answer-content">
+            <h4>📌 The Elevator Pitch & Real-World Trading Names</h4>
+            <p>A Call option with Strike <i>K = 0</i> has a payoff at maturity equal to <strong><i>max(S<sub>T</sub> − 0, 0) = S<sub>T</sub></i></strong>. Because stock prices cannot be negative, the gross payoff is exactly equal to the spot price of the stock at maturity.</p>
+            <p><strong>Real-World Trading Names (How to impress your interviewer):</strong><br>
+              • <strong>Prepaid Forward Contract / LEPO (Low Exercise Price Option):</strong> Traded extensively on European and Australian exchanges where investors pay the entire forward price upfront.<br>
+              • <strong>Delta-One Access Products / Participatory Notes (P-Notes):</strong> Used heavily by global investment banks (Goldman Sachs, Morgan Stanley) to give hedge funds 100% economic exposure (Δ = 1) to restricted foreign equity markets (e.g., India, China A-shares, Taiwan) where local capital controls or stamp duties prevent direct share ownership.
+            </p>
+
+            <h4>⚖️ 4 Core Differences vs. Holding Underlying Stock Directly</h4>
+            <div style="overflow-x: auto; margin: var(--space-sm) 0;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--border-glass); color: var(--accent-blue);">
+                    <th style="padding: 8px;">Dimension</th>
+                    <th style="padding: 8px;">Holding Underlying Stock Directly</th>
+                    <th style="padding: 8px;">Holding Zero-Strike Call (K = 0)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 8px; font-weight: bold;">1. Dividends (q)</td>
+                    <td style="padding: 8px; color: #10B981;">Receives all cash dividends quarterly right into bank account.</td>
+                    <td style="padding: 8px; color: #FBBF24;"><strong>Does NOT receive cash dividends</strong> paid during the option life. Thus, its upfront price is discounted by expected dividends: <i>C<sub>0</sub> = S<sub>0</sub> · e<sup>−qT</sup></i>.</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 8px; font-weight: bold;">2. Voting Rights</td>
+                    <td style="padding: 8px;">Full shareholder voting rights &amp; corporate governance voice.</td>
+                    <td style="padding: 8px; color: #94A3B8;">No voting rights whatsoever.</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 8px; font-weight: bold;">3. Upfront Price (if No Divs)</td>
+                    <td style="padding: 8px;">Exactly equal to spot price <i>S<sub>0</sub></i>.</td>
+                    <td style="padding: 8px;">Exactly equal to spot price <i>S<sub>0</sub></i> (by Put-Call Parity: <i>C − P = S − K·e<sup>−rT</sup></i> with <i>K=0, P=0</i>).</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px; font-weight: bold;">4. Counterparty Credit Risk</td>
+                    <td style="padding: 8px; color: #10B981;">Direct physical/custodial asset ownership.</td>
+                    <td style="padding: 8px; color: #F43F5E; font-weight: bold;">Faces counterparty credit risk of the issuing bank or clearinghouse! ⚠️</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pro-tip-box">
+              <strong>💡 Interview Pro-Tip:</strong> If asked, <em>"If a stock pays no dividends, why would anyone buy K=0 call instead of stock?"</em><br>
+              <strong>Answer:</strong> To save on local transaction taxes/stamp duties, to bypass foreign ownership quotas (using Delta-One P-Notes), or to obtain leverage/margin efficiencies within prime brokerage accounts!
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-07</span></div>
+          <span class="q-flag answered">Answered</span>
+        </div>
+        <div class="q-text">Breakdown the value of an option into its components. What is intrinsic value vs time value?</div>
+        
+        <details class="answer-details">
+          <summary class="answer-summary">💡 View Answer & Interview Tips</summary>
+          <div class="answer-content">
+            <h4>📌 The Fundamental Value Equation</h4>
+            <p>The total market price (premium) of any option is always decomposed into two distinct components:</p>
+            <div style="font-family: monospace; font-size: 0.95rem; color: var(--accent-blue); background: rgba(15, 23, 42, 0.85); padding: 10px; border-radius: var(--radius-sm); border-left: 3px solid var(--accent-blue); margin: 8px 0;">Total Option Value = Intrinsic Value (IV) + Time Value (Extrinsic Value, TV)</div>
+
+            <h4>1. Intrinsic Value (IV) — Immediate Exercise Payoff</h4>
+            <p>The value you would capture if you exercised the option <strong>right now at the current spot price <i>S</i></strong>. Intrinsic value is strictly non-negative (<i>IV ≥ 0</i>; it can never be less than zero because you are never forced to exercise).</p>
+            <ul>
+              <li><strong>Call Intrinsic Value:</strong> <i>IV = max(S − K, 0)</i></li>
+              <li><strong>Put Intrinsic Value:</strong> <i>IV = max(K − S, 0)</i></li>
+            </ul>
+
+            <h4>2. Time Value (TV / Extrinsic Value) — Optionality &amp; Uncertainty</h4>
+            <p>The excess premium above the intrinsic value that the market is willing to pay for the <strong>probability / optionality</strong> that the underlying spot price will move further in a favorable direction prior to expiration <i>T</i>.</p>
+            <ul>
+              <li><strong>Key Drivers:</strong> Time Value depends directly on <strong>Implied Volatility (σ)</strong> (more dispersion = higher chance of large payoff) and <strong>Time Remaining to Expiration (τ)</strong> (more time = more opportunity to move).</li>
+              <li><strong>Peak Time Value:</strong> Time value is strictly maximized when the option is exactly <strong>At-The-Money (S = K)</strong> because uncertainty about ending ITM vs OTM is at its highest (Delta ≈ 0.50, Gamma &amp; Vega peak).</li>
+            </ul>
+
+            <div class="pro-tip-box">
+              <strong>🎯 Advanced Quant Trap (Can Time Value be NEGATIVE?):</strong><br>
+              While time value is strictly positive (<i>TV &gt; 0</i>) for American options (since early exercise guarantees at least intrinsic value) and European Calls without dividends, <strong>Time Value can actually be NEGATIVE for Deep In-The-Money European Put Options!</strong><br>
+              Why? Because if a European Put is deep ITM (e.g., <i>S ≈ $1, K = $100</i>), you cannot exercise until maturity <i>T</i>. Due to discounting / time value of money, the present value of the guaranteed $100 strike you receive in the future (<i>K · e<sup>−rT</sup></i>) is less than $100 today! Thus, the market price falls below intrinsic value (<i>P &lt; K − S</i>), giving a <strong>negative time value</strong>!
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- ==================== SECTION 2: Pricing Parameters ==================== -->
+    <div class="question-section">
+      <h2><span class="section-icon">⚙️</span> Option Pricing Parameters</h2>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-08</span></div>
+          <span class="q-flag answered">Answered</span>
+        </div>
+        <div class="q-text">What are all the parameters that influence the price of an option? For each one, explain how an increase affects the price of a call and a put.</div>
+        
+        <details class="answer-details">
+          <summary class="answer-summary">💡 View Answer & Interview Tips</summary>
+          <div class="answer-content">
+            <h4>📌 The 6 Core Pricing Parameters (Black-Scholes / Binomial Inputs)</h4>
+            <p>Every option pricing model relies on exactly 6 underlying parameters. When one parameter increases (holding all others constant), here is how Call and Put prices respond:</p>
+
+            <div style="overflow-x: auto; margin: var(--space-sm) 0;">
+              <table style="width: 100%; border-collapse: collapse; font-size: 0.88rem; text-align: left;">
+                <thead>
+                  <tr style="border-bottom: 2px solid var(--border-glass); color: var(--accent-blue);">
+                    <th style="padding: 8px;">Parameter (When Increased ↑)</th>
+                    <th style="padding: 8px;">Call Price Effect</th>
+                    <th style="padding: 8px;">Put Price Effect</th>
+                    <th style="padding: 8px;">Economic Intuition &amp; Mechanism</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 8px; font-weight: bold;">1. Underlying Spot Price (<i>S</i> ↑)</td>
+                    <td style="padding: 8px; color: #10B981; font-weight: bold;">Increase ↑ (+Δ)</td>
+                    <td style="padding: 8px; color: #F43F5E; font-weight: bold;">Decrease ↓ (−Δ)</td>
+                    <td style="padding: 8px;">Calls gain intrinsic/time value as probability of ending ITM rises. Puts lose value as they move OTM.</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 8px; font-weight: bold;">2. Strike Price (<i>K</i> ↑)</td>
+                    <td style="padding: 8px; color: #F43F5E; font-weight: bold;">Decrease ↓</td>
+                    <td style="padding: 8px; color: #10B981; font-weight: bold;">Increase ↑</td>
+                    <td style="padding: 8px;">Higher strike means paying more to buy stock (bad for Calls) or receiving more when selling stock (good for Puts).</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 8px; font-weight: bold;">3. Implied Volatility (<i>σ</i> ↑)</td>
+                    <td style="padding: 8px; color: #10B981; font-weight: bold;">Increase ↑ (+V)</td>
+                    <td style="padding: 8px; color: #10B981; font-weight: bold;">Increase ↑ (+V)</td>
+                    <td style="padding: 8px;"><strong>Asymmetric Payoff Convexity:</strong> Higher dispersion widens both tails. You capture large upside gains while losses remain bounded at $0 on the downside. Thus, both Calls and Puts gain value!</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 8px; font-weight: bold;">4. Time to Expiration (<i>T</i> ↑)</td>
+                    <td style="padding: 8px; color: #10B981; font-weight: bold;">Increase ↑ (+Θ)*</td>
+                    <td style="padding: 8px; color: #10B981; font-weight: bold;">Increase ↑ (+Θ)*</td>
+                    <td style="padding: 8px;">More time allows greater probability for the stock to make a large favorable move. (*Nuance: Deep ITM European Puts or high-dividend options can lose value with more time due to discounting/carry).</td>
+                  </tr>
+                  <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+                    <td style="padding: 8px; font-weight: bold;">5. Risk-Free Interest Rate (<i>r</i> ↑)</td>
+                    <td style="padding: 8px; color: #10B981; font-weight: bold;">Increase ↑ (+ρ)</td>
+                    <td style="padding: 8px; color: #F43F5E; font-weight: bold;">Decrease ↓ (−ρ)</td>
+                    <td style="padding: 8px;"><strong>Time Value of Money:</strong> Call buyers defer paying <i>K</i> until maturity (cash earns interest in bank; PV of strike <i>K·e<sup>−rT</sup></i> drops). Put buyers wait to receive cash <i>K</i> (heavy discounting reduces its PV today).</td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 8px; font-weight: bold;">6. Dividend Yield (<i>q</i> ↑)</td>
+                    <td style="padding: 8px; color: #F43F5E; font-weight: bold;">Decrease ↓</td>
+                    <td style="padding: 8px; color: #10B981; font-weight: bold;">Increase ↑</td>
+                    <td style="padding: 8px;">Dividends cause the underlying stock price to drop across ex-dividend dates (<i>S·e<sup>−qT</sup></i>). Lower future stock prices hurt Calls and boost Puts.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="pro-tip-box">
+              <strong>💡 Whiteboard Etiquette:</strong> Never just memorize the arrows (+ − + + + −)! When an interviewer asks you about parameters, always start by stating: <em>"The 6 parameters are S, K, σ, T, r, q..."</em> and immediately follow up with the economic intuition for <strong>Why Volatility and Rates work the way they do</strong>, as those are the two most frequently probed follow-ups.
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-09</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">If interest rates increase, what happens to the price of a call? Why? (Explain economically, not just from the formula.)</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-10</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">How do dividends affect the price of a call option? And a put option? Why?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-11</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">Why is an option with high volatility more expensive than one with low volatility, all else being equal?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-12</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">You have two ATM calls with the same strike and spot but different maturities: 2 years and 6 months. Do they both have a delta of 0.5? Which one has the higher delta?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-13</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">Compare a call ATM and a put ATM with 1-year maturity on a stock that pays no dividend. Which costs more if rates are zero? And if rates are 10%?</div>
+      </div>
+    </div>
+
+    <!-- ==================== SECTION 3: Put-Call Parity ==================== -->
+    <div class="question-section">
+      <h2><span class="section-icon">⚖️</span> Put-Call Parity</h2>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-14</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">State and explain the put-call parity. Write the formula with and without dividends.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-15</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">How can you replicate a forward using options? What is a synthetic forward?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-16</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">I buy a call and sell a put at the same strike. What is my position? What are the delta and vega of this combined position?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-17</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">Would you prefer a forward or a call with strike 0? Why?</div>
+      </div>
+    </div>
+
+    <!-- ==================== SECTION 4: Black-Scholes ==================== -->
+    <div class="question-section">
+      <h2><span class="section-icon">📊</span> Black-Scholes Model</h2>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-18</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What are the assumptions of the Black-Scholes model? List all of them.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-19</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">Which of the Black-Scholes assumptions are false in reality? What are the practical implications?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-20</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">Give the closed-form Black-Scholes formula for pricing a call. What is the difference between N(d1) and N(d2)?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-21</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">Which is the only unknown variable in the Black-Scholes formula? How do you obtain it?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-22</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">Price a call from memory: Spot = 100, Vol = 20%, T = 1Y, ATM. What is the approximate price? Where does the simplified formula S₀ × σ × √T × 0.4 come from?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-23</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What are other models besides Black-Scholes for pricing options? Compare the pros and cons of B&S, Monte Carlo, and binomial trees for pricing a simple cap.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-24</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">Price this call using a one-period binomial tree: K=100, S=90, σ=20%, r=0, T=1, probability of up = probability of down = 1/2.</div>
+      </div>
+    </div>
+
+    <!-- ==================== SECTION 5: Forwards & Futures ==================== -->
+    <div class="question-section">
+      <h2><span class="section-icon">🔄</span> Forwards & Futures</h2>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-25</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What is a forward? What is a future? What are the key differences between the two?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-26</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">How do you price a forward? What are the components (spot, rates, dividends, repo)?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-27</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What is the difference between an option and a forward/future?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-28</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">Which is more expensive, a future or a forward? Why?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-29</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">How do you price a forward on FX? Write the formula. What are the concepts of report (premium) and deport (discount)?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-30</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">BNP is quoted at 60. At what price do you sell the April 2017 future? (Hint: no dividend until May, and rates are slightly negative.)</div>
+      </div>
+    </div>
+
+    <!-- ==================== SECTION 6: Option Strategies ==================== -->
+    <div class="question-section">
+      <h2><span class="section-icon">♟️</span> Option Strategies</h2>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-31</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">Define and draw the payoff of a straddle and a strangle. What market view does each represent? What is the approximate delta of an ATM straddle?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-32</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What is a call spread? A put spread? How do you construct a bull spread? Draw the payoff and identify where delta is maximum.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-33</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What is a butterfly spread? Draw the payoff.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-34</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What is a collar? What is a risk reversal? How are they different from a bull spread?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-35</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">Which option strategies allow you to profit from an increase/decrease in implied volatility?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-36</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">I buy a call at 100, sell two calls at 110, and buy one call at 120. Describe the payoff. Do I pay or receive a premium for this structure?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-37</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What is a call spread ratio? What is its purpose?</div>
+      </div>
+    </div>
+
+    <!-- ==================== SECTION 7: Exotic Options & Volatility ==================== -->
+    <div class="question-section">
+      <h2><span class="section-icon">🌀</span> Exotic Options & Volatility</h2>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-38</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What makes an option "exotic" as opposed to "vanilla"? Name three exotic options and explain how they work.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-39</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What is an Asian option? Is it more or less expensive than a vanilla option? Why?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-40</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What is a digital (binary) option? How do you replicate it? What is the delta of a digital option at ATM?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-41</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What are barrier options? Explain the four types: Up-and-In, Up-and-Out, Down-and-In, Down-and-Out. Draw the payoff of a call Up-and-Out.</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-42</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What is the volatility smile? Draw it for equities. Is it symmetrical? Why does it have that shape? How does the smile differ for FX and commodities?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-43</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What is the difference between historical volatility and implied volatility?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-44</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">I have a call with strike 100 and underlying at 105. Is the implied volatility of the corresponding put higher, lower, or equal? Why?</div>
+      </div>
+
+      <div class="question-card">
+        <div class="q-header">
+          <div class="q-header-left"><span class="q-number">Q-OD-45</span></div>
+          <span class="q-flag unanswered">Unanswered</span>
+        </div>
+        <div class="q-text">What volatility models do you know? What is a local volatility model? What is GARCH and why do we use it to simulate volatility?</div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <p>SKEMA MSc FMI Interview Prep — <a href="../index.html">Back to Categories</a></p>
+    </div>
+  </footer>
+</body>
+</html>
