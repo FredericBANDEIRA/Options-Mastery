@@ -13,9 +13,9 @@
 <style>
 :root{
   --bg:#060810;
-  --surface:#090c18;
-  --card:#0d1020;
-  --border:#181d35;
+  --surface:#0a0e1c;
+  --card:#0f1528;
+  --border:#242e4d;
   --theta:#38bdf8;   /* sky blue — Theta */
   --theta2:#0ea5e9;
   --vega:#a78bfa;    /* violet — Vega */
@@ -26,8 +26,8 @@
   --pink:#f472b6;
   --teal:#2dd4bf;
   --orange:#fb923c;
-  --text:#e2e8f0;
-  --muted:#4a5575;
+  --text:#f8fafc;
+  --muted:#94a3b8;
   --mono:'Fira Code','Cascadia Code',monospace;
   --sans:'IBM Plex Sans','Segoe UI',sans-serif;
 }
@@ -125,44 +125,46 @@ body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:9990;
 @media(max-width:740px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
 
 /* ── KPI ── */
-.kpi{background:#030508;border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem;transition:border-color .2s}
-.kpi:hover{border-color:var(--theta)}
-.kpi .lbl{font-family:var(--mono);font-size:.63rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.3rem}
-.kpi .val{font-family:var(--mono);font-size:1rem;font-weight:700}
-.kpi .sub{font-size:.76rem;color:var(--muted);margin-top:.2rem}
+.kpi{background:#060a16;border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;transition:all .2s;box-shadow:0 2px 10px rgba(0,0,0,0.35)}
+.kpi:hover{border-color:var(--theta);background:#080e1f}
+.kpi .lbl{font-family:var(--mono);font-size:.68rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.35rem;font-weight:600}
+.kpi .val{font-family:var(--mono);font-size:1.06rem;font-weight:700}
+.kpi .sub{font-size:.82rem;color:#cbd5e1;margin-top:.35rem;line-height:1.55}
 
 /* ── TABLE ── */
 table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.87rem}
-th{background:#030508;color:var(--theta);font-family:var(--mono);font-size:.66rem;letter-spacing:.09em;text-transform:uppercase;padding:.7rem 1rem;border-bottom:2px solid var(--theta);text-align:left}
+th{background:#060a16;color:var(--theta);font-family:var(--mono);font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;padding:.75rem 1rem;border-bottom:2px solid var(--theta);text-align:left}
 th.v{color:var(--vega);border-bottom-color:var(--vega)}
 th.g{color:var(--gamma);border-bottom-color:var(--gamma)}
-td{padding:.65rem 1rem;border-bottom:1px solid var(--border);vertical-align:top;font-size:.86rem}
+td{padding:.7rem 1rem;border-bottom:1px solid var(--border);vertical-align:top;font-size:.87rem;color:#e2e8f0}
 tr:last-child td{border-bottom:none}
-tr:hover td{background:rgba(56,189,248,.02)}
+tr:hover td{background:rgba(56,189,248,.03)}
 .up{color:var(--green);font-weight:600}.dn{color:var(--red);font-weight:600}
 
 /* ── CHARTS ── */
-.chart-wrap{background:#030508;border:1px solid var(--border);border-radius:10px;padding:1rem;margin:1rem 0}
+.chart-wrap{background:#060a16;border:1px solid var(--border);border-radius:10px;padding:1rem;margin:1rem 0;box-shadow:0 2px 10px rgba(0,0,0,0.35)}
 .chart-controls{display:flex;gap:.7rem;flex-wrap:wrap;margin-bottom:.8rem;align-items:center}
-.chart-controls label{font-family:var(--mono);font-size:.7rem;color:var(--muted)}
+.chart-controls label{font-family:var(--mono);font-size:.74rem;color:var(--muted);font-weight:600}
 .chart-controls input[type=range]{accent-color:var(--theta);width:100px}
 .chart-controls input[type=range].vslider{accent-color:var(--vega)}
-.chart-controls select,.chart-controls input[type=number]{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.74rem;padding:.25rem .5rem;border-radius:5px}
+.chart-controls select,.chart-controls input[type=number],.btn-reset{background:var(--card);border:1px solid var(--border);color:var(--text);font-family:var(--mono);font-size:.74rem;padding:.25rem .5rem;border-radius:5px}
+.btn-reset{cursor:pointer;transition:all 0.2s;font-weight:600;color:var(--theta);border-color:var(--theta)}
+.btn-reset:hover{background:var(--theta);color:#000;box-shadow:0 0 8px rgba(56, 189, 248, 0.35)}
 .cval{font-family:var(--mono);font-size:.77rem;color:var(--theta);font-weight:700;min-width:2.8rem}
 .cval.v{color:var(--vega)}.cval.g{color:var(--gamma)}.cval.r{color:var(--red)}
 canvas{display:block;width:100%;border-radius:6px}
 
 /* ── PDE VISUAL ── */
-.pde-eq{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.7rem;padding:1.3rem;background:#030508;border-radius:8px;border:1px solid var(--border);margin:1rem 0}
+.pde-eq{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.7rem;padding:1.3rem;background:#060a16;border-radius:8px;border:1px solid var(--border);margin:1rem 0}
 .pde-term{text-align:center;padding:.6rem .9rem;border-radius:7px;font-family:var(--mono);font-size:.88rem}
-.pde-theta{background:rgba(56,189,248,.1);border:1px solid rgba(56,189,248,.3);color:#bae6fd}
-.pde-gamma{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);color:#fde68a}
-.pde-delta{background:rgba(74,222,128,.08);border:1px solid rgba(74,222,128,.3);color:#86efac}
-.pde-op{font-size:1.3rem;color:var(--muted)}
+.pde-theta{background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.35);color:#bae6fd}
+.pde-gamma{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35);color:#fde68a}
+.pde-delta{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.35);color:#86efac}
+.pde-op{font-size:1.3rem;color:#cbd5e1;font-weight:700}
 
 /* ── VEGA MATRIX ── */
 .vega-matrix{display:grid;grid-template-columns:repeat(5,1fr);gap:3px;margin:1rem 0;font-family:var(--mono);font-size:.72rem}
-.vm-header{background:#0d1020;color:var(--muted);text-align:center;padding:.4rem .3rem;border-radius:4px;letter-spacing:.05em;font-size:.65rem}
+.vm-header{background:#0f1528;color:var(--muted);text-align:center;padding:.4rem .3rem;border-radius:4px;letter-spacing:.05em;font-size:.68rem;font-weight:600}
 .vm-cell{border-radius:4px;padding:.5rem .3rem;text-align:center;font-weight:700;cursor:pointer;transition:transform .15s}
 .vm-cell:hover{transform:scale(1.05)}
 
@@ -170,16 +172,16 @@ canvas{display:block;width:100%;border-radius:6px}
 details{background:var(--card);border:1px solid var(--border);border-radius:8px;margin:.7rem 0;overflow:hidden}
 details[open]{border-color:var(--theta)}
 details.v[open]{border-color:var(--vega)}
-summary{padding:.85rem 1.3rem;cursor:pointer;font-weight:600;font-size:.9rem;display:flex;justify-content:space-between;align-items:center;list-style:none;color:var(--text)}
+summary{padding:.85rem 1.3rem;cursor:pointer;font-weight:600;font-size:.92rem;display:flex;justify-content:space-between;align-items:center;list-style:none;color:var(--text)}
 summary::-webkit-details-marker{display:none}
 summary::after{content:'＋';font-family:var(--mono);color:var(--theta)}
 details.v summary::after{color:var(--vega)}
 details[open] summary::after{content:'－'}
-.dbody{padding:.3rem 1.3rem 1.3rem;font-size:.89rem;color:var(--muted)}
+.dbody{padding:.5rem 1.3rem 1.3rem;font-size:.89rem;color:#cbd5e1;line-height:1.65}
 
-code{font-family:var(--mono);font-size:.82em;color:var(--theta2);background:rgba(56,189,248,.1);padding:.1em .4em;border-radius:4px}
+code{font-family:var(--mono);font-size:.82em;color:var(--theta2);background:rgba(56,189,248,.12);padding:.1em .4em;border-radius:4px}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
-.footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--border);font-family:var(--mono);font-size:.7rem;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.footer{margin-top:4rem;padding-top:1.5rem;border-top:1px solid var(--border);font-family:var(--mono);font-size:.72rem;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
 </style>
 </head>
 <body>
@@ -261,12 +263,13 @@ code{font-family:var(--mono);font-size:.82em;color:var(--theta2);background:rgba
 <!-- Interactive Theta calculator -->
 <div class="sh2-t">Theta Calculator</div>
 <div class="chart-wrap">
-<div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap">
-<div><label>S₀</label><br/><input id="tc-s" oninput="calcTheta()" style="width:70px" type="number" value="100"/></div>
-<div><label>K</label><br/><input id="tc-k" oninput="calcTheta()" style="width:70px" type="number" value="100"/></div>
-<div><label>σ (%)</label><br/><input id="tc-sig" oninput="calcTheta()" style="width:60px" type="number" value="20"/></div>
-<div><label>r (%)</label><br/><input id="tc-r" oninput="calcTheta()" style="width:55px" type="number" value="4"/></div>
-<div><label>T (years)</label><br/><input id="tc-t" oninput="calcTheta()" step="0.1" style="width:70px" type="number" value="0.5"/></div>
+<div class="chart-controls" style="gap:1.2rem;flex-wrap:wrap;align-items:flex-end">
+<div><label>S₀</label><br/><input id="tc-s" min="1" max="500" step="1" oninput="calcTheta()" style="width:70px" type="number" value="100"/></div>
+<div><label>K</label><br/><input id="tc-k" min="1" max="500" step="1" oninput="calcTheta()" style="width:70px" type="number" value="100"/></div>
+<div><label>σ (%)</label><br/><input id="tc-sig" min="1" max="300" step="1" oninput="calcTheta()" style="width:60px" type="number" value="20"/></div>
+<div><label>r (%)</label><br/><input id="tc-r" min="1" max="50" step="0.5" oninput="calcTheta()" style="width:55px" type="number" value="4"/></div>
+<div><label>T (years)</label><br/><input id="tc-t" min="0.01" max="10" step="0.05" oninput="calcTheta()" style="width:70px" type="number" value="0.5"/></div>
+<div><button class="btn-reset" onclick="resetThetaCalc()">Reinit</button></div>
 </div>
 <div id="tc-results" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:.8rem;margin:.8rem 0"></div>
 </div>
@@ -313,8 +316,9 @@ code{font-family:var(--mono);font-size:.82em;color:var(--theta2);background:rgba
 <input id="tt-sig" max="60" min="5" oninput="drawThetaTime()" type="range" value="20"/>
 <span class="cval" id="tt-sig-v">20%</span>
 <label style="margin-left:.8rem">r (%) =</label>
-<input id="tt-r" max="10" min="0" oninput="drawThetaTime()" type="range" value="4"/>
+<input id="tt-r" max="10" min="1" oninput="drawThetaTime()" type="range" value="4"/>
 <span class="cval" id="tt-r-v">4%</span>
+<button class="btn-reset" onclick="resetThetaTime()" style="margin-left:auto">Reinit</button>
 </div>
 <canvas height="280" id="thetaTimeCanvas"></canvas>
 </div>
@@ -378,8 +382,9 @@ code{font-family:var(--mono);font-size:.82em;color:var(--theta2);background:rgba
 <input id="tm-t" max="2" min="0.05" oninput="drawThetaMoneyness()" step="0.05" type="range" value="0.25"/>
 <span class="cval" id="tm-t-v">0.25</span>
 <label style="margin-left:.8rem">r (%) =</label>
-<input id="tm-r" max="10" min="0" oninput="drawThetaMoneyness()" type="range" value="4"/>
+<input id="tm-r" max="10" min="1" oninput="drawThetaMoneyness()" type="range" value="4"/>
 <span class="cval" id="tm-r-v">4%</span>
+<button class="btn-reset" onclick="resetThetaMoneyness()" style="margin-left:auto">Reinit</button>
 </div>
 <canvas height="270" id="thetaMoneynessCanvas"></canvas>
 <div id="tm-stats" style="display:flex;gap:1.5rem;margin-top:.8rem;flex-wrap:wrap;font-family:var(--mono);font-size:.78rem;color:var(--muted)"></div>
@@ -436,8 +441,9 @@ code{font-family:var(--mono);font-size:.82em;color:var(--theta2);background:rgba
 <input id="tv-t" max="2" min="0.05" oninput="drawThetaVol()" step="0.05" type="range" value="0.5"/>
 <span class="cval" id="tv-t-v">0.5</span>
 <label style="margin-left:.8rem">r (%) =</label>
-<input id="tv-r" max="8" min="0" oninput="drawThetaVol()" type="range" value="4"/>
+<input id="tv-r" max="8" min="1" oninput="drawThetaVol()" type="range" value="4"/>
 <span class="cval" id="tv-r-v">4%</span>
+<button class="btn-reset" onclick="resetThetaVol()" style="margin-left:auto">Reinit</button>
 </div>
 <canvas height="280" id="thetaVolCanvas"></canvas>
 </div>
@@ -508,15 +514,6 @@ code{font-family:var(--mono);font-size:.82em;color:var(--theta2);background:rgba
 </div>
 </div>
 </div><!-- /tvol -->
-<!-- ════════════════════ VEGA TABS ════════════════════════════════════ -->
-<!-- TAB 5: VEGA INTRO -->
-<!-- /vintro -->
-<!-- TAB 6: VEGA RISK -->
-<!-- /vrisk -->
-<!-- TAB 7: VEGA UNDER BS -->
-<!-- /vbs -->
-<!-- TAB 8: VEGA SENSITIVITIES -->
-<!-- /vsens -->
 <div class="footer">
 <span>The Greeks Pt.4 — Theta · S&amp;T Interview Guide · Quantitative Finance · 2025-2026</span>
 <span>Θ = ∂V/∂t · Theta Cliff · Vol &amp; PDE · Module 04</span>
@@ -525,13 +522,13 @@ code{font-family:var(--mono);font-size:.82em;color:var(--theta2);background:rgba
 <script>
 /* ─── TABS ─────────────────────────────────────────────────────────── */
 function switchTab(id,el,type){
-  document.querySelectorAll('.nav-tab').forEach(t=>{t.classList.remove('active-t');t.classList.remove('active-v')});
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active-t','active-v'));
   document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   el.classList.add('active-'+type);
-  document.getElementById('tab-'+id).classList.add('active');
+  const tabEl = document.getElementById('tab-'+id);
+  if (tabEl) tabEl.classList.add('active');
   setTimeout(()=>{
-    const fns={tintro:calcTheta,tfeatures:drawThetaTime,tmoneyness:drawThetaMoneyness,tvol:()=>{drawThetaVol();},
-      vintro:calcVega,vrisk:buildVegaMatrix,vbs:()=>{calcVega();drawVegaGammaComp();},vsens:()=>{drawVegaSens();drawVegaTime();}};
+    const fns={tintro:calcTheta,tfeatures:drawThetaTime,tmoneyness:drawThetaMoneyness,tvol:drawThetaVol};
     if(fns[id]) fns[id]();
   },40);
 }
@@ -594,16 +591,15 @@ function drawAxes(ctx,pad,W,H,xMin,xMax,yMin,yMax,xLbl,yLbl,txX,txY,xFmt,yFmt){
 
 /* ─── THETA CALCULATOR ──────────────────────────────────────────────── */
 function calcTheta(){
-  const S=parseFloat(document.getElementById('tc-s').value)||100;
-  const K=parseFloat(document.getElementById('tc-k').value)||100;
-  const sig=parseFloat(document.getElementById('tc-sig').value)/100||.2;
-  const r=parseFloat(document.getElementById('tc-r').value)/100||.04;
-  const T=parseFloat(document.getElementById('tc-t').value)||.5;
+  const sRaw=parseFloat(document.getElementById('tc-s').value); const S=isNaN(sRaw)?100:sRaw;
+  const kRaw=parseFloat(document.getElementById('tc-k').value); const K=isNaN(kRaw)?100:kRaw;
+  const sigRaw=parseFloat(document.getElementById('tc-sig').value); const sig=(isNaN(sigRaw)?20:sigRaw)/100;
+  const rRaw=parseFloat(document.getElementById('tc-r').value); const r=(isNaN(rRaw)?4:rRaw)/100;
+  const tRaw=parseFloat(document.getElementById('tc-t').value); const T=isNaN(tRaw)?0.5:tRaw;
   if(T<=0||sig<=0) return;
   const thC=bsTheta(S,K,r,sig,T,true),thP=bsTheta(S,K,r,sig,T,false);
   const gma=bsGamma(S,K,r,sig,T);
   const approxTheta=-.5*sig*sig*S*S*gma;
-  const C=bsCall(S,K,r,sig,T);
   document.getElementById('tc-results').innerHTML=`
     <div class="kpi"><div class="lbl">Theta_call (annual)</div><div class="val" style="color:var(--theta)">${thC.toFixed(5)}</div></div>
     <div class="kpi"><div class="lbl">Theta_call (daily)</div><div class="val" style="color:var(--theta)">${(thC/365).toFixed(5)}</div><div class="sub">Value lost per calendar day</div></div>
@@ -614,64 +610,150 @@ function calcTheta(){
   `;
 }
 
+function resetThetaCalc(){
+  document.getElementById('tc-s').value=100;
+  document.getElementById('tc-k').value=100;
+  document.getElementById('tc-sig').value=20;
+  document.getElementById('tc-r').value=4;
+  document.getElementById('tc-t').value=0.5;
+  calcTheta();
+}
+
 /* ─── THETA vs TIME ─────────────────────────────────────────────────── */
+let thetaTimeHoverS = null;
+function resetThetaTime(){
+  document.getElementById('tt-k').value=100;
+  document.getElementById('tt-sig').value=20;
+  document.getElementById('tt-r').value=4;
+  drawThetaTime();
+}
+
 function drawThetaTime(){
-  const K=parseFloat(document.getElementById('tt-k').value)||100;
-  const sig=parseFloat(document.getElementById('tt-sig').value)/100||.2;
-  const r=parseFloat(document.getElementById('tt-r').value)/100||.04;
+  const kRaw=parseFloat(document.getElementById('tt-k').value); const K=isNaN(kRaw)?100:kRaw;
+  const sigRaw=parseFloat(document.getElementById('tt-sig').value); const sig=(isNaN(sigRaw)?20:sigRaw)/100;
+  const rRaw=parseFloat(document.getElementById('tt-r').value); const r=(isNaN(rRaw)?4:rRaw)/100;
   document.getElementById('tt-k-v').textContent=K;
   document.getElementById('tt-sig-v').textContent=(sig*100).toFixed(0)+'%';
   document.getElementById('tt-r-v').textContent=(r*100).toFixed(0)+'%';
   const Srange=Array.from({length:300},(_,i)=>50+i*100/300);
   const mats=[[1/252,'1D','#f87171'],[7/252,'1W','#fb923c'],[1/12,'1M','#fbbf24'],[3/12,'3M','#4ade80'],[0.5,'6M','#38bdf8'],[1,'1Y','#818cf8'],[3,'3Y','#f472b6']];
   const allT=mats.flatMap(([T])=>Srange.map(S=>bsTheta(S,K,r,sig,T,true)));
-  const yMin=Math.max(Math.min(...allT)*1.1,-.5),yMax=0.01;
+  const yMin=Math.max(Math.min(...allT)*1.05,-5.0),yMax=0.01;
   const rk=setupCanvas('thetaTimeCanvas',280);if(!rk)return;
   const{ctx,W,H}=rk;
   const pad={l:60,r:85,t:20,b:35};
-  const{toX,toY}=drawAxes(ctx,pad,W,H,50,150,yMin,yMax,'Spot S','Theta (annual)',
+  const{toX,toY,cw}=drawAxes(ctx,pad,W,H,50,150,yMin,yMax,'Spot S','Theta (annual)',
     [60,75,100,125,140],[yMin,yMin/2,0].map(v=>parseFloat(v.toFixed(4))),
     null,v=>v.toFixed(4));
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(pad.l, pad.t, W-pad.l-pad.r, H-pad.t-pad.b);
+  ctx.clip();
   mats.forEach(([T,label,col])=>{
-    const thetas=Srange.map(S=>Math.max(bsTheta(S,K,r,sig,T,true),yMin));
+    const thetas=Srange.map(S=>bsTheta(S,K,r,sig,T,true));
     ctx.strokeStyle=col;ctx.lineWidth=T<.1?2.5:1.8;ctx.beginPath();
     Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(thetas[i])):ctx.lineTo(toX(S),toY(thetas[i])));ctx.stroke();
   });
+  ctx.restore();
   ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#38bdf8';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K',toX(K),pad.t-5);
   ctx.textAlign='left';ctx.font='10px Fira Code,monospace';
   mats.forEach(([T,label,col],i)=>{ctx.fillStyle=col;ctx.fillRect(W-80,pad.t+i*16,14,2);ctx.fillStyle=col;ctx.fillText(label,W-62,pad.t+i*16+4)});
+
+  const canvas=document.getElementById('thetaTimeCanvas');
+  if(canvas && !canvas.dataset.hasListeners){
+    canvas.addEventListener('mousemove',(e)=>{
+      const rect=canvas.getBoundingClientRect();
+      const mouseX=e.clientX-rect.left;
+      if(mouseX>=pad.l && mouseX<=W-pad.r){
+        thetaTimeHoverS=50+(mouseX-pad.l)/cw*(150-50);
+        thetaTimeHoverS=Math.max(50,Math.min(150,thetaTimeHoverS));
+        drawThetaTime();
+      }else{
+        thetaTimeHoverS=null;
+        drawThetaTime();
+      }
+    });
+    canvas.addEventListener('mouseleave',()=>{
+      thetaTimeHoverS=null;
+      drawThetaTime();
+    });
+    canvas.dataset.hasListeners='true';
+  }
+
+  if(thetaTimeHoverS!==null){
+    const hx=toX(thetaTimeHoverS);
+    ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(hx,pad.t);ctx.lineTo(hx,H-pad.b);ctx.stroke();ctx.setLineDash([]);
+
+    const hoverMats=[[1/12,'1M','#fbbf24'],[0.5,'6M','#38bdf8'],[1,'1Y','#818cf8']];
+    const vals=hoverMats.map(([T,label,col])=>{
+      const val=bsTheta(thetaTimeHoverS,K,r,sig,T,true);
+      const hy=toY(Math.max(val,yMin));
+      if(hy>=pad.t && hy<=H-pad.b){
+        ctx.fillStyle=col;ctx.beginPath();ctx.arc(hx,hy,4,0,Math.PI*2);ctx.fill();
+        ctx.strokeStyle='#030508';ctx.lineWidth=1.5;ctx.stroke();
+      }
+      return {label,col,val};
+    });
+
+    const boxW=135,boxH=66;
+    let tx=hx+12; if(tx+boxW>W-85) tx=hx-boxW-12;
+    const ty=pad.t+8;
+    ctx.fillStyle='rgba(9,14,18,0.92)';ctx.strokeStyle='#182028';ctx.lineWidth=1.5;
+    ctx.fillRect(tx,ty,boxW,boxH);ctx.strokeRect(tx,ty,boxW,boxH);
+    ctx.font='10px Fira Code,monospace';ctx.textAlign='left';
+    ctx.fillStyle='#e2e8f0';ctx.fillText(`Spot: $${thetaTimeHoverS.toFixed(2)}`,tx+8,ty+14);
+    vals.forEach((item,idx)=>{
+      ctx.fillStyle=item.col;
+      ctx.fillText(`${item.label} Θ: ${item.val.toFixed(4)}`,tx+8,ty+28+idx*14);
+    });
+  }
 }
 
 /* ─── THETA vs MONEYNESS ────────────────────────────────────────────── */
+let thetaMoneynessHoverS = null;
+function resetThetaMoneyness(){
+  document.getElementById('tm-k').value=100;
+  document.getElementById('tm-sig').value=20;
+  document.getElementById('tm-t').value=0.25;
+  document.getElementById('tm-r').value=4;
+  drawThetaMoneyness();
+}
+
 function drawThetaMoneyness(){
-  const K=parseFloat(document.getElementById('tm-k').value)||100;
-  const sig=parseFloat(document.getElementById('tm-sig').value)/100||.2;
-  const T=parseFloat(document.getElementById('tm-t').value)||.25;
-  const r=parseFloat(document.getElementById('tm-r').value)/100||.04;
+  const kRaw=parseFloat(document.getElementById('tm-k').value); const K=isNaN(kRaw)?100:kRaw;
+  const sigRaw=parseFloat(document.getElementById('tm-sig').value); const sig=(isNaN(sigRaw)?20:sigRaw)/100;
+  const tRaw=parseFloat(document.getElementById('tm-t').value); const T=isNaN(tRaw)?0.25:tRaw;
+  const rRaw=parseFloat(document.getElementById('tm-r').value); const r=(isNaN(rRaw)?4:rRaw)/100;
   document.getElementById('tm-k-v').textContent=K;document.getElementById('tm-sig-v').textContent=(sig*100).toFixed(0)+'%';
   document.getElementById('tm-t-v').textContent=T.toFixed(2);document.getElementById('tm-r-v').textContent=(r*100).toFixed(0)+'%';
   const Srange=Array.from({length:300},(_,i)=>40+i*120/300);
   const thetaCall=Srange.map(S=>bsTheta(S,K,r,sig,T,true));
   const thetaPut=Srange.map(S=>bsTheta(S,K,r,sig,T,false));
-  const yMin=Math.max(Math.min(...thetaCall,...thetaPut)*1.1,-.2);
+  const yMin=Math.max(Math.min(...thetaCall,...thetaPut)*1.08,-5.0);
   const yMax=Math.max(...thetaCall,...thetaPut)*1.1+.002;
   const rk=setupCanvas('thetaMoneynessCanvas',270);if(!rk)return;
   const{ctx,W,H}=rk;
   const pad={l:65,r:15,t:20,b:35};
-  const{toX,toY}=drawAxes(ctx,pad,W,H,40,160,yMin,yMax,'Spot S','Theta',
+  const{toX,toY,cw}=drawAxes(ctx,pad,W,H,40,160,yMin,yMax,'Spot S','Theta',
     [50,70,90,100,110,130,150],[yMin,yMin/2,0,yMax].map(v=>parseFloat(v.toFixed(4))),
     null,v=>v.toFixed(4));
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(pad.l, pad.t, W-pad.l-pad.r, H-pad.t-pad.b);
+  ctx.clip();
   // fill under call curve
-  ctx.fillStyle='rgba(56,189,248,.06)';ctx.beginPath();ctx.moveTo(toX(Srange[0]),toY(Math.max(yMin,thetaCall[0])));
-  Srange.forEach((S,i)=>ctx.lineTo(toX(S),toY(Math.max(yMin,thetaCall[i]))));
+  ctx.fillStyle='rgba(56,189,248,.06)';ctx.beginPath();ctx.moveTo(toX(Srange[0]),toY(thetaCall[0]));
+  Srange.forEach((S,i)=>ctx.lineTo(toX(S),toY(thetaCall[i])));
   ctx.lineTo(toX(Srange[Srange.length-1]),toY(0));ctx.lineTo(toX(Srange[0]),toY(0));ctx.closePath();ctx.fill();
   // call theta
   ctx.strokeStyle='#38bdf8';ctx.lineWidth=2.5;ctx.beginPath();
-  Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(Math.max(yMin,thetaCall[i]))):ctx.lineTo(toX(S),toY(Math.max(yMin,thetaCall[i]))));ctx.stroke();
+  Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(thetaCall[i])):ctx.lineTo(toX(S),toY(thetaCall[i])));ctx.stroke();
   // put theta
   ctx.strokeStyle='#a78bfa';ctx.lineWidth=2;ctx.setLineDash([5,4]);ctx.beginPath();
-  Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(Math.max(yMin,thetaPut[i]))):ctx.lineTo(toX(S),toY(Math.max(yMin,thetaPut[i]))));ctx.stroke();ctx.setLineDash([]);
+  Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(thetaPut[i])):ctx.lineTo(toX(S),toY(thetaPut[i])));ctx.stroke();ctx.setLineDash([]);
+  ctx.restore();
   // strike & label
   ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#38bdf8';ctx.font='11px Fira Code,monospace';ctx.textAlign='center';ctx.fillText('K='+K,toX(K),pad.t-5);
@@ -684,34 +766,148 @@ function drawThetaMoneyness(){
     <span>Θ_put(ATM) = <strong style="color:var(--vega)">${tPutAtm.toFixed(5)}</strong></span>
     <span>Put Positive Θ? <strong style="color:${hasPosThetaPut?'var(--green)':'var(--muted)'}">${hasPosThetaPut?'Yes — deep ITM put':'No'}</strong></span>
   `;
+
+  const canvas=document.getElementById('thetaMoneynessCanvas');
+  if(canvas && !canvas.dataset.hasListeners){
+    canvas.addEventListener('mousemove',(e)=>{
+      const rect=canvas.getBoundingClientRect();
+      const mouseX=e.clientX-rect.left;
+      if(mouseX>=pad.l && mouseX<=W-pad.r){
+        thetaMoneynessHoverS=40+(mouseX-pad.l)/cw*(160-40);
+        thetaMoneynessHoverS=Math.max(40,Math.min(160,thetaMoneynessHoverS));
+        drawThetaMoneyness();
+      }else{
+        thetaMoneynessHoverS=null;
+        drawThetaMoneyness();
+      }
+    });
+    canvas.addEventListener('mouseleave',()=>{
+      thetaMoneynessHoverS=null;
+      drawThetaMoneyness();
+    });
+    canvas.dataset.hasListeners='true';
+  }
+
+  if(thetaMoneynessHoverS!==null){
+    const hx=toX(thetaMoneynessHoverS);
+    ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(hx,pad.t);ctx.lineTo(hx,H-pad.b);ctx.stroke();ctx.setLineDash([]);
+
+    const valCall=bsTheta(thetaMoneynessHoverS,K,r,sig,T,true);
+    const valPut=bsTheta(thetaMoneynessHoverS,K,r,sig,T,false);
+    const hyC=toY(Math.max(valCall,yMin));
+    const hyP=toY(Math.max(valPut,yMin));
+
+    if(hyC>=pad.t && hyC<=H-pad.b){
+      ctx.fillStyle='#38bdf8';ctx.beginPath();ctx.arc(hx,hyC,4.5,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#030508';ctx.lineWidth=1.5;ctx.stroke();
+    }
+    if(hyP>=pad.t && hyP<=H-pad.b){
+      ctx.fillStyle='#a78bfa';ctx.beginPath();ctx.arc(hx,hyP,4.5,0,Math.PI*2);ctx.fill();
+      ctx.strokeStyle='#030508';ctx.lineWidth=1.5;ctx.stroke();
+    }
+
+    const boxW=140,boxH=54;
+    let tx=hx+12; if(tx+boxW>W-15) tx=hx-boxW-12;
+    const ty=pad.t+8;
+    ctx.fillStyle='rgba(9,14,18,0.92)';ctx.strokeStyle='#182028';ctx.lineWidth=1.5;
+    ctx.fillRect(tx,ty,boxW,boxH);ctx.strokeRect(tx,ty,boxW,boxH);
+    ctx.font='10px Fira Code,monospace';ctx.textAlign='left';
+    ctx.fillStyle='#e2e8f0';ctx.fillText(`Spot: $${thetaMoneynessHoverS.toFixed(2)}`,tx+8,ty+14);
+    ctx.fillStyle='#38bdf8';ctx.fillText(`Call Θ: ${valCall.toFixed(5)}`,tx+8,ty+28);
+    ctx.fillStyle='#a78bfa';ctx.fillText(`Put Θ:  ${valPut.toFixed(5)}`,tx+8,ty+42);
+  }
 }
 
 /* ─── THETA vs VOL ──────────────────────────────────────────────────── */
+let thetaVolHoverS = null;
+function resetThetaVol(){
+  document.getElementById('tv-k').value=100;
+  document.getElementById('tv-t').value=0.5;
+  document.getElementById('tv-r').value=4;
+  drawThetaVol();
+}
+
 function drawThetaVol(){
-  const K=parseFloat(document.getElementById('tv-k').value)||100;
-  const T=parseFloat(document.getElementById('tv-t').value)||.5;
-  const r=parseFloat(document.getElementById('tv-r').value)/100||.04;
+  const kRaw=parseFloat(document.getElementById('tv-k').value); const K=isNaN(kRaw)?100:kRaw;
+  const tRaw=parseFloat(document.getElementById('tv-t').value); const T=isNaN(tRaw)?0.5:tRaw;
+  const rRaw=parseFloat(document.getElementById('tv-r').value); const r=(isNaN(rRaw)?4:rRaw)/100;
   document.getElementById('tv-k-v').textContent=K;document.getElementById('tv-t-v').textContent=T.toFixed(2);
   document.getElementById('tv-r-v').textContent=(r*100).toFixed(0)+'%';
   const vols=[[.10,'IV 10%','#f87171'],[.20,'IV 20%','#fb923c'],[.30,'IV 30%','#fbbf24'],[.50,'IV 50%','#34d399'],[.80,'IV 80%','#818cf8']];
   const Srange=Array.from({length:300},(_,i)=>20+i*280/300);
   const allT=vols.flatMap(([v])=>Srange.map(S=>bsTheta(S,K,r,v,T,true)));
-  const yMin=Math.max(Math.min(...allT)*1.1,-.12);
+  const yMin=Math.max(Math.min(...allT)*1.05,-5.0);
   const rk=setupCanvas('thetaVolCanvas',280);if(!rk)return;
   const{ctx,W,H}=rk;
   const pad={l:65,r:90,t:20,b:35};
-  const{toX,toY}=drawAxes(ctx,pad,W,H,20,300,yMin,0,'Spot S','Theta',
+  const{toX,toY,cw}=drawAxes(ctx,pad,W,H,20,300,yMin,0,'Spot S','Theta',
     [50,100,150,200,250],[yMin,yMin/2,0].map(v=>parseFloat(v.toFixed(4))),
     null,v=>v.toFixed(4));
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(pad.l, pad.t, W-pad.l-pad.r, H-pad.t-pad.b);
+  ctx.clip();
   vols.forEach(([sig,label,col])=>{
-    const thetas=Srange.map(S=>Math.max(bsTheta(S,K,r,sig,T,true),yMin));
+    const thetas=Srange.map(S=>bsTheta(S,K,r,sig,T,true));
     ctx.strokeStyle=col;ctx.lineWidth=sig===.10?2.5:1.8;ctx.beginPath();
     Srange.forEach((S,i)=>i===0?ctx.moveTo(toX(S),toY(thetas[i])):ctx.lineTo(toX(S),toY(thetas[i])));ctx.stroke();
   });
+  ctx.restore();
   ctx.strokeStyle='rgba(255,255,255,.15)';ctx.lineWidth=1;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(toX(K),pad.t);ctx.lineTo(toX(K),H-35);ctx.stroke();ctx.setLineDash([]);
   ctx.fillStyle='#38bdf8';ctx.textAlign='center';ctx.font='11px Fira Code,monospace';ctx.fillText('K',toX(K),pad.t-5);
   ctx.textAlign='left';ctx.font='10px Fira Code,monospace';
   vols.forEach(([v,label,col],i)=>{ctx.fillStyle=col;ctx.fillRect(W-85,pad.t+i*16,14,2);ctx.fillStyle=col;ctx.fillText(label,W-67,pad.t+i*16+4)});
+
+  const canvas=document.getElementById('thetaVolCanvas');
+  if(canvas && !canvas.dataset.hasListeners){
+    canvas.addEventListener('mousemove',(e)=>{
+      const rect=canvas.getBoundingClientRect();
+      const mouseX=e.clientX-rect.left;
+      if(mouseX>=pad.l && mouseX<=W-pad.r){
+        thetaVolHoverS=20+(mouseX-pad.l)/cw*(300-20);
+        thetaVolHoverS=Math.max(20,Math.min(300,thetaVolHoverS));
+        drawThetaVol();
+      }else{
+        thetaVolHoverS=null;
+        drawThetaVol();
+      }
+    });
+    canvas.addEventListener('mouseleave',()=>{
+      thetaVolHoverS=null;
+      drawThetaVol();
+    });
+    canvas.dataset.hasListeners='true';
+  }
+
+  if(thetaVolHoverS!==null){
+    const hx=toX(thetaVolHoverS);
+    ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.lineWidth=1;ctx.setLineDash([3,3]);
+    ctx.beginPath();ctx.moveTo(hx,pad.t);ctx.lineTo(hx,H-pad.b);ctx.stroke();ctx.setLineDash([]);
+
+    const hoverVols=[[.20,'IV 20%','#fb923c'],[.50,'IV 50%','#34d399'],[.80,'IV 80%','#818cf8']];
+    const vals=hoverVols.map(([v,label,col])=>{
+      const val=bsTheta(thetaVolHoverS,K,r,v,T,true);
+      const hy=toY(Math.max(val,yMin));
+      if(hy>=pad.t && hy<=H-pad.b){
+        ctx.fillStyle=col;ctx.beginPath();ctx.arc(hx,hy,4,0,Math.PI*2);ctx.fill();
+        ctx.strokeStyle='#030508';ctx.lineWidth=1.5;ctx.stroke();
+      }
+      return {label,col,val};
+    });
+
+    const boxW=140,boxH=66;
+    let tx=hx+12; if(tx+boxW>W-90) tx=hx-boxW-12;
+    const ty=pad.t+8;
+    ctx.fillStyle='rgba(9,14,18,0.92)';ctx.strokeStyle='#182028';ctx.lineWidth=1.5;
+    ctx.fillRect(tx,ty,boxW,boxH);ctx.strokeRect(tx,ty,boxW,boxH);
+    ctx.font='10px Fira Code,monospace';ctx.textAlign='left';
+    ctx.fillStyle='#e2e8f0';ctx.fillText(`Spot: $${thetaVolHoverS.toFixed(2)}`,tx+8,ty+14);
+    vals.forEach((item,idx)=>{
+      ctx.fillStyle=item.col;
+      ctx.fillText(`${item.label} Θ: ${item.val.toFixed(4)}`,tx+8,ty+28+idx*14);
+    });
+  }
 }
 
 /* ─── INIT ──────────────────────────────────────────────────────────── */
